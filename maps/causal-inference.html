@@ -1,0 +1,3129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Causal inference · product experiments · Prerequisite Map</title>
+<style>
+  :root{
+    --ink:#1e293b; --muted:#64748b; --line:#e2e8f0; --bg:#f8fafc; --panel:#ffffff;
+    --accent:#2563eb;
+    /* engine defaults — the MAP-THEME block in the page's script overrides all of these at startup */
+    --ink-2:#334155; --dep-bg:#fbfdff; --edge:#bcc7d4; --edge-related:#7c8aa0;
+    --hover-bg:#eff6ff; --match:#f59e0b; --btn-hover-border:#94a3b8;
+    --overlay-bg:rgba(255,255,255,.92); --overlay-bg-2:rgba(255,255,255,.85);
+    --font-display:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --font-body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --safe-t:env(safe-area-inset-top,0px); --safe-r:env(safe-area-inset-right,0px);
+    --safe-b:env(safe-area-inset-bottom,0px); --safe-l:env(safe-area-inset-left,0px);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;height:100dvh;margin:0;overflow:hidden;overscroll-behavior:none;-webkit-text-size-adjust:100%}
+  body{font-family:var(--font-body);color:var(--ink);background:var(--bg);display:flex;flex-direction:column;max-width:100%}
+  header{display:flex;align-items:center;gap:14px;padding:10px 16px;padding-left:max(16px,var(--safe-l));padding-right:max(16px,var(--safe-r));padding-top:max(10px,var(--safe-t));background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap;position:relative;z-index:30}
+  .brand{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;min-width:0}
+  header h1{font-size:17px;margin:0;font-weight:650;font-family:var(--font-display)}
+  header .stats{font-size:14px;color:var(--muted)}
+  .spacer{flex:1}
+  .toolbar{display:flex;align-items:center;gap:8px}
+  .toolbar-actions{display:flex;align-items:center;gap:8px}
+  @media (min-width:901px){
+    .brand,.toolbar,.toolbar-actions{display:contents}
+  }
+  .searchwrap{position:relative}
+  #search{width:230px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;font-size:15px;outline:none;background:var(--panel);color:var(--ink)}
+  #search:focus{border-color:var(--accent)}
+  #results{position:absolute;top:36px;left:0;width:300px;max-height:260px;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px rgba(15,23,42,.12);display:none;z-index:50}
+  #results div{padding:7px 10px;font-size:15px;cursor:pointer}
+  #results div:hover{background:var(--hover-bg)}
+  #results .rphase{color:var(--muted);font-size:14px;margin-left:6px}
+  button{padding:6px 11px;border:1px solid var(--line);background:var(--panel);border-radius:8px;font-size:15px;cursor:pointer;color:var(--ink)}
+  button:hover{border-color:var(--btn-hover-border)}
+  .iconbtn{display:none;align-items:center;justify-content:center;width:44px;height:44px;padding:0;flex-shrink:0}
+  .iconbtn svg{display:block}
+  .narrow-only{display:none}
+  main{flex:1;display:flex;min-height:0;min-width:0}
+  #canvaswrap{flex:1;position:relative;overflow:hidden;min-width:0;min-height:0}
+  #graph{width:100%;height:100%;display:block;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+  #graph.panning{cursor:grabbing}
+  #legend{position:absolute;left:12px;bottom:12px;background:var(--overlay-bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:14px;max-width:340px;z-index:20}
+  #legend .bar{height:10px;border-radius:5px}
+  #legend .barlabels{display:flex;justify-content:space-between;margin-top:3px;color:var(--muted)}
+  #legend .cap{margin-top:4px;color:var(--muted);line-height:1.4}
+  .sheet-head{display:none;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+  .sheet-head strong{font-size:15px;font-family:var(--font-display)}
+  .sheet-handle{display:none;width:36px;height:4px;border-radius:999px;background:var(--line);margin:0 auto 10px}
+  .sheet-close{min-height:44px;padding:8px 12px}
+  #hint{position:absolute;left:12px;top:12px;font-size:14px;color:var(--muted);background:var(--overlay-bg-2);border:1px solid var(--line);border-radius:8px;padding:5px 9px;z-index:20}
+  #tt{position:absolute;display:none;max-width:330px;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgba(15,23,42,.18);padding:10px 12px;font-size:14.5px;z-index:40;pointer-events:none;line-height:1.45}
+  #tt .who{font-weight:650;font-size:14px;margin-bottom:4px}
+  #tt .who .arrow{color:var(--accent)}
+  #panel{width:400px;flex-shrink:0;background:var(--panel);border-left:1px solid var(--line);overflow-y:auto;padding:18px 20px 40px}
+  #panel h2{font-size:19px;margin:6px 0 6px;line-height:1.3;font-family:var(--font-display)}
+  #panel h3{font-size:14px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:18px 0 8px}
+  #panel p{font-size:15px;line-height:1.55;margin:6px 0}
+  #panel ul,#panel ol{margin:4px 0;padding-left:20px}
+  #panel li{font-size:15px;line-height:1.5;margin:3px 0}
+  #panel ol.outline li{margin:6px 0}
+  #panel ol.outline li::marker{color:var(--muted);font-weight:650;font-size:14px}
+  #panel details{margin-top:6px}
+  #panel summary{cursor:pointer;color:var(--accent);font-size:14px}
+  #panel details p{margin:6px 0 2px;font-size:14.5px;color:var(--ink-2)}
+  #panel .chip{display:inline-block;font-size:14px;font-weight:600;letter-spacing:.03em;padding:3px 9px;border-radius:999px;color:#fff}
+  .dep{border:1px solid var(--line);border-radius:10px;padding:9px 11px;margin:8px 0;background:var(--dep-bg)}
+  .dep b{font-size:15px;cursor:pointer;color:var(--accent)}
+  .dep b:hover{text-decoration:underline}
+  .dep p{margin:4px 0 2px;font-size:14.5px;color:var(--ink-2)}
+  #panel a{color:var(--accent);text-decoration:none;font-size:15px}
+  #panel a:hover{text-decoration:underline}
+  .backlink{font-size:14.5px;color:var(--accent);cursor:pointer}
+  .backlink:hover{text-decoration:underline}
+  #scrim{display:none}
+  .colbg{opacity:.05}
+  .collabel{font-size:14px;font-weight:650;filter:brightness(.62) saturate(1.15)}
+  .node rect.main{stroke-width:1.3;cursor:pointer}
+  .node text{font-size:14px;fill:var(--ink);pointer-events:none;font-weight:520}
+  .node{cursor:pointer}
+  .edge path.line{stroke:var(--edge);stroke-width:1.3;fill:none;transition:stroke-width .1s}
+  .edge polygon{fill:var(--edge)}
+  .edge path.hit{stroke:transparent;stroke-width:16;fill:none;pointer-events:stroke;cursor:pointer}
+  svg.dimmed .node:not(.related){opacity:.13}
+  svg.dimmed .edge:not(.related){opacity:.05}
+  svg.dimmed .colbg{opacity:.02}
+  svg.dimmed .collabel:not(.related){opacity:.2}
+  .edge.related path.line{stroke:var(--edge-related);stroke-width:1.7}
+  .edge.related polygon{fill:var(--edge-related)}
+  .edge.direct path.line{stroke:var(--accent);stroke-width:2.1}
+  .edge.direct polygon{fill:var(--accent)}
+  .edge.hov path.line{stroke:var(--accent);stroke-width:2.6}
+  .edge.hov polygon{fill:var(--accent)}
+  .node.related rect.main{stroke-width:2.2}
+  .node.sel rect.main{stroke-width:2.8}
+  .node.match rect.main{stroke:var(--match);stroke-width:2.6}
+  .node.learner-known rect.main{fill-opacity:0.08;stroke-opacity:0.5}
+  .node.learner-frontier rect.main{stroke-width:2.35}
+  .node .here-ring{fill:none;stroke:var(--accent);stroke-width:1.6;opacity:.88}
+  .node .here-flag{font-size:14px;font-weight:650;fill:var(--accent)}
+  .here-summary{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:10px 0 4px;background:var(--dep-bg)}
+  .here-summary h3{margin-top:0}
+  .here-jump{color:var(--accent);cursor:pointer}
+  .here-jump:hover{text-decoration:underline}
+  .chipbtn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:999px;padding:2px 9px;font-size:14px;font-weight:600;cursor:pointer;background:var(--panel)}
+  .chipbtn:hover{border-color:var(--btn-hover-border)}
+  .chipbtn .dot{width:8px;height:8px;border-radius:50%}
+  @media (pointer:coarse){
+    .edge path.hit{stroke-width:28}
+  }
+  @media (max-width:900px){
+    header{z-index:70;flex-wrap:nowrap;gap:8px;padding:8px 12px;padding-left:max(12px,var(--safe-l));padding-right:max(12px,var(--safe-r));padding-top:max(8px,var(--safe-t))}
+    .brand{flex:1}
+    header h1{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    header .stats,.spacer{display:none}
+    .iconbtn,.narrow-only{display:inline-flex}
+    .sheet-head.narrow-only{display:flex}
+    .toolbar{position:relative;flex-shrink:0}
+    .searchwrap{display:none;flex:1;min-width:0}
+    header.search-open .brand{display:none}
+    header.search-open .searchwrap{display:block}
+    header.search-open #btn-more{display:none}
+    #search{width:100%;min-height:44px;font-size:16px;padding:10px 12px}
+    #results{left:0;right:0;width:100%;top:calc(100% + 6px);max-height:min(50dvh,360px)}
+    #results div{min-height:44px;display:flex;align-items:center;padding:10px 12px}
+    .toolbar-actions{display:none;position:absolute;top:calc(100% + 6px);right:0;flex-direction:column;align-items:stretch;min-width:196px;padding:8px;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(15,23,42,.16);z-index:80}
+    header.menu-open .toolbar-actions{display:flex}
+    .toolbar-actions button{min-height:44px;width:100%;text-align:left;padding:10px 12px}
+    button,.iconbtn,.chipbtn,#panel .backlink,#panel summary{min-height:44px}
+    .chipbtn{padding:10px 14px}
+    #hint{display:none}
+    #legend{display:none;position:fixed;left:0;right:0;bottom:0;top:auto;max-width:none;max-height:min(52dvh,460px);overflow:auto;z-index:60;border-radius:16px 16px 0 0;border:1px solid var(--line);background:var(--panel);padding:12px 16px calc(16px + var(--safe-b));box-shadow:0 -8px 28px rgba(15,23,42,.16)}
+    #legend.is-open{display:block}
+    #legend .lvlchip{min-width:44px;min-height:44px;justify-content:center}
+    #tt{position:fixed;left:0;right:0;bottom:0;top:auto;max-width:none;max-height:min(42dvh,360px);overflow:auto;pointer-events:auto;border-radius:16px 16px 0 0;padding:12px 16px calc(16px + var(--safe-b));z-index:70}
+    #panel .backlink{display:inline-flex;align-items:center;min-height:44px;padding-right:8px}
+    #tt .sheet-handle,#legend .sheet-handle,#panel .sheet-handle{display:block}
+    button,.iconbtn{touch-action:manipulation}
+    #panel,#legend,#tt{-webkit-overflow-scrolling:touch}
+    #panel{position:fixed;left:0;right:0;bottom:0;width:100%;max-height:min(58dvh,520px);border-left:none;border-top:1px solid var(--line);border-radius:16px 16px 0 0;padding:14px 16px calc(18px + var(--safe-b));z-index:60;transform:translateY(110%);box-shadow:0 -8px 28px rgba(15,23,42,.16)}
+    #panel.is-open{transform:translateY(0)}
+    #scrim.is-on{display:block;position:fixed;inset:0;background:rgba(15,23,42,.28);z-index:45}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <h1>Causal inference · product experiments</h1>
+    <span class="stats" id="stats"></span>
+  </div>
+  <div class="spacer"></div>
+  <div class="toolbar">
+    <button type="button" id="btn-search-toggle" class="iconbtn narrow-only" aria-label="Search concepts" aria-expanded="false" title="Search">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.25" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.2 15.2 21 21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <div class="searchwrap">
+      <input id="search" type="search" placeholder="Search concepts…" autocomplete="off" enterkeyhint="search">
+      <div id="results"></div>
+    </div>
+    <div class="toolbar-actions" id="toolbar-actions">
+      <button type="button" id="btn-theme" title="Toggle themed / default skin">Themed</button>
+      <button type="button" id="btn-fit" title="Zoom to fit">Fit</button>
+      <button type="button" id="btn-reset" title="Clear selection">Reset</button>
+      <button type="button" id="btn-legend" class="narrow-only" aria-expanded="false">Levels</button>
+      <button type="button" id="btn-guide" class="narrow-only" aria-expanded="false">Guide</button>
+    </div>
+    <button type="button" id="btn-more" class="iconbtn narrow-only" aria-label="More controls" aria-expanded="false" aria-controls="toolbar-actions" title="More">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="6" r="1.7" fill="currentColor"/><circle cx="12" cy="12" r="1.7" fill="currentColor"/><circle cx="12" cy="18" r="1.7" fill="currentColor"/></svg>
+    </button>
+  </div>
+</header>
+<main>
+  <div id="canvaswrap">
+    <svg id="graph" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div id="hint">A → B means “learn A before B”. Hover or click any arrow to see <b>why</b> it is a prerequisite.</div>
+    <div id="legend"></div>
+    <div id="tt"></div>
+  </div>
+  <aside id="panel"></aside>
+</main>
+<div id="scrim" hidden></div>
+
+<script>
+/*DATA-START*/
+const DATA =
+{
+  "nodes": [
+    {
+      "id": "probability",
+      "phase": 0,
+      "label": "Probability",
+      "desc": "The rules for events, conditional probability, expectation, and variance — the language every later contrast is written in.",
+      "outline": [
+        "Events, complements, and the addition rule for unions",
+        "Conditional probability and independence",
+        "Random variables, expectation as a long-run average, and variance",
+        "The law of large numbers: why a mean settles as the sample grows",
+        "Bayes' rule as rearranging a conditional probability, not as a philosophy"
+      ],
+      "ideas": [
+        "P(A or B) = P(A) + P(B) − P(A and B); for disjoint events the intersection term is zero",
+        "Independence means P(A and B) = P(A)P(B), which is stronger than 'unrelated in a sentence'",
+        "Expectation is linear even when variables are dependent; variance adds only when they are uncorrelated",
+        "A sample mean concentrates around the expectation, which is why experiment size shows up later as precision"
+      ],
+      "questions": [
+        {
+          "q": "When is P(A and B) equal to P(A)P(B), and what does that fail to say?",
+          "a": "That equality is the definition of independence. It does not say the events are causally unrelated — only that knowing one does not change the probability of the other."
+        },
+        {
+          "q": "Why can two variables be dependent while the expectation of their sum is still the sum of expectations?",
+          "a": "Linearity of expectation does not require independence. Variance of a sum does: overlapping variation is the covariance term, which is zero only when the variables are uncorrelated."
+        },
+        {
+          "q": "A feature's seven-day retention rate moved from 0.40 to 0.43 on a small slice. What does the law of large numbers warn you not to conclude yet?",
+          "a": "A mean from a small sample can sit far from the underlying expectation. The law says the sample mean settles as the number of units grows; one noisy slice is not yet that settlement."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Diez, Çetinkaya-Rundel & Barr, OpenIntro Statistics, 4th ed. (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        }
+      ],
+      "learner": "known"
+    },
+    {
+      "id": "units-and-populations",
+      "phase": 0,
+      "label": "Units & populations",
+      "desc": "The thing you assign, the thing you measure, and the people the number is supposed to speak for — three choices that are easy to blur.",
+      "outline": [
+        "Name the unit: user, request, session, device, or market",
+        "Separate the study population from the population you will ship to",
+        "See how a clustered unit changes both the estimand and the effective sample size",
+        "Notice when the logged unit is not the unit that was randomized",
+        "Write the population sentence before you write the metric"
+      ],
+      "ideas": [
+        "The unit of assignment is what the coin flip touches; the unit of analysis is what the row in the table is",
+        "A result on new users last week is not automatically a result on the people who will see the launch",
+        "When users share a market, a device, or a household, treating rows as independent overstates how much information you have",
+        "Switching the unit — user versus session versus geo — changes which question the number answers"
+      ],
+      "questions": [
+        {
+          "q": "What is the difference between the unit of assignment and the unit of analysis?",
+          "a": "Assignment is what you randomize (often the user). Analysis is the row you average (sometimes a session or a request). If those differ, several rows share one coin flip and are not independent draws."
+        },
+        {
+          "q": "A holdout is run on US users this month and the launch is global. What population did you actually learn about?",
+          "a": "You learned about the study population: US users in that window, under that traffic mix. Transport to other countries or later months is a further claim, not something the sample automatically buys."
+        },
+        {
+          "q": "Why does randomizing markets, rather than users, shrink the effective sample even when millions of users are inside the markets?",
+          "a": "Users in the same market share the assignment. The independent pieces of information are closer to the number of markets than to the number of users, so the uncertainty stays large."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Diez, Çetinkaya-Rundel & Barr, OpenIntro Statistics, 4th ed. (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        },
+        {
+          "t": "Kohavi, Tang & Xu, Trustworthy Online Controlled Experiments (Cambridge University Press, 2020)",
+          "u": "https://doi.org/10.1017/9781108653985"
+        }
+      ],
+      "learner": "known"
+    },
+    {
+      "id": "prediction-vs-cause",
+      "phase": 0,
+      "label": "Prediction vs cause",
+      "desc": "A model that forecasts what will happen is not a model of what will happen if you intervene. Shipping a feature is an intervention.",
+      "outline": [
+        "State a predictive question and a causal question about the same metric",
+        "Use the intervention test: if you set X, does the distribution of Y change?",
+        "See why a high-accuracy recommender can still be silent about a product change",
+        "Separate 'users who did X retained' from 'making users do X would change retention'",
+        "Park causal discovery and structural models as out of scope for this map"
+      ],
+      "ideas": [
+        "Huntington-Klein's working definition: X causes Y if intervening to change X changes the distribution of Y",
+        "Shorts and ice cream move together because of weather; swapping someone's pants for shorts does not make them eat ice cream",
+        "A ranker that predicts engagement tells you who will engage, not what happens if you force a new ranking on everyone",
+        "Correlation is the raw material of prediction; an intervention is a different question"
+      ],
+      "questions": [
+        {
+          "q": "In everyday terms, what has to be true for X to cause Y?",
+          "a": "Intervening to change X changes the distribution of Y. Watching X and Y move together is not that test — the intervention is."
+        },
+        {
+          "q": "People who wear shorts eat more ice cream. Why is that not evidence that shorts cause ice cream?",
+          "a": "The association runs through a common cause (hot weather). Intervening on clothing does not change the weather, so it does not change ice cream eating. The predictive association is real; the causal one is not."
+        },
+        {
+          "q": "Your ranker predicts next-day retention well. What does that still not tell a product decision?",
+          "a": "It does not tell you the effect of shipping a change. Prediction conditions on the world as it is; a launch changes the world. Those are different contrasts."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Huntington-Klein, The Effect: An Introduction to Research Design and Causality (Chapman & Hall, 2021)",
+          "u": "https://www.theeffectbook.net/"
+        },
+        {
+          "t": "Hernán & Robins, Causal Inference: What If (Chapman & Hall/CRC, 2020)",
+          "u": "https://miguelhernan.org/whatifbook"
+        }
+      ],
+      "learner": "known"
+    },
+    {
+      "id": "metric-design",
+      "phase": 0,
+      "label": "Metric design",
+      "desc": "The outcome you will treat as success, the window you measure it in, and the guardrails that can veto a win.",
+      "outline": [
+        "Write one overall evaluation criterion before the test starts",
+        "Add guardrail metrics that can stop a ship even if the primary moves",
+        "Fix the window: same-day, seven-day, or long-run, and say why",
+        "Notice dilution: users who never hit the feature still sit in the average",
+        "Decide the unit the metric is averaged over, matching the assignment unit"
+      ],
+      "ideas": [
+        "Kohavi, Tang, and Xu treat an overall evaluation criterion as the pre-committed definition of success",
+        "A guardrail is a metric you did not hope to move but will not accept harming",
+        "The same feature can win on a one-day metric and lose on a twenty-eight-day one",
+        "If most randomized users never see the change, the average effect is diluted toward zero"
+      ],
+      "questions": [
+        {
+          "q": "What is an overall evaluation criterion, and when is it fixed?",
+          "a": "It is the pre-committed metric that defines whether the change worked. It is fixed before you look at results, so the decision is not a search over whichever number moved."
+        },
+        {
+          "q": "A retention win comes with a crash-rate increase. Which number is the guardrail, and what is it for?",
+          "a": "Crash rate is the guardrail. It exists so a movement in the success metric cannot by itself authorize a ship that breaks a constraint you already cared about."
+        },
+        {
+          "q": "Only 5% of randomized users trigger the new composer. What happens to the average effect on all randomized users?",
+          "a": "The other 95% contribute a zero individual effect from the feature, so the average across everyone is diluted. That average answers 'assign everyone' ; it is a smaller number than the effect on people who actually hit the composer."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Kohavi, Tang & Xu, Trustworthy Online Controlled Experiments (Cambridge University Press, 2020)",
+          "u": "https://doi.org/10.1017/9781108653985"
+        },
+        {
+          "t": "Diez, Çetinkaya-Rundel & Barr, OpenIntro Statistics, 4th ed. (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        }
+      ],
+      "learner": "known"
+    },
+    {
+      "id": "regression",
+      "phase": 1,
+      "label": "Regression",
+      "desc": "A fitted conditional mean: the line (or surface) that best predicts the outcome from the covariates you handed it.",
+      "outline": [
+        "Read a simple regression as a fitted conditional mean",
+        "Interpret a coefficient as an associated difference holding included covariates fixed in the fit",
+        "Separate R² (predictive fit) from any claim about an intervention",
+        "See multiple regression as the same idea with a surface instead of a line",
+        "Notice that 'controlling for' is a phrase about the fit, not yet about causation"
+      ],
+      "ideas": [
+        "Ordinary least squares picks coefficients to minimize squared prediction error",
+        "A coefficient is the associated change in the fitted mean when that covariate moves and the other included ones stay put",
+        "R² says how much outcome variation the fit captures; it does not say the covariates caused the outcome",
+        "Adding a covariate changes the other coefficients because the fit re-attributes shared variation"
+      ],
+      "questions": [
+        {
+          "q": "What does a regression coefficient actually report?",
+          "a": "The difference in the fitted conditional mean of the outcome associated with a one-unit difference in that covariate, holding the other covariates in the model fixed. It is a description of the fit."
+        },
+        {
+          "q": "What breaks if you treat a high R² as evidence that the covariates caused the outcome?",
+          "a": "R² is in-sample predictive fit. A cause you cannot act on, or a collider you should not have conditioned on, can still produce a tight fit. Fit is not an intervention."
+        },
+        {
+          "q": "You add yesterday's engagement to a model for today's retention and the coefficient on 'saw the new feature' shrinks. What happened, in the fit?",
+          "a": "The feature indicator and yesterday's engagement share variation in retention. Once yesterday is in the model, the feature coefficient only keeps the association that is left. Whether that leftover is the effect of the feature is a later question."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Diez, Çetinkaya-Rundel & Barr, OpenIntro Statistics, 4th ed. (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        },
+        {
+          "t": "Huntington-Klein, The Effect: An Introduction to Research Design and Causality (Chapman & Hall, 2021)",
+          "u": "https://www.theeffectbook.net/"
+        }
+      ],
+      "learner": "known"
+    },
+    {
+      "id": "sampling-uncertainty",
+      "phase": 1,
+      "label": "Sampling uncertainty",
+      "desc": "Any one experiment is a single draw. The standard error is how far that draw typically sits from the underlying mean.",
+      "outline": [
+        "Treat the observed lift as one draw from a sampling distribution",
+        "Use the standard error of a mean, and the 1/√n shrinkage under independence",
+        "See a confidence interval as a band built from that standard error",
+        "Adjust your intuition when units are clustered rather than independent",
+        "Connect sample size to how small a lift you can tell from noise"
+      ],
+      "ideas": [
+        "Under independent sampling the standard error of a mean scales like σ/√n",
+        "A wide interval means the draw is not pinned down, not that the effect is large",
+        "Clustering (markets, devices, friend groups) makes the effective n smaller than the row count",
+        "Two experiments can show the same point estimate and justify different decisions because their uncertainty differs"
+      ],
+      "questions": [
+        {
+          "q": "Why does quadrupling an independent sample cut the standard error of a mean roughly in half?",
+          "a": "The standard error scales like 1/√n when observations are independent and the variance is stable. √4 = 2, so four times the sample halves the standard error."
+        },
+        {
+          "q": "What fails in that 1/√n story when you randomize 40 cities instead of 4 million users?",
+          "a": "Users in a city are not independent draws of the assignment. The relevant n is nearer the number of cities, so the standard error stays large no matter how many users sit inside them."
+        },
+        {
+          "q": "Two readouts show +1% retention. One interval is −4% to +6%, the other is +0.6% to +1.4%. What is different?",
+          "a": "The point estimates match; the sampling uncertainty does not. The first draw is compatible with a large loss or a large gain. The second is pinned near +1%."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Diez, Çetinkaya-Rundel & Barr, OpenIntro Statistics, 4th ed. (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        }
+      ],
+      "learner": "known"
+    },
+    {
+      "id": "confounding-picture",
+      "phase": 1,
+      "label": "Confounding picture",
+      "desc": "A third factor that influences both who gets the treatment and the outcome, so the raw comparison is not the effect of the treatment.",
+      "outline": [
+        "Draw treatment, outcome, and a common cause",
+        "Name the non-causal path: treatment ← confounder → outcome",
+        "See a confounder as something you would need to block, not merely a covariate you happen to have",
+        "Distinguish confounding from a variable that sits on the causal path",
+        "Practice on an ads example: people who were going to buy are easier to show ads to"
+      ],
+      "ideas": [
+        "Hernán and Robins describe confounding as a common cause of treatment and outcome that leaves them associated even when treatment has no effect",
+        "The open backdoor is treatment ← confounder → outcome",
+        "A variable caused by treatment is not a confounder of treatment's total effect; it is downstream",
+        "In advertising, baseline purchase intent confounds exposure and purchases: likely buyers see more ads and buy more anyway"
+      ],
+      "questions": [
+        {
+          "q": "What structure makes a variable a confounder of treatment and outcome?",
+          "a": "It is a common cause: it influences who receives treatment and it influences the outcome, opening a path between them that is not the effect of treatment."
+        },
+        {
+          "q": "What breaks if you call a post-treatment mediator a confounder and adjust for it?",
+          "a": "You block part of the very effect you were trying to measure. A mediator is downstream of treatment, not a common cause of treatment and outcome."
+        },
+        {
+          "q": "Heavy buyers see more retargeting ads and also purchase more. Why is the raw exposed-versus-unexposed gap not the ad's effect?",
+          "a": "Purchase intent drives both exposure and purchases. The gap mixes any real ad effect with the fact that the exposed group was already going to buy."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Hernán & Robins, Causal Inference: What If (Chapman & Hall/CRC, 2020)",
+          "u": "https://miguelhernan.org/whatifbook"
+        },
+        {
+          "t": "Huntington-Klein, The Effect: An Introduction to Research Design and Causality (Chapman & Hall, 2021)",
+          "u": "https://www.theeffectbook.net/"
+        }
+      ],
+      "learner": "frontier"
+    },
+    {
+      "id": "experiment-anatomy",
+      "phase": 1,
+      "label": "Experiment anatomy",
+      "desc": "The pieces of a randomized product test: a unit, an assignment, a treatment, a control, an outcome, and a log of what actually happened.",
+      "outline": [
+        "Name unit, treatment, control, and outcome for a feature you might ship",
+        "Separate assignment (the coin flip) from exposure (who actually got the experience)",
+        "Log the assignment decision, not only the downstream event",
+        "See a holdout as the same anatomy with 'no treatment' as the control",
+        "Check that the metric's unit matches the unit that was randomized"
+      ],
+      "ideas": [
+        "A randomized experiment has an assignment mechanism you control, which is what makes the later identification argument possible",
+        "Assignment and exposure come apart whenever delivery, triggering, or an auction decides who actually sees the change",
+        "If the log only keeps exposed users, the control group is no longer the group the coin flip created",
+        "A holdout is not a different species of study; it is an experiment whose control is 'do not apply the treatment'"
+      ],
+      "questions": [
+        {
+          "q": "What five pieces have to be named before an A/B test is a defined experiment?",
+          "a": "The unit being randomized, the treatment, the control, the outcome, and the assignment mechanism. A dashboard without those names is not yet an experiment you can interpret."
+        },
+        {
+          "q": "Why is assignment not the same thing as exposure?",
+          "a": "Assignment is the coin flip you control. Exposure is what the user actually encountered. Triggers, bugs, auctions, and opt-outs put some assigned users in a different experience than the arm name suggests."
+        },
+        {
+          "q": "The pipeline keeps only users who saw the new module. What did that do to the control group?",
+          "a": "It threw away assigned controls who did not see the module, and it may have thrown away assigned treatments who failed to load. The remaining rows are no longer the randomized arms."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Kohavi, Tang & Xu, Trustworthy Online Controlled Experiments (Cambridge University Press, 2020)",
+          "u": "https://doi.org/10.1017/9781108653985"
+        },
+        {
+          "t": "Hernán & Robins, Causal Inference: What If (Chapman & Hall/CRC, 2020)",
+          "u": "https://miguelhernan.org/whatifbook"
+        }
+      ],
+      "learner": "known"
+    },
+    {
+      "id": "potential-outcomes",
+      "phase": 2,
+      "label": "Potential outcomes",
+      "desc": "Each unit has an outcome under treatment and an outcome under control. You only get to see the one that matches what actually happened.",
+      "outline": [
+        "Write Y(1) and Y(0) for a single user",
+        "See the individual effect Y(1) − Y(0) as the contrast you want and cannot observe",
+        "Define the average treatment effect as the mean of those individual contrasts",
+        "State the fundamental problem: the missing potential outcome",
+        "Notice that the notation itself assumes the unit's outcome depends on its own treatment"
+      ],
+      "ideas": [
+        "Hernán and Robins define an individual causal effect as a contrast of potential outcomes under two treatment values",
+        "The average causal effect is the population mean of those contrasts, not the contrast of two different groups unless those groups stand in for the missing outcomes",
+        "Holland's point, carried by this setup: for each unit, one of the two potential outcomes is missing",
+        "Association compares different people; the causal contrast compares the same people under two interventions"
+      ],
+      "questions": [
+        {
+          "q": "For one user, what are the two potential outcomes, and why is their difference missing?",
+          "a": "Y(1) is the outcome if that user is treated; Y(0) is the outcome if not. Whichever arm they landed in reveals one of them. The other was never realized, so the individual difference is not in the data."
+        },
+        {
+          "q": "How is the average treatment effect defined, before any estimator?",
+          "a": "It is the mean, over the units in the population, of Y(1) − Y(0). The definition does not mention a model. Estimators come later, once you say how the missing outcomes are recovered."
+        },
+        {
+          "q": "What fails in this notation if one user's treatment changes a friend's outcome?",
+          "a": "Y(1) and Y(0) only index that user's own treatment. If the friend's assignment also matters, those two numbers are not enough to describe the intervention, and a user-level contrast is no longer the effect of shipping to the network."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Hernán & Robins, Causal Inference: What If (Chapman & Hall/CRC, 2020)",
+          "u": "https://miguelhernan.org/whatifbook"
+        },
+        {
+          "t": "Cunningham, Causal Inference: The Mixtape (Yale University Press, 2021)",
+          "u": "https://mixtape.scunning.com/"
+        }
+      ],
+      "learner": "frontier"
+    },
+    {
+      "id": "dags",
+      "phase": 2,
+      "label": "Causal diagrams",
+      "desc": "A directed acyclic graph of the data-generating process: arrows are assumed direct effects, and missing arrows are assumptions too.",
+      "outline": [
+        "Draw nodes for treatment, outcome, and the variables that sit between or behind them",
+        "Read an arrow as 'direct effect in this diagram,' not as decoration",
+        "Learn the three junctions: chain, fork, and collider",
+        "See conditioning close a chain or a fork and open a collider",
+        "Treat every missing arrow as a claim you are willing to defend"
+      ],
+      "ideas": [
+        "A causal diagram is a picture of assumed direct effects; it is not discovered by correlating columns",
+        "A chain A → B → C and a fork A ← B → C are blocked by conditioning on B",
+        "A collider A → B ← C is blocked when you leave B alone, and opened when you condition on B",
+        "Hernán and Robins use these diagrams to classify confounding and selection as different open paths"
+      ],
+      "questions": [
+        {
+          "q": "What does an arrow mean in a causal diagram, and what does a missing arrow mean?",
+          "a": "An arrow is an assumed direct effect. A missing arrow is the assumption that there is no direct effect. Both are claims about the world, not summaries of a correlation table."
+        },
+        {
+          "q": "Conditioning on the middle of a fork versus the middle of a collider: what happens to the path between the two ends?",
+          "a": "Conditioning on the middle of a fork (or a chain) blocks the path. Conditioning on a collider opens a path that was closed. The same mechanical step, 'add a covariate,' does opposite things."
+        },
+        {
+          "q": "You draw 'ad exposure → purchase' and also 'purchase intent → exposure' and 'purchase intent → purchase.' Which path is the effect, and which is not?",
+          "a": "Exposure → purchase is the causal path you hope to measure. Exposure ← intent → purchase is a backdoor: a non-causal path that makes exposed and unexposed users different even if ads do nothing."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Hernán & Robins, Causal Inference: What If (Chapman & Hall/CRC, 2020)",
+          "u": "https://miguelhernan.org/whatifbook"
+        },
+        {
+          "t": "Huntington-Klein, The Effect: An Introduction to Research Design and Causality (Chapman & Hall, 2021)",
+          "u": "https://www.theeffectbook.net/"
+        },
+        {
+          "t": "Cunningham, Causal Inference: The Mixtape (Yale University Press, 2021)",
+          "u": "https://mixtape.scunning.com/"
+        }
+      ],
+      "learner": "frontier"
+    },
+    {
+      "id": "hypothesis-tests",
+      "phase": 2,
+      "label": "Tests & intervals",
+      "desc": "A p-value and a confidence interval are statements about a procedure under a model, not a verdict that the feature is good.",
+      "outline": [
+        "State a null as a claim about the estimand, usually 'no difference'",
+        "Read a p-value as a tail probability if that null is true",
+        "Build a confidence interval from the same sampling model",
+        "Separate 'we did not reject' from 'the effect is zero'",
+        "Keep the substantive size of the effect next to the procedure's yes/no"
+      ],
+      "ideas": [
+        "A p-value is the probability of a result at least this extreme if the null is true — not the probability the null is true",
+        "A 95% confidence interval comes from a procedure that covers the parameter in 95% of repeated samples, under the model's assumptions",
+        "Failure to reject a null is not evidence that the effect is exactly zero, especially when the interval is wide",
+        "OpenIntro develops these procedures for means and for differences of means, which is the shape of a simple lift"
+      ],
+      "questions": [
+        {
+          "q": "What is a p-value, precisely?",
+          "a": "It is the probability, if the null hypothesis is true, of a test statistic at least as extreme as the one you computed. It is not the probability that the feature has no effect."
+        },
+        {
+          "q": "The test does not reject a zero lift, and the interval runs from −2% to +8%. Why can't you conclude the feature does nothing?",
+          "a": "The data are still compatible with lifts as large as 8% and losses as large as 2%. 'Not significantly different from zero' means the procedure did not rule zero out, not that zero is the effect."
+        },
+        {
+          "q": "What has to be true of the sampling model for a 95% interval's coverage claim to apply?",
+          "a": "The interval's coverage is a property of the procedure under its assumptions: the estimand, the independence or clustering structure, and the planned sample. Peeking until it looks good, or switching metrics, breaks that claim."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Diez, Çetinkaya-Rundel & Barr, OpenIntro Statistics, 4th ed. (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        }
+      ],
+      "learner": "known"
+    },
+    {
+      "id": "regression-traps",
+      "phase": 2,
+      "label": "Regression traps",
+      "desc": "Putting a covariate in a regression changes the coefficient. Whether that change removes bias or creates it depends on what the covariate is.",
+      "outline": [
+        "Omit a confounder and watch the treatment coefficient keep the backdoor",
+        "Condition on a collider and watch a new association appear",
+        "Condition on a mediator and watch part of the total effect disappear",
+        "Ask, for each covariate, whether it is a common cause, a common effect, or a middle step",
+        "Treat 'the kitchen-sink regression' as a symptom, not a method"
+      ],
+      "ideas": [
+        "Leaving out a common cause leaves a non-causal path open inside the treatment coefficient",
+        "Conditioning on a common effect (a collider) opens a path that was closed",
+        "Conditioning on a mediator removes the part of the effect that flows through it",
+        "The coefficient is still 'holding other included variables fixed.' The causal content of that phrase is the diagram, not the software"
+      ],
+      "questions": [
+        {
+          "q": "You omit a common cause of treatment and outcome. What is left inside the treatment coefficient?",
+          "a": "Both the causal path, if there is one, and the open backdoor through the omitted common cause. The fit cannot tell those two pieces apart."
+        },
+        {
+          "q": "What breaks if you condition on a collider — a common effect of treatment and of something else that affects the outcome?",
+          "a": "You open a non-causal path. Two variables that were marginally independent given the structure can look associated once you select on their common effect."
+        },
+        {
+          "q": "A regression for the effect of a new ranking includes 'time spent on the result page,' which the ranking itself changes. What did you just estimate?",
+          "a": "Not the total effect of the ranking. Time-on-page is downstream of the ranking, so holding it fixed blocks a path the launch would actually change."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Hernán & Robins, Causal Inference: What If (Chapman & Hall/CRC, 2020)",
+          "u": "https://miguelhernan.org/whatifbook"
+        },
+        {
+          "t": "Huntington-Klein, The Effect: An Introduction to Research Design and Causality (Chapman & Hall, 2021)",
+          "u": "https://www.theeffectbook.net/"
+        }
+      ],
+      "learner": "frontier"
+    },
+    {
+      "id": "treatment-definition",
+      "phase": 2,
+      "label": "Defining treatment",
+      "desc": "The intervention has to be specific enough that 'what would have happened under treatment' is one number, not a cloud of versions.",
+      "outline": [
+        "Write the intervention as an action, not as a vibe ('exposed,' 'engaged,' 'saw quality')",
+        "Separate intent to treat (assignment) from receipt (exposure, dose, completion)",
+        "See consistency: the observed outcome equals the potential outcome under the treatment that was actually received",
+        "Notice versions of treatment: which creative, which ranker, which moderator threshold",
+        "Refuse a treatment definition that bundles many different interventions under one label"
+      ],
+      "ideas": [
+        "Hernán and Robins require consistency: the outcome you observe under a treatment value equals the potential outcome that value refers to",
+        "That link fails when 'treated' means many different interventions (different ads, different doses, different neighbors' states)",
+        "Intent-to-treat is the effect of assignment; the effect of receipt is a different intervention and a different estimand",
+        "In ads, 'eligible for the campaign' and 'auction won and the ad rendered' are different treatments"
+      ],
+      "questions": [
+        {
+          "q": "What does consistency demand of a treatment definition?",
+          "a": "There is a well-specified intervention such that the outcome you record when a unit receives it is the potential outcome that intervention refers to. A vague label ('exposed') with many versions underneath does not meet that."
+        },
+        {
+          "q": "How do 'assigned to the new composer' and 'actually used the new composer' differ as treatments?",
+          "a": "Assignment is one intervention: the coin flip. Use is another: it depends on the user's behavior after assignment. The effect of assignment (intent to treat) is not the effect of use."
+        },
+        {
+          "q": "A campaign logs 'exposed' for everyone who received any of twelve creatives at any frequency. What goes wrong for the potential outcome?",
+          "a": "There is no single Y(exposed). Different creatives and frequencies are different interventions, so the recorded outcome is not the potential outcome of one well-defined action."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Hernán & Robins, Causal Inference: What If (Chapman & Hall/CRC, 2020)",
+          "u": "https://miguelhernan.org/whatifbook"
+        },
+        {
+          "t": "Johnson, Lewis & Nubbemeyer, Ghost ads, Journal of Marketing Research, 2017",
+          "u": "https://doi.org/10.1509/jmr.15.0297"
+        }
+      ],
+      "learner": "frontier"
+    },
+    {
+      "id": "estimands",
+      "phase": 3,
+      "label": "Causal estimands",
+      "desc": "The contrast you claim to want: average effect for everyone, for the treated, or for a slice — chosen before you pick a formula.",
+      "outline": [
+        "Write the average treatment effect as E[Y(1) − Y(0)]",
+        "Write the average treatment effect on the treated",
+        "Write a conditional effect given a covariate slice",
+        "Match an intent-to-treat estimand to assignment, not to receipt",
+        "Say which population the expectation is over"
+      ],
+      "ideas": [
+        "The average treatment effect averages the individual contrast over the whole study population",
+        "The effect on the treated averages it only over units who were treated — the right target for some policy questions, the wrong one for others",
+        "A conditional average treatment effect is that contrast inside a covariate slice, which is the seed of heterogeneity",
+        "Switching estimands without saying so is how a holdout and an exposed-only report 'disagree' while both are internally consistent"
+      ],
+      "questions": [
+        {
+          "q": "Define the average treatment effect and the average treatment effect on the treated.",
+          "a": "The average treatment effect is the mean of Y(1) − Y(0) over the whole population. The effect on the treated is that same mean restricted to units who received treatment. They coincide when the effect is constant or treatment is randomized; not otherwise."
+        },
+        {
+          "q": "A ghost-ad comparison is among users who would have been exposed. Which estimand is that closer to, and why does it differ from an intent-to-treat holdout?",
+          "a": "It is closer to an effect of exposure among the would-be exposed. An intent-to-treat holdout averages over everyone assigned, including people the auction would never have shown the ad to. Those are different populations."
+        },
+        {
+          "q": "What breaks if the ship review quotes a conditional effect for power users as if it were the average effect?",
+          "a": "The decision then applies a slice's contrast to the whole population. If the effect is smaller, zero, or negative elsewhere, the average — the thing the full launch produces — is not the number on the slide."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Hernán & Robins, Causal Inference: What If (Chapman & Hall/CRC, 2020)",
+          "u": "https://miguelhernan.org/whatifbook"
+        },
+        {
+          "t": "Johnson, Lewis & Nubbemeyer, Ghost ads, Journal of Marketing Research, 2017",
+          "u": "https://doi.org/10.1509/jmr.15.0297"
+        }
+      ],
+      "learner": "later"
+    },
+    {
+      "id": "randomization-id",
+      "phase": 3,
+      "label": "Why randomization works",
+      "desc": "A coin flip makes treatment independent of the potential outcomes, so the difference in observed means estimates the average treatment effect.",
+      "outline": [
+        "State exchangeability: randomization balances potential outcomes across arms, in expectation",
+        "Connect that balance to the difference in means",
+        "Name the other conditions still required: consistency and no interference",
+        "See conditional randomization (a stratified coin flip) as exchangeability within strata",
+        "Notice what randomization does not fix: a bad metric, a bad log, or a vague treatment"
+      ],
+      "ideas": [
+        "Hernán and Robins: randomization creates exchangeability, so the treated and untreated are comparable on the potential outcomes",
+        "The difference in sample means then estimates the average treatment effect in the randomized population",
+        "The argument uses consistency (the treatment is well defined) and no interference (a unit's outcome depends on its own assignment)",
+        "Randomization balances both measured and unmeasured common causes, which is the point of doing it instead of adjusting"
+      ],
+      "questions": [
+        {
+          "q": "Why does a fair coin flip identify the average treatment effect?",
+          "a": "It makes assignment independent of the potential outcomes (exchangeability). Then the mean outcome among the treated estimates the mean of Y(1), the mean among the controls estimates the mean of Y(0), and their difference estimates the average contrast."
+        },
+        {
+          "q": "What does that argument still need besides the coin flip?",
+          "a": "A well-defined treatment, so the observed outcome is the potential outcome of that treatment (consistency), and no interference, so one unit's outcome does not depend on another unit's assignment. A broken log or a post-hoc metric is outside the argument entirely."
+        },
+        {
+          "q": "You randomize within country. What did conditional randomization buy you, and what did it not?",
+          "a": "Exchangeability within country: arms are comparable inside each country. It did not buy transport to a country you did not randomize in, and it did not fix interference inside the country."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Hernán & Robins, Causal Inference: What If (Chapman & Hall/CRC, 2020)",
+          "u": "https://miguelhernan.org/whatifbook"
+        },
+        {
+          "t": "Cunningham, Causal Inference: The Mixtape (Yale University Press, 2021)",
+          "u": "https://mixtape.scunning.com/"
+        }
+      ],
+      "learner": "later"
+    },
+    {
+      "id": "backdoor",
+      "phase": 3,
+      "label": "Backdoor adjustment",
+      "desc": "A set of covariates identifies the effect when it blocks every non-causal path into treatment and does not block the causal paths or open a collider.",
+      "outline": [
+        "Trace every path from treatment to outcome that starts with an arrow into treatment",
+        "Pick a set that blocks those backdoor paths",
+        "Reject any covariate that is a descendant of treatment",
+        "Say the criterion out loud before fitting anything",
+        "Admit the diagram is an assumption: the data will not confirm the missing arrows"
+      ],
+      "ideas": [
+        "Hernán and Robins state the backdoor criterion: block all backdoor paths and condition on no descendant of treatment",
+        "A fork's middle is a legitimate backdoor blocker; a collider is not",
+        "Once the set satisfies the criterion, several formulas can use it — standardization, weighting, or a correctly specified outcome regression",
+        "No regression output tests whether a missing arrow was really missing"
+      ],
+      "questions": [
+        {
+          "q": "What two demands does the backdoor criterion place on a covariate set?",
+          "a": "The set blocks every path from treatment to outcome that points into treatment, and it contains no descendant of treatment. Block the non-causal paths; leave the causal ones alone."
+        },
+        {
+          "q": "Why is 'adjust for every column we logged' not an application of the criterion?",
+          "a": "Some columns are colliders or mediators. Conditioning on them opens a bias path or closes a causal one. The criterion is a filter, not a request for more covariates."
+        },
+        {
+          "q": "You blocked every backdoor you drew. What is still untested?",
+          "a": "The arrows you did not draw. If an undrawn common cause exists, a backdoor is still open. Adjustment under a wrong diagram does not become identification because the model converged."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Hernán & Robins, Causal Inference: What If (Chapman & Hall/CRC, 2020)",
+          "u": "https://miguelhernan.org/whatifbook"
+        },
+        {
+          "t": "Huntington-Klein, The Effect: An Introduction to Research Design and Causality (Chapman & Hall, 2021)",
+          "u": "https://www.theeffectbook.net/"
+        }
+      ],
+      "learner": "later"
+    },
+    {
+      "id": "stat-inference",
+      "phase": 3,
+      "label": "Reading uncertainty",
+      "desc": "How to read a standard error, a p-value, and an interval as uncertainty about an estimand — and where that reading stops.",
+      "outline": [
+        "Attach the interval to a named estimand, not to 'the feature'",
+        "Read the interval's width as precision and its location as the range still plausible",
+        "Separate statistical distinguishability from a product threshold",
+        "See a non-significant result with a wide interval as low precision, not a precise zero",
+        "Check that the interval's assumptions match the design (independence, clustering, planned sample)"
+      ],
+      "ideas": [
+        "The interval is uncertainty about the estimand under the sampling model, not a personal probability that shipping is wise",
+        "A product threshold ('we need +1% retention') is a decision rule laid on top of the interval",
+        "Wide intervals that cover both large gains and large losses are underpowered reads, whatever the p-value says",
+        "Changing the metric or the window after seeing the data changes the estimand the interval was built for"
+      ],
+      "questions": [
+        {
+          "q": "An interval for a lift is +0.2% to +0.4%, and the ship bar is +1%. How can the result be 'significant' and still a no-ship?",
+          "a": "Significance says the estimand is distinguishable from zero. The whole interval sits below the product threshold, so the effect you can defend is smaller than the effect you required."
+        },
+        {
+          "q": "An interval runs from −5% to +6% and the p-value is large. What are you allowed to say?",
+          "a": "That this sample did not pin the estimand down. You are not allowed to say the effect is zero. Zero is inside a wide set of values that are still compatible with the data."
+        },
+        {
+          "q": "What fails if the interval assumes independent users but the randomization was by city?",
+          "a": "The stated width is too small. City-level assignment means fewer independent draws than users, so the procedure covers the estimand less often than its nominal level."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Diez, Çetinkaya-Rundel & Barr, OpenIntro Statistics, 4th ed. (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        },
+        {
+          "t": "Kohavi, Tang & Xu, Trustworthy Online Controlled Experiments (Cambridge University Press, 2020)",
+          "u": "https://doi.org/10.1017/9781108653985"
+        }
+      ],
+      "learner": "later"
+    },
+    {
+      "id": "ab-readout",
+      "phase": 4,
+      "label": "Reading an A/B test",
+      "desc": "The disciplined read of a randomized feature test: trust checks first, then the pre-committed estimand, then the decision.",
+      "outline": [
+        "Confirm the assignment log matches the configured split before reading any lift",
+        "Report the pre-committed metric and its interval, in the assignment population",
+        "Lay the interval against the ship threshold, not against a vibe",
+        "Read guardrails as vetoes, not as footnotes",
+        "Write one sentence of the form 'assignment caused this contrast if the experiment assumptions hold'"
+      ],
+      "ideas": [
+        "Kohavi, Tang, and Xu's practical warning: most ideas do not produce a meaningful improvement, so a flat result is ordinary",
+        "The primary number is the intent-to-treat contrast on the pre-committed metric unless you declared something else",
+        "A readout that starts from the metric that moved is a search, not a test",
+        "Trust failures (broken splits, broken logging) dominate the statistical commentary"
+      ],
+      "questions": [
+        {
+          "q": "What is the first thing to check on an A/B readout, before the lift?",
+          "a": "That the experiment you randomized is the experiment you logged: the sample ratio matches the configured split, and the assignment — not a downstream trigger — defines the arms."
+        },
+        {
+          "q": "The success metric is flat and a secondary engagement metric is up. What does the pre-commitment rule say to ship on?",
+          "a": "The pre-committed success metric. The secondary movement is a new question, not a replacement criterion discovered at readout time. Most ideas do not move the criterion that mattered."
+        },
+        {
+          "q": "State the causal sentence a clean user-level A/B actually supports.",
+          "a": "Among the randomized population, assignment to treatment rather than control changed the mean of the pre-committed outcome by about the reported contrast, if consistency holds and one user's assignment did not change another's outcome."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Kohavi, Tang & Xu, Trustworthy Online Controlled Experiments (Cambridge University Press, 2020)",
+          "u": "https://doi.org/10.1017/9781108653985"
+        },
+        {
+          "t": "Hernán & Robins, Causal Inference: What If (Chapman & Hall/CRC, 2020)",
+          "u": "https://miguelhernan.org/whatifbook"
+        }
+      ],
+      "learner": "later"
+    },
+    {
+      "id": "power-mde",
+      "phase": 4,
+      "label": "Power & MDE",
+      "desc": "Power is the chance you detect an effect of a size you named. The minimum detectable effect is that size, given your variance and sample.",
+      "outline": [
+        "Fix a significance level and a target power",
+        "Name an effect size that would matter to the product",
+        "Translate variance and sample size into the smallest effect you can reliably detect",
+        "See an underpowered test as a wide interval, not as a proof of no effect",
+        "Recompute when the unit is a cluster or the metric is rare"
+      ],
+      "ideas": [
+        "OpenIntro treats power as the probability of rejecting a false null at a stated effect size",
+        "The minimum detectable effect is the smallest lift at which that probability hits your target, given the variance and n you actually have",
+        "Rare binary metrics and clustered assignment both inflate the effect you can see",
+        "Running the test anyway and reading a non-significant result as 'no impact' inverts the power calculation"
+      ],
+      "questions": [
+        {
+          "q": "Define power, and define a minimum detectable effect in those terms.",
+          "a": "Power is the probability that the test rejects the null when the true effect has a stated size. The minimum detectable effect is the smallest such size at which power reaches the target you set, for your variance and sample."
+        },
+        {
+          "q": "A non-significant test had a minimum detectable effect of +5%, and the product only cared about +1%. What did the test fail to do?",
+          "a": "It was never likely to flag a +1% effect. A non-rejection is what an underpowered test does, even when a product-relevant effect is present."
+        },
+        {
+          "q": "Why does a 2% conversion metric need a very different sample than a metric with plenty of variation around a large mean?",
+          "a": "The variance of a rare binary mean is tied to a small proportion, and the relative lift you care about is a small absolute difference. Both push the detectable effect up unless n grows."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Diez, Çetinkaya-Rundel & Barr, OpenIntro Statistics, 4th ed. (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        },
+        {
+          "t": "Kohavi, Tang & Xu, Trustworthy Online Controlled Experiments (Cambridge University Press, 2020)",
+          "u": "https://doi.org/10.1017/9781108653985"
+        }
+      ],
+      "learner": "later"
+    },
+    {
+      "id": "variance-reduction",
+      "phase": 4,
+      "label": "Variance reduction",
+      "desc": "Using a pre-treatment covariate that predicts the outcome to shrink the variance of the lift, without changing the estimand.",
+      "outline": [
+        "Pick a covariate measured before assignment that predicts the outcome",
+        "See CUPED as subtracting a fitted multiple of that covariate from the outcome",
+        "Check that the adjustment does not touch a post-treatment variable",
+        "Expect a tighter interval around the same intent-to-treat contrast",
+        "Do not treat the variance win as evidence about confounding — there is no confounding left for randomization to fix"
+      ],
+      "ideas": [
+        "Deng, Xu, Kohavi, and Walker (CUPED) use pre-experiment data to reduce the variance of the treatment-effect estimator",
+        "The covariate must be unaffected by treatment; pre-assignment behavior qualifies, post-assignment behavior does not",
+        "The point is sensitivity: smaller variance means a smaller detectable effect for the same traffic",
+        "Variance reduction is not identification. Randomization already identified the intent-to-treat contrast"
+      ],
+      "questions": [
+        {
+          "q": "What does CUPED use the pre-experiment covariate for?",
+          "a": "To reduce the variance of the estimated treatment effect. A multiple of a pre-experiment predictor is removed from the outcome so the arm comparison is less noisy."
+        },
+        {
+          "q": "What breaks if the 'covariate' is measured after assignment and can be moved by the treatment?",
+          "a": "You are adjusting for a post-treatment variable. That can block part of the effect or open bias, so the tighter number is no longer the intent-to-treat contrast."
+        },
+        {
+          "q": "Randomization already identifies the effect. Why bother reducing variance?",
+          "a": "Identification says the contrast is right in expectation. Variance says how wide this particular draw is. A less noisy contrast can detect a smaller lift with the same users."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Deng, Xu, Kohavi & Walker, Improving sensitivity with pre-experiment data (CUPED), WSDM 2013",
+          "u": "https://exp-platform.com/Documents/2013-02-CUPED-ImprovingSensitivityOfControlledExperiments.pdf"
+        },
+        {
+          "t": "Hernán & Robins, Causal Inference: What If (Chapman & Hall/CRC, 2020)",
+          "u": "https://miguelhernan.org/whatifbook"
+        }
+      ],
+      "learner": "later"
+    },
+    {
+      "id": "srm-logging",
+      "phase": 4,
+      "label": "SRM & logging",
+      "desc": "Sample-ratio mismatch: the arms are not the sizes the coin flip promised, which usually means the data are not the experiment.",
+      "outline": [
+        "Compare observed arm counts to the configured split",
+        "Use a chi-square check; at product scale a tiny ratio gap can be impossible under the design",
+        "Treat a detected mismatch as invalidating, not as a covariate to adjust away",
+        "Hunt the usual causes: redirects, bot filters, trigger conditions, unequal logging",
+        "Only interpret the lift after the ratio is boring"
+      ],
+      "ideas": [
+        "Fabijan and colleagues define sample-ratio mismatch as a significant gap between the configured split and the observed one",
+        "Their running example: 50.2/49.8 on about 1.6 million users is already astronomically unlikely under a true 50/50 split",
+        "In most cases an SRM invalidates the result rather than calling for a clever reweight",
+        "The mismatch is a symptom of a data-quality bug, not a finding about the feature"
+      ],
+      "questions": [
+        {
+          "q": "What is a sample-ratio mismatch?",
+          "a": "The observed fraction of units in each arm differs from the fraction the experiment was configured to assign, by more than chance allows. It is a data-quality alarm, not a metric result."
+        },
+        {
+          "q": "Why can a split of 50.2% versus 49.8% be a fatal problem at a million users?",
+          "a": "Under a true 50/50 assignment, a gap that size on samples of order 800,000 per arm has a vanishingly small probability (Fabijan et al. put a similar gap under 1 in 500,000). Something other than the coin flip selected who appears in the log."
+        },
+        {
+          "q": "What fails if you 'control for the ratio' and ship anyway?",
+          "a": "The ratio is a symptom that the logged sample is not the randomized sample. Adjustment does not restore the users the logger dropped or double-counted, so the contrast is not the experiment's contrast."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Fabijan et al., Diagnosing sample ratio mismatch in online controlled experiments, KDD 2019",
+          "u": "https://exp-platform.com/Documents/2019_KDDFabijanGupchupFuptaOmhoverVermeerDmitriev.pdf"
+        },
+        {
+          "t": "Kohavi, Tang & Xu, Trustworthy Online Controlled Experiments (Cambridge University Press, 2020)",
+          "u": "https://doi.org/10.1017/9781108653985"
+        }
+      ],
+      "learner": "later"
+    },
+    {
+      "id": "incrementality",
+      "phase": 4,
+      "label": "Incrementality",
+      "desc": "The extra outcome caused by the treatment — usually an ad or a campaign — relative to the counterfactual in which it was absent.",
+      "outline": [
+        "Write incrementality as a potential-outcome contrast, not as attributed conversions",
+        "Distinguish an intent-to-treat holdout from an effect among the exposed",
+        "See ghost ads as a way to find the control counterparts of users who would have been exposed",
+        "Compare that to a PSA holdout and to a purely observational model",
+        "Read Gordon and colleagues as a warning: rich observational models often miss the experimental answer"
+      ],
+      "ideas": [
+        "Incrementality is the causal contrast, not a credit-assignment rule in an attribution dashboard",
+        "Johnson, Lewis, and Nubbemeyer's ghost ads identify control users who would have been exposed, so the comparison is among the would-be exposed",
+        "Ghost ads can measure that contrast with far less wasted spend than a PSA or a blunt intent-to-treat test",
+        "Gordon, Zettelmeyer, Bhargava, and Chapsky find that observational models conditioned on rich user data often fail to recover Facebook experiment effects"
+      ],
+      "questions": [
+        {
+          "q": "What contrast is an incrementality estimate claiming to be?",
+          "a": "The difference between outcomes with the campaign and the outcomes the same population would have had without it. Attribution that splits credit after the fact is not that contrast."
+        },
+        {
+          "q": "What do ghost ads compare, and how does that differ from a public-service-announcement holdout?",
+          "a": "Ghost ads compare exposed treated users to control users the auction would have exposed. A PSA holdout instead shows a substitute ad. Ghost ads target the would-be-exposed contrast and, in their retail example, measured lift while spending far less than PSA or intent-to-treat designs."
+        },
+        {
+          "q": "Why is a careful observational model of ad exposure not a substitute you can assume will match the experiment?",
+          "a": "Gordon and colleagues compared observational estimates to large Facebook experiments and found the observational numbers often did not recover the experimental effects, even with extensive demographic and behavioral covariates."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Johnson, Lewis & Nubbemeyer, Ghost ads, Journal of Marketing Research, 2017",
+          "u": "https://doi.org/10.1509/jmr.15.0297"
+        },
+        {
+          "t": "Gordon, Zettelmeyer, Bhargava & Chapsky, Marketing Science 38(2), 2019",
+          "u": "https://www.kellogg.northwestern.edu/faculty/gordon_b/files/fb_comparison.pdf"
+        }
+      ],
+      "learner": "known"
+    },
+    {
+      "id": "peeking-multiplicity",
+      "phase": 4,
+      "label": "Peeking & multiplicity",
+      "desc": "Looking at a fixed-horizon p-value until it passes, or reading many metrics as if each were the only one, breaks the error rate.",
+      "outline": [
+        "See optional stopping as a different sampling distribution than the one the p-value assumed",
+        "Read always-valid intervals as procedures built for continuous monitoring",
+        "Count metrics, segments, and peeks as a family of tests",
+        "Pre-commit the primary comparison so the family is not 'whatever moved'",
+        "Treat a peeking-safe analysis as a design choice made before the first look"
+      ],
+      "ideas": [
+        "Johari, Pekelis, and Walsh show that ordinary p-values and intervals are unreliable when the experimenter watches them and stops at will",
+        "Always-valid p-values and confidence intervals stay valid no matter when you look",
+        "That validity is a property of the sequential procedure, not a correction you paste onto a broken fixed-horizon test after the fact",
+        "Many metrics and many slices are many chances to be wrong, even if you only peeked once"
+      ],
+      "questions": [
+        {
+          "q": "Why is a fixed-horizon p-value unreliable if you refresh the dashboard until it drops below 0.05?",
+          "a": "The p-value's tail probability assumes a sample size chosen without looking at the outcome. Stopping when the number pleases you makes extreme results more common under the null than the quoted p-value says."
+        },
+        {
+          "q": "What do always-valid intervals guarantee that a patched fixed-horizon interval does not?",
+          "a": "They cover the estimand at the nominal rate whenever you choose to stop, including strategies that depend on the data seen so far. Johari, Pekelis, and Walsh build them as a sequential test with that guarantee."
+        },
+        {
+          "q": "You peek once, at the planned end, but you scan forty metrics. What is still wrong with reading the smallest p-value as the result?",
+          "a": "Forty tests give forty chances for a null metric to look extreme. The family error rate is not the error rate of the single smallest p-value."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Johari, Pekelis & Walsh, Always valid inference: bringing sequential analysis to A/B testing",
+          "u": "https://arxiv.org/abs/1512.04922"
+        },
+        {
+          "t": "Kohavi, Tang & Xu, Trustworthy Online Controlled Experiments (Cambridge University Press, 2020)",
+          "u": "https://doi.org/10.1017/9781108653985"
+        }
+      ],
+      "learner": "later"
+    },
+    {
+      "id": "bad-controls",
+      "phase": 4,
+      "label": "Bad controls",
+      "desc": "Covariates that must stay out of the adjustment set: colliders, and anything the treatment itself moved, when you want the total effect.",
+      "outline": [
+        "List descendants of treatment and mark them ineligible for a total-effect adjustment",
+        "Find colliders: common effects of treatment and of another cause of the outcome",
+        "Practice the failure mode 'we conditioned on engagement, which the feature changed'",
+        "Keep pre-treatment covariates as the default legal set",
+        "If you want a path-specific story, say so — that is a different estimand"
+      ],
+      "ideas": [
+        "A bad control is not a poorly measured covariate; it is a covariate in the wrong place in the diagram",
+        "Conditioning on a descendant blocks or diverts the total effect you set out to estimate",
+        "Conditioning on a collider induces an association that is not a causal path you can ship",
+        "The backdoor criterion's 'no descendants' clause is this node's entire job"
+      ],
+      "questions": [
+        {
+          "q": "When is a covariate a bad control for the total effect of a feature?",
+          "a": "When it is a descendant of the feature — a mediator or another post-treatment variable — or a collider you opened by conditioning. Pre-treatment common causes are the ones the backdoor criterion wants."
+        },
+        {
+          "q": "The analysis conditions on 'completed onboarding,' and the new flow changes who completes onboarding. What happened to the total effect?",
+          "a": "Part of the effect runs through onboarding completion. Holding completion fixed removes that part, so the coefficient is not the effect of shipping the flow."
+        },
+        {
+          "q": "What breaks if you only drop covariates that are weakly correlated with the outcome?",
+          "a": "Correlation with the outcome is the wrong filter. A collider can be strongly correlated and still be illegal; a real confounder can look weak in a marginal table and still be required."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Hernán & Robins, Causal Inference: What If (Chapman & Hall/CRC, 2020)",
+          "u": "https://miguelhernan.org/whatifbook"
+        },
+        {
+          "t": "Huntington-Klein, The Effect: An Introduction to Research Design and Causality (Chapman & Hall, 2021)",
+          "u": "https://www.theeffectbook.net/"
+        }
+      ],
+      "learner": "later"
+    },
+    {
+      "id": "ratio-metrics",
+      "phase": 4,
+      "label": "Ratio metrics",
+      "desc": "A ratio can move because the numerator moved, the denominator moved, or the mix of units changed. Those are different product facts.",
+      "outline": [
+        "Write the numerator and the denominator as their own metrics",
+        "Distinguish a ratio of averages from an average of ratios",
+        "See mix shift: the ratio moves because who is in the denominator changed",
+        "Decide which of those stories would actually justify a ship",
+        "Pre-commit that decomposition so the readout cannot pick the flattering one"
+      ],
+      "ideas": [
+        "A ratio hides two movements; the ship decision usually cares which one happened",
+        "The average of user-level ratios is not the ratio of the totals, and they answer different questions",
+        "If treatment changes how many sessions a user starts, a per-session metric moves even when the per-user experience did not",
+        "Decomposing the ratio is part of metric design, not a debugging step you invent after a surprising win"
+      ],
+      "questions": [
+        {
+          "q": "Clicks per session rose. Name two different mechanisms that produce the same movement.",
+          "a": "Users clicked more in sessions that would have existed anyway, or the treatment killed low-click sessions and the remaining ones look better. The ratio alone does not say which."
+        },
+        {
+          "q": "Why is the average of per-user rates not the same claim as the ratio of total clicks to total sessions?",
+          "a": "The average of rates weights users equally. The ratio of totals weights users by their session counts. A treatment that changes who has many sessions moves one number and not the other."
+        },
+        {
+          "q": "What fails if the ship review treats a per-session win as a per-user win?",
+          "a": "The launch may have changed the session mix rather than the user's experience. You then ship a denominator effect under the name of a quality effect."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Diez, Çetinkaya-Rundel & Barr, OpenIntro Statistics, 4th ed. (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        },
+        {
+          "t": "Kohavi, Tang & Xu, Trustworthy Online Controlled Experiments (Cambridge University Press, 2020)",
+          "u": "https://doi.org/10.1017/9781108653985"
+        }
+      ],
+      "learner": "later"
+    },
+    {
+      "id": "noncompliance",
+      "phase": 5,
+      "label": "Noncompliance",
+      "desc": "People assigned to treatment who never get it, and people assigned to control who get it anyway. The effect of assignment is then not the effect of receipt.",
+      "outline": [
+        "Separate always-takers, never-takers, and compliers in words",
+        "Read the intent-to-treat contrast as the effect of assignment, which stays valid",
+        "See why comparing 'actually received' groups reintroduces selection",
+        "Ask whether the decision is about assignment (a rollout switch) or about receipt (the experience)",
+        "Hold the instrumental-variable argument until the assumptions are explicit"
+      ],
+      "ideas": [
+        "Angrist, Imbens, and Rubin start from ignorable assignment with imperfect compliance, so receipt is not ignorable",
+        "The intent-to-treat analysis compares people by assignment and remains a causal effect of assignment",
+        "Comparing users who actually received the experience selects on a post-assignment behavior",
+        "If the product decision is 'flip the switch for everyone,' intent-to-treat is often the estimand you wanted anyway"
+      ],
+      "questions": [
+        {
+          "q": "What does an intent-to-treat contrast still identify when many assigned users never see the feature?",
+          "a": "The effect of assignment in the randomized population, including the people who never see it. It does not identify the effect of actually receiving the feature."
+        },
+        {
+          "q": "Why is 'compare users who actually used it to users who did not' no longer the randomized experiment?",
+          "a": "Use is chosen after assignment and is tangled with the kind of user they are. That comparison conditions on a post-treatment behavior, so the groups are not exchangeable on the potential outcomes."
+        },
+        {
+          "q": "For which product decision is intent-to-treat the right estimand even with poor uptake?",
+          "a": "A decision about assignment: whether to turn the switch on for the population. The people who never encounter the feature are part of what the switch does. A decision about forcing the experience is a different intervention."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Angrist, Imbens & Rubin, Identification of causal effects using instrumental variables, JASA, 1996",
+          "u": "https://doi.org/10.1080/01621459.1996.10476902"
+        },
+        {
+          "t": "Hernán & Robins, Causal Inference: What If (Chapman & Hall/CRC, 2020)",
+          "u": "https://miguelhernan.org/whatifbook"
+        }
+      ],
+      "learner": "later"
+    },
+    {
+      "id": "interference",
+      "phase": 5,
+      "label": "Interference",
+      "desc": "One user's treatment changes another user's outcome. On a social product that is the ordinary case, not a footnote.",
+      "outline": [
+        "State the no-interference assumption the user-level A/B used",
+        "Name a spillover: a friend's treatment hits your outcome",
+        "See why the user-level contrast is not the effect of launching to everyone",
+        "Separate that full-launch estimand from a partial-rollout estimand",
+        "Connect marketplace and feed experiments to the same structure"
+      ],
+      "ideas": [
+        "Ugander, Karrer, Backstrom, and Kleinberg: ordinary A/B testing is poorly suited when treatment spills along a social network",
+        "The potential outcome then depends on the assignment vector, not only on your own coin flip",
+        "A 50/50 user split mixes a world where friends are treated with a world where they are not — neither world is the full launch",
+        "Ads, ranking, and moderation all interfere when one person's experience changes another's behavior or the inventory"
+      ],
+      "questions": [
+        {
+          "q": "What does no-interference assume, in potential-outcome language?",
+          "a": "A unit's outcome depends only on its own treatment. The two numbers Y(1) and Y(0) are enough. If a neighbor's assignment also matters, the outcome is a function of a larger assignment vector."
+        },
+        {
+          "q": "Why is a user-level 50/50 test of a sharing feature not the effect of shipping it to everyone?",
+          "a": "In the test, many of a treated user's friends are still in control, and many control users have treated friends. The full launch puts every friend in treatment. Those are different interventions, and spillovers make them different outcomes."
+        },
+        {
+          "q": "A moderation change on one account changes what that account's viewers see. Where is the interference?",
+          "a": "The viewer's outcome depends on the account's assignment, not only on the viewer's own assignment. Randomizing viewers and ignoring the creator-side spillover estimates a different contrast than changing the policy for the network."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Ugander, Karrer, Backstrom & Kleinberg, Graph cluster randomization, KDD 2013",
+          "u": "https://arxiv.org/abs/1305.6979"
+        },
+        {
+          "t": "Hernán & Robins, Causal Inference: What If (Chapman & Hall/CRC, 2020)",
+          "u": "https://miguelhernan.org/whatifbook"
+        }
+      ],
+      "learner": "later"
+    },
+    {
+      "id": "observational-setup",
+      "phase": 5,
+      "label": "No randomization",
+      "desc": "When you cannot flip a coin, write the trial you wish you had run, then say which of its pieces the observational data can still emulate.",
+      "outline": [
+        "Specify the target trial: population, treatment, outcome, and follow-up",
+        "List exchangeability, positivity, and consistency as the identification conditions",
+        "Say which condition is an assumption rather than a design feature",
+        "Refuse to start from the regression you already know how to fit",
+        "Use this as the gate in front of difference-in-differences, instruments, and the rest"
+      ],
+      "ideas": [
+        "Hernán and Robins ask you to specify the target trial the observational analysis is trying to emulate",
+        "Exchangeability (no open backdoor), positivity (both treatments occur in the strata you use), and consistency (the treatment is well defined) are the identifiability conditions",
+        "Randomization was a design that created exchangeability; without it, exchangeability is a substantive assumption",
+        "A model fitted because the columns existed is not yet an answer to the target trial"
+      ],
+      "questions": [
+        {
+          "q": "What is a target trial, and why write it when you will not run it?",
+          "a": "It is the randomized experiment that would answer the product question. Writing it forces population, treatment, outcome, and follow-up into the open, so the observational analysis has something specific to emulate instead of a vague regression."
+        },
+        {
+          "q": "Name the three identifiability conditions and which one randomization was doing for you.",
+          "a": "Exchangeability, positivity, and consistency. Randomization creates exchangeability (treatment independent of potential outcomes). Positivity and consistency can still fail in a randomized test if some units cannot receive a treatment or the treatment is ill defined."
+        },
+        {
+          "q": "Positivity fails for a slice of users who are always shown the ad. What cannot you estimate for them?",
+          "a": "Their outcome under no ad. If a stratum has no untreated units, there is no observed stand-in for Y(0) there, and adjustment has nothing to borrow without extrapolation."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Hernán & Robins, Causal Inference: What If (Chapman & Hall/CRC, 2020)",
+          "u": "https://miguelhernan.org/whatifbook"
+        },
+        {
+          "t": "Huntington-Klein, The Effect: An Introduction to Research Design and Causality (Chapman & Hall, 2021)",
+          "u": "https://www.theeffectbook.net/"
+        }
+      ],
+      "learner": "later"
+    },
+    {
+      "id": "selection-bias",
+      "phase": 5,
+      "label": "Selection bias",
+      "desc": "The sample you analyze was filtered by something the treatment affected, or by a collider, so the remaining comparison is distorted.",
+      "outline": [
+        "Separate selection bias from confounding: one is conditioning on a collider-like path, the other is an open backdoor",
+        "See attrition that depends on treatment and on the outcome as selection",
+        "Connect a sample-ratio mismatch to selection into the log",
+        "Ask who is missing and whether treatment caused their absence",
+        "Do not 'fix' selection by conditioning on the collider that created it"
+      ],
+      "ideas": [
+        "Hernán and Robins classify selection as a different graphical structure from confounding",
+        "Conditioning on a common effect, or on a variable downstream of treatment and of the outcome's causes, induces a non-causal association",
+        "Analyzing only users who remained, or only users who triggered, is conditioning on a post-treatment event",
+        "An SRM is often selection into the dataset: the log kept arms at the wrong rate"
+      ],
+      "questions": [
+        {
+          "q": "How does selection bias differ from confounding?",
+          "a": "Confounding is an open backdoor from a common cause, present before you touch the data. Selection bias comes from conditioning — on a collider, on attrition, or on a trigger — in a way that distorts the comparison that is left."
+        },
+        {
+          "q": "Treatment changes who churns, and you analyze only users still active at day seven. What did you condition on?",
+          "a": "Survival to day seven, which is affected by treatment and by whatever else causes the outcome. The remaining arms are not the randomized arms; the comparison is selected."
+        },
+        {
+          "q": "Why doesn't adding the selection variable as a covariate repair the bias?",
+          "a": "The selection variable is how you conditioned. Adjusting for the collider, or for the post-treatment filter, is the bias, not the cure. The repair is to stop selecting, or to treat the selection as its own identification problem."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Hernán & Robins, Causal Inference: What If (Chapman & Hall/CRC, 2020)",
+          "u": "https://miguelhernan.org/whatifbook"
+        },
+        {
+          "t": "Fabijan et al., Diagnosing sample ratio mismatch in online controlled experiments, KDD 2019",
+          "u": "https://exp-platform.com/Documents/2019_KDDFabijanGupchupFuptaOmhoverVermeerDmitriev.pdf"
+        }
+      ],
+      "learner": "later"
+    },
+    {
+      "id": "hte-question",
+      "phase": 5,
+      "label": "Who benefits",
+      "desc": "The average can hide a slice that is harmed and a slice that is helped. Effect modification is that difference in the causal effect.",
+      "outline": [
+        "Define effect modification as a causal effect that differs across levels of a covariate",
+        "Separate it from confounding, which is about comparability, not about the effect varying",
+        "See a pre-specified slice as a different object from a slice found by searching",
+        "Notice that subgroup estimates are noisier than the average",
+        "Ask whether the ship decision is allowed to depend on the slice"
+      ],
+      "ideas": [
+        "Hernán and Robins treat effect modification as heterogeneity of the causal effect across levels of another variable",
+        "Stratifying to describe modification is not the same move as stratifying to block confounding",
+        "A slice's interval is wider because the slice is smaller",
+        "A decision that ships only where the effect is positive needs the slice's effect to be a real estimand, not a fishing result"
+      ],
+      "questions": [
+        {
+          "q": "What is effect modification?",
+          "a": "The causal effect of treatment differs across levels of a covariate. The contrast Y(1) − Y(0) is not the same number in every slice."
+        },
+        {
+          "q": "How is that different from confounding by the same covariate?",
+          "a": "Confounding means the covariate makes the arms incomparable, so the raw average is not the effect. Modification means the effect itself differs by the covariate. You can have either, both, or neither."
+        },
+        {
+          "q": "You find a large positive effect in one of twenty slices after looking. What is wrong with shipping only to that slice on the strength of that look?",
+          "a": "The slice was chosen because it looked large. That search invalidates the interval computed as if the slice had been named in advance, and the other nineteen slices were chances to be fooled."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Hernán & Robins, Causal Inference: What If (Chapman & Hall/CRC, 2020)",
+          "u": "https://miguelhernan.org/whatifbook"
+        },
+        {
+          "t": "Athey & Imbens, Recursive partitioning for heterogeneous causal effects, PNAS 2016",
+          "u": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4941430/"
+        }
+      ],
+      "learner": "later"
+    },
+    {
+      "id": "time-and-novelty",
+      "phase": 5,
+      "label": "Time & novelty",
+      "desc": "Early behavior is often not steady-state behavior. A short window can crown a feature that fades, or kill one that compounds.",
+      "outline": [
+        "Separate novelty and primacy effects from a durable effect",
+        "Name carryover: today's assignment still in tomorrow's outcome",
+        "Put seasonality and day-of-week next to any short test",
+        "Ask whether the ship decision is about the first week or the equilibrated product",
+        "See a pre-period, when you have one, as the setup for the next designs"
+      ],
+      "ideas": [
+        "Kohavi, Tang, and Xu flag carryover as a standard way online experiments lie",
+        "A novelty effect is a real effect on the early window and a bad estimate of the effect after users get used to the change",
+        "Seasonality can move a metric inside the experiment window for reasons that are not the treatment",
+        "If the decision is a long-run ship, the estimand is the long-run contrast, and a two-day test is a different one"
+      ],
+      "questions": [
+        {
+          "q": "What is a novelty effect, and why can a three-day win be a bad estimate of the launch?",
+          "a": "Users react to the newness itself. That reaction is a real short-window effect and a poor stand-in for the effect after the newness fades. Shipping on the short window launches the wrong estimand."
+        },
+        {
+          "q": "What is carryover, and what does it do to the next experiment on the same users?",
+          "a": "The earlier assignment still affects the later outcome. The next coin flip is then not starting from a clean potential outcome; some of yesterday's treatment is inside today's control."
+        },
+        {
+          "q": "A test runs across a holiday week and the metric moves. What do you owe the readout before calling it the feature?",
+          "a": "A reason to think the movement is the feature rather than the calendar. Seasonality is an alternative cause inside the window. Without a design that separates them, the lift is not yet the effect."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Kohavi, Tang & Xu, Trustworthy Online Controlled Experiments (Cambridge University Press, 2020)",
+          "u": "https://doi.org/10.1017/9781108653985"
+        },
+        {
+          "t": "Huntington-Klein, The Effect: An Introduction to Research Design and Causality (Chapman & Hall, 2021)",
+          "u": "https://www.theeffectbook.net/"
+        }
+      ],
+      "learner": "later"
+    },
+    {
+      "id": "ship-bar",
+      "phase": 5,
+      "label": "The ship bar",
+      "desc": "The decision rule, written before the readout: which estimand, which threshold, which guardrails, and which trust checks can veto.",
+      "outline": [
+        "Write the rule as estimand, threshold, guardrail, and veto",
+        "Put practical significance next to statistical distinguishability",
+        "Include the trust checks (ratio, logging, pre-commitment) as hard stops",
+        "Say what a wide interval authorizes: collect more, do not pretend it was zero",
+        "Record the rule where a later reader can see that it was not fitted to the winner"
+      ],
+      "ideas": [
+        "A ship bar is a decision procedure, not a p-value costume",
+        "Kohavi, Tang, and Xu's culture of experimentation assumes you are bad at guessing which ideas work, so the rule has to be able to kill most of them",
+        "An interval that clears zero and misses the threshold is a no-ship under a threshold rule",
+        "Changing the bar after seeing the data is a second experiment you did not run"
+      ],
+      "questions": [
+        {
+          "q": "What four pieces does a ship rule need before the test starts?",
+          "a": "The estimand (which contrast), the threshold (how big a movement counts), the guardrails (what harm vetoes), and the trust checks (what data failures void the readout)."
+        },
+        {
+          "q": "The interval is entirely above zero and entirely below the threshold you wrote down. What is the decision?",
+          "a": "No-ship under that rule. Distinguishable from zero is not the same claim as large enough to launch."
+        },
+        {
+          "q": "What fails if the threshold is chosen after you see which metric moved?",
+          "a": "The rule was fitted to the data. The error rate and the estimand are whatever the search selected, not the ones you would have pre-committed. That is how a dashboard feels understood and is not."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Kohavi, Tang & Xu, Trustworthy Online Controlled Experiments (Cambridge University Press, 2020)",
+          "u": "https://doi.org/10.1017/9781108653985"
+        },
+        {
+          "t": "Diez, Çetinkaya-Rundel & Barr, OpenIntro Statistics, 4th ed. (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        }
+      ],
+      "learner": "later"
+    },
+    {
+      "id": "diff-in-diff",
+      "phase": 6,
+      "label": "Difference-in-differences",
+      "desc": "Compare the change in the treated group to the change in a comparison group. The identifying bet is that those changes would have matched without the treatment.",
+      "outline": [
+        "Form the before/after change in the treated group and in the comparison group",
+        "Subtract them: that difference in differences is the estimator",
+        "State parallel trends as the claim about the missing counterfactual change",
+        "Use a pre-period plot as a check of the claim, not as a proof",
+        "Notice staggered rollouts: when effects differ over time, the usual two-way fixed-effects regression can mix the wrong comparisons"
+      ],
+      "ideas": [
+        "The estimator is (treated after − treated before) − (comparison after − comparison before)",
+        "Parallel trends says the treated group's counterfactual change equals the comparison group's observed change",
+        "A flat pre-period gap is supportive and is not the assumption itself; the assumption is about the post period you cannot see",
+        "Roth, Sant'Anna, Bilinski, and Poe synthesize the recent literature: with staggered timing, two-way fixed effects is not automatically the effect you wanted when effects are heterogeneous"
+      ],
+      "questions": [
+        {
+          "q": "What quantity does the difference-in-differences estimator compute, and what assumption makes it the effect?",
+          "a": "It subtracts the comparison group's change from the treated group's change. It equals the average effect on the treated if, absent treatment, the treated group would have changed by the same amount the comparison group changed (parallel trends)."
+        },
+        {
+          "q": "A pre-trend looks flat. What did you not prove?",
+          "a": "That the post-period counterfactual change would have matched. The pre-period is a diagnostic of the past gap. Parallel trends is a claim about the missing after period."
+        },
+        {
+          "q": "You rolled a feature out to countries in waves and effects differ by wave. Why can a single two-way fixed-effects coefficient be the wrong summary?",
+          "a": "With staggered timing and heterogeneous effects, that regression mixes comparisons, including already-treated groups used as controls. Roth and colleagues' review is the map of why that mix is not the estimand you think it is."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Cunningham, Causal Inference: The Mixtape (Yale University Press, 2021)",
+          "u": "https://mixtape.scunning.com/"
+        },
+        {
+          "t": "Roth, Sant'Anna, Bilinski & Poe, What's trending in difference-in-differences?, Journal of Econometrics, 2023",
+          "u": "https://doi.org/10.1016/j.jeconom.2023.03.008"
+        },
+        {
+          "t": "Huntington-Klein, The Effect: An Introduction to Research Design and Causality (Chapman & Hall, 2021)",
+          "u": "https://www.theeffectbook.net/"
+        }
+      ],
+      "learner": "later"
+    },
+    {
+      "id": "synthetic-control",
+      "phase": 6,
+      "label": "Synthetic control",
+      "desc": "Build a weighted blend of untreated units that tracks the treated unit before the intervention, then read the later gap as the effect.",
+      "outline": [
+        "Use it when one aggregate unit is treated: a market, a country, a large geo",
+        "Choose donor weights so the synthetic unit matches the pre-treatment path",
+        "Read the post-treatment gap between treated and synthetic as the estimate",
+        "Refuse the method when the treated unit sits outside the convex hull of the donors",
+        "Compare the idea to difference-in-differences: a constructed comparison instead of one named control"
+      ],
+      "ideas": [
+        "Abadie, Diamond, and Hainmueller form a weighted combination of control units to approximate the treated unit's counterfactual",
+        "Weights are chosen on the pre-treatment period; the post-treatment gap is the effect estimate",
+        "The classic setting is an aggregate intervention — one region, one market — where a single untreated twin does not exist",
+        "If the treated unit's pre-period cannot be matched without wild extrapolation, there is no synthetic control, only a story"
+      ],
+      "questions": [
+        {
+          "q": "What is the synthetic control, in one sentence?",
+          "a": "A weighted average of untreated units, with weights chosen so the average tracks the treated unit before the intervention. After the intervention, the gap between the treated unit and that average estimates the effect."
+        },
+        {
+          "q": "Why is this a natural design for a single-market launch rather than a user-level A/B?",
+          "a": "The treated unit is one aggregate (the market). There is no large pool of treated twins. Other markets can be blended into a comparison that matches the launched market's own past."
+        },
+        {
+          "q": "The treated market is far outside the range of the donor markets on the pre-period outcome. What fails?",
+          "a": "No convex combination of donors reproduces the treated market's past, so the weights would be extrapolating. The post-period gap is then not a comparison to a credible counterfactual."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Abadie, Diamond & Hainmueller, Synthetic control methods for comparative case studies, JASA 105(490), 2010",
+          "u": "https://www.law.upenn.edu/live/files/8950-abadie2010pdf"
+        },
+        {
+          "t": "Cunningham, Causal Inference: The Mixtape (Yale University Press, 2021)",
+          "u": "https://mixtape.scunning.com/"
+        }
+      ],
+      "learner": "later"
+    },
+    {
+      "id": "instrumental-variables",
+      "phase": 6,
+      "label": "Instrumental variables",
+      "desc": "A coin flip, or something like one, that moves receipt of treatment and moves the outcome only by moving receipt.",
+      "outline": [
+        "Name the instrument, the treatment it nudges, and the outcome",
+        "State relevance, independence, and the exclusion restriction",
+        "Read the IV estimand as a local average treatment effect for compliers, under those assumptions",
+        "See a weak instrument as an unstable ratio",
+        "Use it for noncompliance when the decision is about receipt, not about assignment"
+      ],
+      "ideas": [
+        "Angrist, Imbens, and Rubin embed IV in potential outcomes: with imperfect compliance, the IV estimand is the average effect for compliers if the assumptions hold",
+        "Without those assumptions the ratio is only a ratio of intent-to-treat effects, not an effect of receipt",
+        "Exclusion: the instrument does not affect the outcome except through treatment",
+        "A weak nudge (the instrument barely moves treatment) makes the ratio blow up"
+      ],
+      "questions": [
+        {
+          "q": "What four claims does an instrument need, in product language?",
+          "a": "It moves receipt of the treatment (relevance). It is as-good-as-random with respect to the potential outcomes (independence). It affects the outcome only through that receipt (exclusion). And it does not push some people into treatment while pushing others out (monotonicity), if you want a complier effect."
+        },
+        {
+          "q": "Who is a complier, and what effect does IV identify for them?",
+          "a": "Compliers are units who receive treatment when the instrument says so and not otherwise. Under the assumptions, the IV estimand is the average effect of receipt for that group — a local average treatment effect — not the effect for always-takers or never-takers."
+        },
+        {
+          "q": "Assignment to a new composer is the instrument, and 'used the composer' is the treatment. How does exclusion fail if assignment also changes the surrounding chrome?",
+          "a": "Then assignment moves the outcome through the chrome even for users who never use the composer. The ratio no longer isolates the effect of use; it mixes in the chrome."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Angrist, Imbens & Rubin, Identification of causal effects using instrumental variables, JASA, 1996",
+          "u": "https://doi.org/10.1080/01621459.1996.10476902"
+        },
+        {
+          "t": "Cunningham, Causal Inference: The Mixtape (Yale University Press, 2021)",
+          "u": "https://mixtape.scunning.com/"
+        }
+      ],
+      "learner": "later"
+    },
+    {
+      "id": "regression-discontinuity",
+      "phase": 6,
+      "label": "Regression discontinuity",
+      "desc": "A cutoff assigns treatment. Units just above and just below it are the comparison, if potential outcomes would have been smooth at the cutoff.",
+      "outline": [
+        "Name the running variable and the cutoff that assigns treatment",
+        "State the estimand as local to units at the cutoff",
+        "Require continuity of the potential outcomes at the cutoff",
+        "Check for manipulation: a pile-up of units on the treated side of the cutoff",
+        "Use it where the product already has a threshold — eligibility, a score, a budget line"
+      ],
+      "ideas": [
+        "The comparison is between units just on either side of a threshold that determines treatment",
+        "The identifying assumption is that potential outcomes would not have jumped at the cutoff in the absence of treatment",
+        "The estimand is local to the cutoff, not the average effect far away in the score distribution",
+        "If people can sort around the cutoff, the two sides are no longer comparable"
+      ],
+      "questions": [
+        {
+          "q": "What does a regression-discontinuity design compare, and for whom is the effect?",
+          "a": "It compares units just above the cutoff to units just below it. The effect is local to units at the cutoff, not the average effect for units with very different scores."
+        },
+        {
+          "q": "What is the continuity assumption, in potential-outcome language?",
+          "a": "The average of Y(1) and the average of Y(0), as functions of the running variable, do not jump at the cutoff. Any jump in the observed outcome at the cutoff is then the treatment, because nothing else was discontinuous there."
+        },
+        {
+          "q": "Creators bunch just above a follower threshold that unlocks a feature. What did manipulation break?",
+          "a": "The units just above are no longer the same kind of creator as the units just below; they sorted themselves onto the treated side. Continuity of potential outcomes at the cutoff is not credible, so the jump is not the effect."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Cunningham, Causal Inference: The Mixtape (Yale University Press, 2021)",
+          "u": "https://mixtape.scunning.com/"
+        },
+        {
+          "t": "Huntington-Klein, The Effect: An Introduction to Research Design and Causality (Chapman & Hall, 2021)",
+          "u": "https://www.theeffectbook.net/"
+        }
+      ],
+      "learner": "later"
+    },
+    {
+      "id": "propensity-methods",
+      "phase": 6,
+      "label": "Propensity methods",
+      "desc": "Model the probability of treatment given covariates, then match, stratify, or reweight so treated and untreated look comparable on those covariates.",
+      "outline": [
+        "Define the propensity score as the probability of treatment given the covariates",
+        "See matching, stratification, and inverse-probability weighting as three uses of that score",
+        "Remember the score does not fix a confounder you never measured",
+        "Check overlap: both arms have to exist across the score",
+        "Tie the legal covariate set back to the backdoor criterion, not to predictive accuracy"
+      ],
+      "ideas": [
+        "Cunningham's mixtape treats matching and weighting as the practical face of unconfoundedness, next to regression",
+        "Hernán and Robins derive inverse-probability weighting from creating a pseudo-population in which treatment is independent of the covariates",
+        "Balance on the measured covariates is checkable; balance on an unmeasured confounder is not",
+        "Positivity fails where the score is essentially zero or one: weighting then extrapolates"
+      ],
+      "questions": [
+        {
+          "q": "What is a propensity score, and what does balancing on it hope to achieve?",
+          "a": "It is the probability of treatment given the covariates. Matching, stratifying, or weighting on it aims to make treated and untreated comparable on those covariates, so the remaining outcome gap can stand in for the effect — if no unmeasured confounder remains."
+        },
+        {
+          "q": "A boosted tree predicts treatment almost perfectly. Why is that a problem for weighting, not a victory?",
+          "a": "Predicted probabilities near zero and one mean some kinds of units are almost always treated or almost never treated. Inverse weights blow up, and you are extrapolating into strata with no real comparison. That is a positivity failure."
+        },
+        {
+          "q": "What does a beautiful covariate-balance table still not show?",
+          "a": "That the backdoor is closed. Balance is about covariates you measured. An unmeasured common cause — the usual ads problem — is invisible in the table, which is why Gordon and colleagues' observational models could still miss the experiments."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Cunningham, Causal Inference: The Mixtape (Yale University Press, 2021)",
+          "u": "https://mixtape.scunning.com/"
+        },
+        {
+          "t": "Hernán & Robins, Causal Inference: What If (Chapman & Hall/CRC, 2020)",
+          "u": "https://miguelhernan.org/whatifbook"
+        },
+        {
+          "t": "Gordon, Zettelmeyer, Bhargava & Chapsky, Marketing Science 38(2), 2019",
+          "u": "https://www.kellogg.northwestern.edu/faculty/gordon_b/files/fb_comparison.pdf"
+        }
+      ],
+      "learner": "later"
+    },
+    {
+      "id": "network-experiments",
+      "phase": 6,
+      "label": "Network experiments",
+      "desc": "Randomize clusters, define what 'exposed' means on the graph, and estimate an effect that matches the launch you will actually do.",
+      "outline": [
+        "Choose clusters so that spillovers mostly stay inside a cluster",
+        "Define an exposure mapping: whose assignments count as 'this user is in the treated world'",
+        "See graph cluster randomization as assigning clusters rather than users",
+        "Use exposure probabilities as weights when exposure is not all-or-nothing",
+        "Trade bias against power: bigger, tighter clusters mean less interference and fewer independent assignments"
+      ],
+      "ideas": [
+        "Ugander and colleagues randomize graph clusters so a unit's neighbors tend to share its world",
+        "They define network exposure conditions and compute the probability of each; a Horvitz–Thompson estimator is unbiased if that exposure model is right",
+        "The full-launch estimand (everyone treated) is not the 50/50-neighbor estimand",
+        "Cluster size is the design knob between interference bias and variance"
+      ],
+      "questions": [
+        {
+          "q": "What does graph cluster randomization change about the coin flip?",
+          "a": "It assigns clusters of the social graph instead of independent users, so neighbors are more likely to share an arm. The goal is a contrast between more coherent 'worlds' than a user-level split creates."
+        },
+        {
+          "q": "What has to be true for their Horvitz–Thompson estimator to be unbiased?",
+          "a": "The exposure model has to be right: you correctly specified which neighborhood assignments count as exposed, and you weighted units by the probability of that exposure. A wrong exposure definition reintroduces bias."
+        },
+        {
+          "q": "Why do larger clusters buy less interference bias and worse precision at the same time?",
+          "a": "A larger cluster keeps more of each user's neighbors inside the same arm, so the contrast is closer to a full launch. You also have fewer independent assignments, so the standard error grows."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Ugander, Karrer, Backstrom & Kleinberg, Graph cluster randomization, KDD 2013",
+          "u": "https://arxiv.org/abs/1305.6979"
+        },
+        {
+          "t": "Kohavi, Tang & Xu, Trustworthy Online Controlled Experiments (Cambridge University Press, 2020)",
+          "u": "https://doi.org/10.1017/9781108653985"
+        }
+      ],
+      "learner": "later"
+    },
+    {
+      "id": "heterogeneous-effects",
+      "phase": 6,
+      "label": "Heterogeneous effects",
+      "desc": "Estimating how the effect varies, without mistaking a search over slices for a confidence interval.",
+      "outline": [
+        "Start from a conditional average treatment effect: the contrast given covariates",
+        "See why the ground truth effect is never observed for any individual",
+        "Split the sample: one part may propose subgroups, the other must estimate them",
+        "Read Athey and Imbens' honesty result as a warning about coverage",
+        "Only promote a slice to a ship rule if it was estimable, not merely the maximum"
+      ],
+      "ideas": [
+        "Athey and Imbens partition units to find subgroups whose treatment effects differ, in experiments and in observational studies",
+        "Honest estimation uses one sample to build the partition and another to estimate the effects inside it",
+        "In their simulations, non-honest 90% intervals covered only about 74–84% of the time; honest intervals had nominal coverage, at a mean-squared-error cost of roughly 7–22%",
+        "The individual effect is still missing, so you cannot validate a personalized score the way you validate a ranker"
+      ],
+      "questions": [
+        {
+          "q": "What is a conditional average treatment effect?",
+          "a": "The mean of Y(1) − Y(0) given a set of covariates. It is the slice-specific causal contrast, not the coefficient on an interaction in a predictive model unless that coefficient identifies this contrast."
+        },
+        {
+          "q": "What is honest estimation, and what did Athey and Imbens see when they skipped it?",
+          "a": "One sample builds the subgroup partition; a held-out sample estimates the effects. Without that split, their 90% intervals covered in the mid-70s to mid-80s percent, not 90. Honesty restored nominal coverage and cost some mean squared error."
+        },
+        {
+          "q": "Why can't you score a heterogeneous-effect model the way you score a recommender, on observed outcomes?",
+          "a": "The causal effect for a unit is never observed — one potential outcome is missing — so there is no ground-truth label to compute accuracy against. Predictive accuracy on the observed outcome is a different target."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Athey & Imbens, Recursive partitioning for heterogeneous causal effects, PNAS 2016",
+          "u": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4941430/"
+        },
+        {
+          "t": "Hernán & Robins, Causal Inference: What If (Chapman & Hall/CRC, 2020)",
+          "u": "https://miguelhernan.org/whatifbook"
+        }
+      ],
+      "learner": "later"
+    },
+    {
+      "id": "sensitivity",
+      "phase": 6,
+      "label": "Sensitivity analysis",
+      "desc": "How strong an unmeasured confounder would have to be to make the result go away. A number about robustness, not a proof.",
+      "outline": [
+        "State the assumption that would have to fail (usually an unmeasured common cause)",
+        "Ask how strong that failure must be to move the estimate to the null",
+        "Read an E-value as that strength, on the risk-ratio scale, for both treatment and outcome",
+        "Compute it for the confidence limit closest to the null, not only the point estimate",
+        "Add a negative control: a comparison where the effect should be absent and the biases should remain",
+        "Use a large E-value as 'harder to explain away,' never as 'therefore causal'"
+      ],
+      "ideas": [
+        "VanderWeele and Ding define the E-value as the minimum strength of association, on the risk-ratio scale, that an unmeasured confounder would need with both treatment and outcome to explain away the observed association, given the measured covariates",
+        "A large E-value means considerable confounding would be required; a small one means little would",
+        "They ask for the E-value of the estimate and of the confidence limit closest to the null",
+        "Lipsitch, Tchetgen Tchetgen, and Cohen: a negative-control outcome should share the confounders of the real outcome and must not be caused by the treatment. An 'effect' there is bias"
+      ],
+      "questions": [
+        {
+          "q": "What does an E-value say, in one sentence?",
+          "a": "It is how strongly an unmeasured confounder would have to be associated, on the risk-ratio scale, with both the treatment and the outcome to fully explain away the observed association, conditional on the covariates you already adjusted for."
+        },
+        {
+          "q": "Why report the E-value for the confidence limit closest to the null, not only for the point estimate?",
+          "a": "A point estimate can look robust while the value still compatible with the data, at the edge of the interval, is easy to explain away. VanderWeele and Ding ask for both."
+        },
+        {
+          "q": "A huge E-value does not prove the effect is causal. What does it prove?",
+          "a": "Only that any unmeasured confounder capable of producing the association would have to be strong. If a strong confounder of that sort is plausible — a usual situation in ad exposure — the result is still easy to doubt."
+        },
+        {
+          "q": "You estimate a large 'effect' of an ad on a purchase the ad could not move, with the same procedure. What is that comparison, and what does it mean?",
+          "a": "It is a negative-control outcome: it should share the confounders and must not be caused by the ad. A nonzero result means the procedure is detecting bias, so the real purchase result from that same procedure is not yet credible."
+        }
+      ],
+      "sources": [
+        {
+          "t": "VanderWeele & Ding, Sensitivity analysis in observational research: introducing the E-value, Annals of Internal Medicine, 2017",
+          "u": "https://doi.org/10.7326/M16-2607"
+        },
+        {
+          "t": "Lipsitch, Tchetgen Tchetgen & Cohen, Negative controls: a tool for detecting confounding and bias, Epidemiology, 2010",
+          "u": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3053408/"
+        }
+      ],
+      "learner": "later"
+    },
+    {
+      "id": "product-decision",
+      "phase": 7,
+      "label": "A product decision",
+      "desc": "Enough causal inference to say what you are deciding, which contrast answers it, which design identifies that contrast, and what would make the number a lie.",
+      "outline": [
+        "Name the decision: ship, hold out, roll out by cluster, or do not pretend you know",
+        "Name the estimand that decision requires — full launch, exposure among the would-be exposed, effect at a cutoff",
+        "Pick the design that identifies it: randomized readout, cluster experiment, difference-in-differences, synthetic control, instrument, discontinuity, or a propensity analysis",
+        "State the assumption in a sentence a teammate can argue with",
+        "Attach the veto: the trust check, the negative control, or the sensitivity number that would flip the call"
+      ],
+      "ideas": [
+        "The decision, the estimand, the design, and the assumption are four different sentences; a dashboard only shows the third's output",
+        "A social launch usually needs a full-launch estimand, which a user-level A/B does not identify when friends interfere",
+        "An ads call needs an incrementality contrast; Gordon and colleagues show a fitted exposure model is not that contrast by default",
+        "Being able to narrate the chart is the illusion. Being able to say what would falsify it is the understanding"
+      ],
+      "questions": [
+        {
+          "q": "A sharing feature is up for a full launch. Which estimand do you need, and why does a user-level A/B often fail to be it?",
+          "a": "You need the effect of treating the network, not the effect of treating a user whose friends are still mixed. Interference makes those different interventions. A cluster or exposure design is aimed at the launch; the user-level split is aimed at a partial world."
+        },
+        {
+          "q": "You cannot randomize a market-wide policy. What do you owe the readout before you treat a pre/post movement as the effect?",
+          "a": "A named design and its assumption: parallel trends for difference-in-differences, a matched pre-period for synthetic control, continuity at a cutoff, or an instrument's exclusion restriction. Plus a check — pre-trends, a negative control, or a sensitivity number — that could have failed."
+        },
+        {
+          "q": "What is the difference between understanding the experiment and narrating the dashboard?",
+          "a": "Narrating says which number moved. Understanding names the estimand, the assumption that identifies it, and the specific failure (interference, selection, a bad control, peeking, an unmeasured confounder strong enough to matter) that would make the number the wrong input to the decision."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Hernán & Robins, Causal Inference: What If (Chapman & Hall/CRC, 2020)",
+          "u": "https://miguelhernan.org/whatifbook"
+        },
+        {
+          "t": "Kohavi, Tang & Xu, Trustworthy Online Controlled Experiments (Cambridge University Press, 2020)",
+          "u": "https://doi.org/10.1017/9781108653985"
+        },
+        {
+          "t": "Ugander, Karrer, Backstrom & Kleinberg, Graph cluster randomization, KDD 2013",
+          "u": "https://arxiv.org/abs/1305.6979"
+        }
+      ],
+      "learner": "later"
+    }
+  ],
+  "edges": [
+    {
+      "from": "probability",
+      "to": "regression",
+      "why": "A regression coefficient is a contrast in a conditional mean. Without probability — expectation and conditioning — that coefficient has nothing to be about."
+    },
+    {
+      "from": "probability",
+      "to": "sampling-uncertainty",
+      "why": "A standard error is the typical size of a chance gap between a sample mean and an expectation. The probability of a draw is what makes 'this lift might be noise' a quantity."
+    },
+    {
+      "from": "units-and-populations",
+      "to": "sampling-uncertainty",
+      "why": "The standard error depends on how many independent draws you have. That number is the count of assignment units, not the row count, once users share a market or a device."
+    },
+    {
+      "from": "units-and-populations",
+      "to": "experiment-anatomy",
+      "why": "An experiment is undefined until you say what is randomized and who the result is about. The unit and the population are those two sentences."
+    },
+    {
+      "from": "prediction-vs-cause",
+      "to": "confounding-picture",
+      "why": "Confounding is the concrete way a real association fails the intervention test: a common cause moves both sides, so setting the treatment would not produce the gap you see."
+    },
+    {
+      "from": "prediction-vs-cause",
+      "to": "experiment-anatomy",
+      "why": "You only bother to randomize because prediction is not the question. The anatomy — assignment, treatment, outcome — is the intervention the predictive model refused to answer."
+    },
+    {
+      "from": "metric-design",
+      "to": "experiment-anatomy",
+      "why": "The outcome slot in the experiment is a metric with a window and a unit. Without that definition, assignment has nothing it is the effect on."
+    },
+    {
+      "from": "regression",
+      "to": "regression-traps",
+      "why": "The traps are ways a fitted conditional mean parts company with an effect. You need the coefficient's actual meaning — holding included covariates fixed in the fit — before you can see which covariates corrupt it."
+    },
+    {
+      "from": "sampling-uncertainty",
+      "to": "hypothesis-tests",
+      "why": "A p-value and a confidence interval are computed from the sampling distribution. They are unexplained procedures until the standard error and the idea of a single draw are in place."
+    },
+    {
+      "from": "confounding-picture",
+      "to": "potential-outcomes",
+      "why": "The raw treated-versus-untreated gap compares different people. Potential outcomes restate the target as a contrast for the same people, which is exactly what a common cause makes you unable to see."
+    },
+    {
+      "from": "confounding-picture",
+      "to": "dags",
+      "why": "A diagram is the confounding picture made inspectable: the fork treatment ← common cause → outcome is the path you will later decide to block or to randomize away."
+    },
+    {
+      "from": "confounding-picture",
+      "to": "regression-traps",
+      "why": "Omitting a confounder leaves that common-cause path inside the coefficient. The picture of the fork is what tells you the regression omitted something that matters."
+    },
+    {
+      "from": "experiment-anatomy",
+      "to": "potential-outcomes",
+      "why": "Y(1) and Y(0) are the outcomes under the two arms you just named. The anatomy gives the intervention; potential outcomes say you only record the arm that happened."
+    },
+    {
+      "from": "experiment-anatomy",
+      "to": "treatment-definition",
+      "why": "Assignment, exposure, and dose are different slots in the anatomy. Defining the treatment is deciding which of those slots the potential outcome refers to."
+    },
+    {
+      "from": "potential-outcomes",
+      "to": "estimands",
+      "why": "An estimand is a specific average of Y(1) − Y(0). Without the two potential outcomes, 'ATE' and 'effect on the treated' are slogans rather than contrasts."
+    },
+    {
+      "from": "potential-outcomes",
+      "to": "randomization-id",
+      "why": "Randomization identifies an average of potential-outcome contrasts because it makes the missing outcome recoverable from the other arm. The argument needs Y(1) and Y(0) already on the table."
+    },
+    {
+      "from": "dags",
+      "to": "backdoor",
+      "why": "The backdoor criterion is a rule for reading the diagram: block paths into treatment, and do not condition on descendants. Without the junctions — fork, chain, collider — the rule has nothing to operate on."
+    },
+    {
+      "from": "hypothesis-tests",
+      "to": "stat-inference",
+      "why": "Reading uncertainty is using a p-value and an interval as statements about an estimand. That reading sits on top of what those procedures actually compute."
+    },
+    {
+      "from": "regression-traps",
+      "to": "backdoor",
+      "why": "Backdoor adjustment is the disciplined version of 'which covariates go in.' The traps — collider, mediator, omitted fork — are the reasons a covariate is illegal or required."
+    },
+    {
+      "from": "treatment-definition",
+      "to": "estimands",
+      "why": "The average treatment effect depends on which intervention 'treatment' is. Assignment and receipt produce different contrasts, so the estimand is unfinished until the treatment is one action."
+    },
+    {
+      "from": "treatment-definition",
+      "to": "randomization-id",
+      "why": "A coin flip identifies the effect of the intervention you randomized. If 'treatment' is still a blur of exposure versions, exchangeability is about the wrong action."
+    },
+    {
+      "from": "estimands",
+      "to": "ab-readout",
+      "why": "A readout reports one number. That number is an answer only after you have said which contrast it is — intent to treat on the pre-committed metric, not whichever gap appeared."
+    },
+    {
+      "from": "estimands",
+      "to": "incrementality",
+      "why": "Incrementality is an estimand: outcomes with the campaign versus the counterfactual without it, often among the would-be exposed. Attribution dashboards skip that choice."
+    },
+    {
+      "from": "estimands",
+      "to": "ratio-metrics",
+      "why": "A ratio is a candidate estimand only once you say whether you mean the ratio of totals or the average of ratios, and over which units. Those are different contrasts."
+    },
+    {
+      "from": "randomization-id",
+      "to": "ab-readout",
+      "why": "The license to read a difference in means as an effect is the randomization argument. The readout is that argument applied to a logged experiment, not a fresh philosophy."
+    },
+    {
+      "from": "randomization-id",
+      "to": "variance-reduction",
+      "why": "CUPED tightens the same randomized contrast. Variance reduction is worth doing only once randomization has already made the contrast an effect rather than a fit."
+    },
+    {
+      "from": "randomization-id",
+      "to": "srm-logging",
+      "why": "Sample-ratio mismatch matters because the identification argument assumed the configured coin flip is the coin flip in the data. A mismatched log is a broken assignment mechanism."
+    },
+    {
+      "from": "randomization-id",
+      "to": "incrementality",
+      "why": "A holdout or a ghost-ad test is a randomized contrast aimed at an incremental effect. The reason the holdout identifies anything is the same exchangeability argument, pointed at a campaign."
+    },
+    {
+      "from": "backdoor",
+      "to": "bad-controls",
+      "why": "Bad controls are the covariates the backdoor criterion rejects: descendants of treatment, and colliders. You cannot keep them out unless you already know what the criterion forbids."
+    },
+    {
+      "from": "stat-inference",
+      "to": "ab-readout",
+      "why": "The lift on a readout is a point with an interval. Reading the experiment is reading that uncertainty against a decision, which is empty if a p-value is still 'the probability the feature works.'"
+    },
+    {
+      "from": "stat-inference",
+      "to": "power-mde",
+      "why": "Power and the minimum detectable effect are statements about when an interval will be tight enough to notice a named effect. They are built out of the standard error and the test's error rates."
+    },
+    {
+      "from": "stat-inference",
+      "to": "peeking-multiplicity",
+      "why": "Peeking breaks a fixed-horizon p-value because the sampling model changed. You have to know what the ordinary interval claims before you can see why watching it until it passes voids the claim."
+    },
+    {
+      "from": "ab-readout",
+      "to": "noncompliance",
+      "why": "The readout's intent-to-treat number is the effect of assignment. Noncompliance is why that number is not the effect of receiving the experience — a gap you can only see once the readout is explicit."
+    },
+    {
+      "from": "ab-readout",
+      "to": "interference",
+      "why": "A user-level readout estimates a contrast under mixed neighbors. Interference is the reason that contrast is not the full launch the readout is often asked to authorize."
+    },
+    {
+      "from": "ab-readout",
+      "to": "selection-bias",
+      "why": "A clean readout uses the randomized sample. Selection bias is what you get when the analyzed rows are a treated-dependent subset of that sample — triggered users, survivors, or a broken log."
+    },
+    {
+      "from": "ab-readout",
+      "to": "hte-question",
+      "why": "The readout's headline is an average. 'Who benefits' starts when you ask whether that average hides slices the ship decision would treat differently."
+    },
+    {
+      "from": "ab-readout",
+      "to": "time-and-novelty",
+      "why": "The readout is a contrast inside a window. Novelty and carryover are how that window's effect comes apart from the effect of leaving the feature on."
+    },
+    {
+      "from": "ab-readout",
+      "to": "ship-bar",
+      "why": "A ship rule applies a threshold and a veto to a readout. Without a defined contrast and its interval, the bar has no input."
+    },
+    {
+      "from": "power-mde",
+      "to": "ship-bar",
+      "why": "The bar can say 'no effect' only if the test could have seen the effect you care about. Power is what tells the rule whether a flat result is information or a shrug."
+    },
+    {
+      "from": "variance-reduction",
+      "to": "hte-question",
+      "why": "Slices are smaller than the experiment, so their contrasts are noisier. A variance reduction that sharpens the average is what makes a pre-specified slice estimable rather than pure noise."
+    },
+    {
+      "from": "srm-logging",
+      "to": "selection-bias",
+      "why": "A sample-ratio mismatch means the log kept the arms at the wrong rates. That is selection into the analyzed sample, and it is why an SRM belongs to bias rather than to a footnote about chi-square."
+    },
+    {
+      "from": "incrementality",
+      "to": "interference",
+      "why": "An ad or a feed treatment changes inventory and other people's outcomes. Incrementality measured as an isolated user's exposure effect is not yet the effect in a network where neighbors also see it."
+    },
+    {
+      "from": "incrementality",
+      "to": "observational-setup",
+      "why": "When you cannot hold out, the incrementality contrast is still the estimand. The observational setup is the demand that you write the holdout you failed to run before substituting a model."
+    },
+    {
+      "from": "peeking-multiplicity",
+      "to": "ship-bar",
+      "why": "A bar that uses a p-value watched until it passed, or the best of many metrics, is not the error rate you wrote down. The rule has to say how many looks and how many metrics were allowed."
+    },
+    {
+      "from": "bad-controls",
+      "to": "observational-setup",
+      "why": "Without randomization, adjustment is the whole identification strategy. Knowing which controls are illegal is what keeps the target-trial emulation from conditioning its way into a new bias."
+    },
+    {
+      "from": "bad-controls",
+      "to": "selection-bias",
+      "why": "Conditioning on a collider or on a post-treatment filter is how selection bias is manufactured. The bad-control list is the mechanism; selection is that mechanism applied to who remains in the table."
+    },
+    {
+      "from": "ratio-metrics",
+      "to": "ship-bar",
+      "why": "A ship rule on a ratio that cannot say whether the numerator or the denominator moved will launch the wrong change. The bar has to name which decomposition counts as success."
+    },
+    {
+      "from": "ratio-metrics",
+      "to": "time-and-novelty",
+      "why": "A ratio's denominator — sessions, views, days active — is often exactly what novelty changes first. Reading the ratio over time requires knowing the ratio can move because the mix moved."
+    },
+    {
+      "from": "noncompliance",
+      "to": "instrumental-variables",
+      "why": "Once assignment and receipt come apart, the effect of receipt needs an instrument: something that moves receipt and moves the outcome only through receipt. Noncompliance is the problem that instrument is for."
+    },
+    {
+      "from": "interference",
+      "to": "network-experiments",
+      "why": "User-level randomization does not identify a launch under spillover. Cluster assignment and an exposure mapping are the designs that aim the coin flip at a world closer to the one you will ship."
+    },
+    {
+      "from": "observational-setup",
+      "to": "diff-in-diff",
+      "why": "Difference-in-differences is a way to emulate the target trial's contrast when you have a before and a comparison group. It is not available as a method until you have said what trial you are emulating."
+    },
+    {
+      "from": "observational-setup",
+      "to": "synthetic-control",
+      "why": "Synthetic control builds the comparison group the target trial did not randomize. The setup — one treated unit, a counterfactual path — is what the weights are trying to stand in for."
+    },
+    {
+      "from": "observational-setup",
+      "to": "instrumental-variables",
+      "why": "An instrument is useful only for a named trial whose treatment you cannot assign directly. The observational setup says what effect of receipt you are still trying to identify."
+    },
+    {
+      "from": "observational-setup",
+      "to": "regression-discontinuity",
+      "why": "A cutoff is a found assignment mechanism. It answers the target trial only for units at that cutoff, which you cannot say until the trial's population and treatment are specified."
+    },
+    {
+      "from": "observational-setup",
+      "to": "propensity-methods",
+      "why": "Matching and weighting are attempts to restore the exchangeability the missing coin flip would have given you. They implement the observational setup; they do not replace it."
+    },
+    {
+      "from": "observational-setup",
+      "to": "sensitivity",
+      "why": "Sensitivity asks how far the exchangeability assumption can bend before the answer flips. That question is meaningless until the observational setup has named the assumption."
+    },
+    {
+      "from": "selection-bias",
+      "to": "propensity-methods",
+      "why": "Weighting and matching assume you are still looking at the population of the trial. Selection decides who remains; a propensity model fitted on a selected sample balances the wrong people."
+    },
+    {
+      "from": "selection-bias",
+      "to": "sensitivity",
+      "why": "A sensitivity number or a negative control is how you ask whether selection, not the treatment, produced the gap. You cannot design that check until you know selection can distort who remains in the table."
+    },
+    {
+      "from": "hte-question",
+      "to": "heterogeneous-effects",
+      "why": "Estimating heterogeneity is the 'who benefits' question turned into a procedure. Without the distinction between a real slice effect and a searched one, the estimator has no target."
+    },
+    {
+      "from": "time-and-novelty",
+      "to": "diff-in-diff",
+      "why": "Difference-in-differences treats a change over time as the comparison. That move is only as good as your grasp of what else changes over time — seasonality, novelty, and pre-existing trajectories."
+    },
+    {
+      "from": "time-and-novelty",
+      "to": "synthetic-control",
+      "why": "The synthetic unit is built to track a pre-treatment path. You need the time structure — what a pre-period is, and why a short window lies — before a matched path means a counterfactual."
+    },
+    {
+      "from": "ship-bar",
+      "to": "sensitivity",
+      "why": "The bar needs a veto for 'this association could be confounding.' Sensitivity turns that veto into a magnitude: how strong a confounder would have to be before the decision flips."
+    },
+    {
+      "from": "ship-bar",
+      "to": "heterogeneous-effects",
+      "why": "A rule that ships only to a slice is a different decision from shipping the average. Heterogeneous-effect estimates are allowed to drive that rule only when the slice survives as an estimand."
+    },
+    {
+      "from": "ship-bar",
+      "to": "network-experiments",
+      "why": "The bar for a social feature has to say whether the authorized estimand is a partial rollout or a full launch. The network design exists to produce the contrast the bar actually asks for."
+    },
+    {
+      "from": "diff-in-diff",
+      "to": "product-decision",
+      "why": "When the decision is about a group that changed at a known time, difference-in-differences is one design that can supply the contrast — if you can defend parallel trends and you are not hiding a staggered rollout inside two-way fixed effects."
+    },
+    {
+      "from": "synthetic-control",
+      "to": "product-decision",
+      "why": "A one-market launch often has no twin. Synthetic control is how that decision gets a counterfactual path instead of a before/after story."
+    },
+    {
+      "from": "instrumental-variables",
+      "to": "product-decision",
+      "why": "When the decision is about receiving an experience the coin flip only encouraged, the instrument is what identifies a complier effect. The decision is wrong if it quotes that number as the effect for everyone."
+    },
+    {
+      "from": "regression-discontinuity",
+      "to": "product-decision",
+      "why": "A threshold the product already uses — a score, an eligibility line — can identify a local effect. The decision may use it only for units at that line, which is a narrower call than a global ship."
+    },
+    {
+      "from": "propensity-methods",
+      "to": "product-decision",
+      "why": "If the decision must be taken from observational data, weighting or matching on a legal covariate set is one way to estimate it. The decision still carries the unmeasured-confounding assumption the balance table cannot see."
+    },
+    {
+      "from": "network-experiments",
+      "to": "product-decision",
+      "why": "A social product decision is usually a full-launch decision. Cluster randomization and an exposure model are what make the reported effect the effect of that launch rather than of a mixed-neighbor test."
+    },
+    {
+      "from": "heterogeneous-effects",
+      "to": "product-decision",
+      "why": "Shipping to a slice, or personalizing a policy, uses a conditional effect. Honest estimation is what keeps that decision from launching the subgroup that won a search."
+    },
+    {
+      "from": "sensitivity",
+      "to": "product-decision",
+      "why": "The decision is not finished by a point estimate. It is finished when you know how strong an unmeasured confounder would have to be to flip it, and whether that strength is plausible here."
+    }
+  ]
+}
+/*DATA-END*/
+;
+
+/*MAP-THEME-START*/
+// The skin — two worlds, control slate to treated indigo.
+const THEME={
+  "name": "Two worlds",
+  "rationale": "Lab-notebook paper and a slate-to-indigo depth ramp, with a copper accent for the treated world, so the page reads as a split experiment before any label is read.",
+  "webfont": "https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,650&family=Public+Sans:wght@400;500;600&display=swap",
+  "fontDisplay": "'Newsreader', 'Iowan Old Style', Georgia, serif",
+  "fontBody": "'Public Sans', 'Segoe UI', Helvetica, Arial, sans-serif",
+  "vars": {
+    "ink": "#1C2430",
+    "ink-2": "#3A4656",
+    "muted": "#5C6B7A",
+    "line": "#D5D8DE",
+    "bg": "#F3F1EB",
+    "panel": "#FBF9F4",
+    "accent": "#8E2F12",
+    "dep-bg": "#F3EBE3",
+    "edge": "#6E6258",
+    "edge-related": "#8E2F12",
+    "hover-bg": "#F4E7DC",
+    "match": "#C4551A",
+    "btn-hover-border": "#C4A48A",
+    "overlay-bg": "rgba(243,241,235,0.94)",
+    "overlay-bg-2": "rgba(243,241,235,0.78)"
+  },
+  "anchors": [
+    "#B7C5D4",
+    "#96AEC4",
+    "#7898B4",
+    "#5C84A6",
+    "#456F96",
+    "#345C82"
+  ],
+  "chips": [
+    "#4E6240",
+    "#2F5E80",
+    "#8A4634",
+    "#2E6A5C",
+    "#8A4E22",
+    "#5C406E",
+    "#2A5368",
+    "#7E2E3A"
+  ]
+};
+/*MAP-THEME-END*/
+
+// ---------- theme applier (engine — edit THEME above, never this) ----------
+const appliedVars=[];
+function applyTheme(t){
+  const r=document.documentElement.style;
+  appliedVars.splice(0).forEach(k=>r.removeProperty("--"+k));
+  if(!t)return;
+  if(t.webfont&&!document.querySelector('link[href="'+t.webfont+'"]')){const l=document.createElement("link");l.rel="stylesheet";l.href=t.webfont;document.head.appendChild(l);}
+  const set=(k,v)=>{if(v){r.setProperty("--"+k,v);appliedVars.push(k);}};
+  Object.keys(t.vars||{}).forEach(k=>set(k,t.vars[k]));
+  set("font-display",t.fontDisplay);set("font-body",t.fontBody);
+}
+const THEME_DEFAULT={name:"Neutral slate",rationale:"Neutral default.",webfont:"",fontDisplay:"-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif",fontBody:"-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif",vars:{},anchors:["#1e3a8a","#2563eb","#0d9488","#16a34a","#ca8a04","#eab308"]};
+applyTheme(typeof THEME!=="undefined"?THEME:null);
+
+/*MAP-METADATA-START*/
+const THEMES=[{name:"Chance & measurement",color:"#4E6240"},{name:"Association",color:"#2F5E80"},{name:"Causal language",color:"#8A4634"},{name:"Identification",color:"#2E6A5C"},{name:"Product experiments",color:"#8A4E22"},{name:"Where A/B breaks",color:"#5C406E"},{name:"Designs beyond the coin flip",color:"#2A5368"},{name:"The decision",color:"#7E2E3A"}];
+const THEME_BLURBS=[
+"Probability, the unit you assign, the difference between predicting and intervening, and the metric that will count as the outcome.",
+"Regression as a fitted mean, sampling uncertainty, the picture of a common cause, and the pieces of an experiment.",
+"Potential outcomes, diagrams, what a test actually says, the ways a regression lies, and a treatment defined as one action. This is where you start.",
+"Name the contrast, see why a coin flip identifies it, block backdoors without bad controls, and read an interval as uncertainty about that contrast.",
+"Read an A/B test, power it, tighten it, trust the log, measure incrementality, and refuse peeked or ratio-blind wins.",
+"Noncompliance, interference, no coin flip, selection, slices, time, and the ship rule those failures have to pass.",
+"Difference-in-differences, synthetic control, instruments, discontinuities, propensity methods, network experiments, heterogeneity, sensitivity, and negative controls.",
+"Choose the design that identifies the contrast the decision actually needs, and say what would make the number a lie."
+];
+const GOAL_STATEMENT="enough causal inference to design and read product experiments \u2014 A/B tests, holdouts, and incrementality \u2014 and to choose a defensible design when randomization is incomplete, interfered with, or impossible";
+const GOAL_SOURCES_NOTE="The spine is Hern\u00e1n &amp; Robins, <i>Causal Inference: What If</i> (Chapman &amp; Hall/CRC, 2020; potential outcomes, diagrams, randomization, backdoor, selection) together with Huntington-Klein, <i>The Effect</i> (2021) and Cunningham, <i>Causal Inference: The Mixtape</i> (2021) for the observational designs. Probability, regression, and intervals follow Diez, \u00c7etinkaya-Rundel &amp; Barr, <i>OpenIntro Statistics</i> (4th ed.). Product experiments follow Kohavi, Tang &amp; Xu, <i>Trustworthy Online Controlled Experiments</i> (2020), plus CUPED (Deng et al. 2013), sample-ratio mismatch (Fabijan et al. 2019), and always-valid peeking (Johari, Pekelis &amp; Walsh). Incrementality follows ghost ads (Johnson, Lewis &amp; Nubbemeyer 2017) and Gordon, Zettelmeyer, Bhargava &amp; Chapsky (Marketing Science 2019). Interference and network experiments follow Ugander, Karrer, Backstrom &amp; Kleinberg (KDD 2013). Heterogeneous effects follow Athey &amp; Imbens (PNAS 2016). Out of scope: causal discovery, structural models, and off-policy evaluation for recommenders.";
+const SUGGESTED_PATH=[
+{h:"Where you're starting",t:"Potential outcomes, causal diagrams, and what a regression coefficient is not \u2014 the language under the incrementality work and the models you already run."},
+{h:"Identification",t:"Name the estimand, see why randomization identifies it, and block backdoors without conditioning on something the treatment moved."},
+{h:"The experiments you already run",t:"Read a holdout or an A/B test, including power, variance reduction, sample-ratio checks, peeking, and ratio metrics. Incrementality stays here as practice you can review."},
+{h:"Where a simple A/B breaks",t:"Noncompliance, interference on a social product, selection, novelty, and slices \u2014 and a ship rule that can veto."},
+{h:"When you cannot randomize",t:"Difference-in-differences, synthetic control, instruments, regression discontinuity, propensity methods, plus a sensitivity check and a negative control."},
+{h:"The decision",t:"Match the design to the launch you will actually ship, and say the assumption that would make the number the wrong input."}
+];
+const LEARNER_NOTE="Where you're starting: potential outcomes and diagrams, under the incrementality work and the models you already run. Quieter nodes are the probability, regression, metrics, and holdout practice you already use — still here if you want to review.";
+const LEARNER_ENTRY="potential-outcomes";
+const BUILD=1;
+/*MAP-METADATA-END*/
+
+// ---------- topological levels ----------
+const LEVEL={};DATA.nodes.forEach(n=>LEVEL[n.id]=0);
+let changed=true,levelGuard=0;
+while(changed&&levelGuard++<=DATA.nodes.length+1){
+  changed=false;
+  for(const e of DATA.edges){
+    if(LEVEL[e.to]<LEVEL[e.from]+1){LEVEL[e.to]=LEVEL[e.from]+1;changed=true;}
+  }
+}
+const MAXL=Math.max(...Object.values(LEVEL));
+const NLEVELS=MAXL+1;
+if(changed)console.error("WARNING: cycle detected in edges — prerequisite graph is not a DAG; level layout is truncated. Run the validator.");
+// Layout uses the computed longest-path levels as-is. Do not invent skip-level
+// edges here — the validator requires every DATA edge to be adjacent (k → k+1).
+DATA.edges.forEach(e=>{
+  const span=LEVEL[e.to]-LEVEL[e.from];
+  if(span!==1)console.error("WARNING: non-adjacent edge",e.from,"->",e.to,"span",span,"— drop, bridge, or demote to see-also; do not redraw it as a long diagonal.");
+});
+
+// depth color scale: early → late
+const ANCHORS=(typeof THEME!=="undefined"&&THEME.anchors&&THEME.anchors.length>=2)?THEME.anchors:["#1e3a8a","#2563eb","#0d9488","#16a34a","#ca8a04","#eab308"]; // depth ramp — set in MAP-THEME
+function hex2rgb(h){return [1,3,5].map(i=>parseInt(h.slice(i,i+2),16));}
+function rgb2hex(r){return "#"+r.map(v=>v.toString(16).padStart(2,"0")).join("");}
+function levelColor(l){
+  const t=MAXL?l/MAXL:0,seg=t*(ANCHORS.length-1);
+  const i=Math.min(Math.floor(seg),ANCHORS.length-2),f=seg-i;
+  const a=hex2rgb(ANCHORS[i]),b=hex2rgb(ANCHORS[i+1]);
+  return rgb2hex(a.map((v,k)=>Math.round(v+(b[k]-v)*f)));
+}
+const LCOL=Array.from({length:NLEVELS},(_,l)=>levelColor(l));
+const LUM=h=>{const a=hex2rgb(h).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*a[0]+.7152*a[1]+.0722*a[2]};
+
+// ---------- helpers ----------
+const $=s=>document.querySelector(s);
+const SVGNS="http://www.w3.org/2000/svg";
+function svgEl(tag,attrs){const el=document.createElementNS(SVGNS,tag);for(const k in attrs)el.setAttribute(k,attrs[k]);return el;}
+function nodeById(id){return DATA.nodes.find(n=>n.id===id);}
+function nodeLabel(id){return nodeById(id).label;}
+function learnerStateOf(n){
+  return (n&&(n.learner==="known"||n.learner==="frontier"||n.learner==="later"))?n.learner:"";
+}
+function learnerNote(){
+  return (typeof LEARNER_NOTE==="string"&&LEARNER_NOTE.trim())?LEARNER_NOTE.trim():"";
+}
+function learnerEntry(){
+  return (typeof LEARNER_ENTRY==="string")?LEARNER_ENTRY:"";
+}
+function hasLearnerData(){
+  return DATA.nodes.some(n=>learnerStateOf(n))||!!learnerNote()||!!learnerEntry();
+}
+function learnerEntryId(){
+  const named=learnerEntry();
+  if(named&&DATA.nodes.some(n=>n.id===named))return named;
+  const f=DATA.nodes.find(n=>n.learner==="frontier");
+  return f?f.id:"";
+}
+function wrapLabel(t){
+  const max=17,words=t.split(" "),lines=[];let cur="";
+  for(const w of words){const cand=cur?cur+" "+w:w;if(cand.length<=max||!cur){cur=cand;}else{lines.push(cur);cur=w;}}
+  if(cur)lines.push(cur);
+  return lines.slice(0,3);
+}
+function mq(q){return typeof matchMedia==="function"&&matchMedia(q).matches;}
+function isNarrow(){return mq("(max-width:900px)");}
+function isCoarse(){return mq("(pointer: coarse)");}
+function usesTouchCopy(){return isNarrow()||isCoarse();}
+function hintCopy(){
+  return usesTouchCopy()
+    ? "A → B means “learn A before B”. Tap any arrow to see <b>why</b> it is a prerequisite."
+    : "A → B means “learn A before B”. Hover or click any arrow to see <b>why</b> it is a prerequisite.";
+}
+
+// ---------- layout: columns = topological levels ----------
+const NODE_W=200,NODE_H=52,GAP_Y=16,GAP_X=74,TOP=64,LEFT=56,MAX_PER_COL=8;
+const cols=[];
+for(let l=0;l<NLEVELS;l++){
+  const ids=DATA.nodes.filter(n=>LEVEL[n.id]===l).map(n=>n.id);
+  for(let i=0;i<ids.length;i+=MAX_PER_COL)cols.push({level:l,ids:ids.slice(i,i+MAX_PER_COL),cont:i>0});
+}
+let cx=LEFT;cols.forEach(c=>{c.x=cx;cx+=NODE_W+GAP_X;});
+const pos={};
+function assignY(){cols.forEach(c=>c.ids.forEach((id,i)=>{pos[id]={x:c.x,y:TOP+i*(NODE_H+GAP_Y)};}));}
+assignY();
+function barycenterPass(dir){
+  const seq=dir>0?cols:[...cols].reverse();
+  seq.forEach((c,ci)=>{
+    const skip=dir>0?ci===0:ci===cols.length-1;
+    if(skip)return;
+    const scored=c.ids.map((id,idx)=>{
+      let sum=0,cnt=0;
+      for(const e of DATA.edges){
+        let other=null;
+        if(e.from===id)other=e.to;else if(e.to===id)other=e.from;else continue;
+        const p2=pos[other];if(!p2)continue;
+        sum+=p2.y+NODE_H/2;cnt++;
+      }
+      return{id,idx,score:cnt?sum/cnt:pos[id].y+NODE_H/2};
+    });
+    scored.sort((a,b)=>a.score-b.score||a.idx-b.idx);
+    c.ids=scored.map(s=>s.id);
+  });
+  assignY();
+}
+for(let i=0;i<6;i++)barycenterPass(i%2===0?1:-1);
+// The entry flag is drawn 16px above its node. If the entry is not the first
+// card in its column, that flag lands on the card above. Open a gap so it doesn't.
+if(hasLearnerData()){
+  const entry=learnerEntryId();
+  const col=cols.find(c=>c.ids.includes(entry));
+  if(col){
+    const idx=col.ids.indexOf(entry);
+    if(idx>0){for(let i=idx;i<col.ids.length;i++)pos[col.ids[i]].y+=20;}
+  }
+}
+let maxX=0,maxY=0;
+cols.forEach(c=>{maxX=Math.max(maxX,c.x+NODE_W);});
+Object.values(pos).forEach(p=>{maxY=Math.max(maxY,p.y+NODE_H);});
+
+// ---------- render ----------
+const svg=$("#graph");
+const gRoot=svgEl("g");svg.appendChild(gRoot);
+const gBg=svgEl("g"),gEdges=svgEl("g"),gNodes=svgEl("g");
+gRoot.appendChild(gBg);gRoot.appendChild(gEdges);gRoot.appendChild(gNodes);
+const edgeEls=[],nodeEls={},colEls=[];
+
+cols.forEach(c=>{
+  const color=LCOL[c.level];
+  const lift=hasLearnerData()&&c.ids.includes(learnerEntryId())?22:0;
+  let minY=Infinity,maxCy=-Infinity;
+  c.ids.forEach(id=>{minY=Math.min(minY,pos[id].y);maxCy=Math.max(maxCy,pos[id].y+NODE_H);});
+  const r=svgEl("rect",{x:c.x-16,y:minY-34-lift,width:NODE_W+32,height:maxCy-minY+50+lift,rx:14,fill:color,"class":"colbg"});
+  gBg.appendChild(r);colEls.push(r);
+  const t=svgEl("text",{x:c.x+NODE_W/2,y:minY-(lift?36:14),"text-anchor":"middle","class":"collabel","data-level":c.level,fill:color});
+  t.textContent="Level "+c.level+(c.cont?" (cont.)":"")+" · "+c.ids.length;
+  gBg.appendChild(t);
+});
+
+DATA.edges.forEach((e,i)=>{
+  const a=pos[e.from],b=pos[e.to];
+  const x1=a.x+NODE_W,y1=a.y+NODE_H/2,x2=b.x,y2=b.y+NODE_H/2;
+  const dx=Math.max(46,(x2-x1)*0.5);
+  const g=svgEl("g",{"class":"edge","data-i":i});
+  const line=svgEl("path",{d:`M ${x1} ${y1} C ${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2-7} ${y2}`,"class":"line"});
+  const arrow=svgEl("polygon",{points:`${x2},${y2} ${x2-8},${y2-4} ${x2-8},${y2+4}`});
+  const hit=svgEl("path",{d:`M ${x1} ${y1} C ${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2} ${y2}`,"class":"hit"});
+  g.appendChild(line);g.appendChild(arrow);g.appendChild(hit);
+  gEdges.appendChild(g);edgeEls.push(g);
+  g.addEventListener("mouseenter",ev=>onEdgeEnter(i,ev));
+  g.addEventListener("mousemove",ev=>onEdgeMove(ev));
+  g.addEventListener("mouseleave",()=>onEdgeLeave(i));
+});
+
+DATA.nodes.forEach(n=>{
+  const p=pos[n.id],color=LCOL[LEVEL[n.id]];
+  const ls=learnerStateOf(n);
+  const isEntry=hasLearnerData()&&n.id===learnerEntryId();
+  const here=isEntry||ls==="frontier";
+  const g=svgEl("g",{"class":"node"+(ls?" learner-"+ls:"")+(isEntry?" learner-here":""),"data-id":n.id,transform:`translate(${p.x},${p.y})`});
+  if(here){
+    g.appendChild(svgEl("rect",{x:-5,y:-5,width:NODE_W+10,height:NODE_H+10,rx:13,"class":"here-ring"}));
+  }
+  const rect=svgEl("rect",{x:0,y:0,width:NODE_W,height:NODE_H,rx:10,"class":"main",fill:color,"fill-opacity":0.12,stroke:color});
+  g.appendChild(rect);
+  const lines=wrapLabel(n.label),midY=NODE_H/2;
+  const txt=svgEl("text",{"text-anchor":"middle",x:NODE_W/2});
+  lines.forEach((ln,i)=>{
+    const ts=svgEl("tspan",{x:NODE_W/2,y:midY+(i-(lines.length-1)/2)*16+4});
+    ts.textContent=ln;txt.appendChild(ts);
+  });
+  g.appendChild(txt);
+  if(isEntry){
+    const flag=svgEl("text",{x:NODE_W/2,y:-16,"text-anchor":"middle","class":"here-flag"});
+    flag.textContent="Start here";
+    g.appendChild(flag);
+  }
+  gNodes.appendChild(g);nodeEls[n.id]=g;
+});
+
+// ---------- view transform ----------
+const state={sel:null};
+let view={x:0,y:0,k:1};
+let viewTouched=false;
+function applyView(){gRoot.setAttribute("transform",`translate(${view.x},${view.y}) scale(${view.k})`);}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function zoomAt(px,py,f){
+  const k2=clamp(view.k*f,0.18,3.2),r=k2/view.k;
+  view.x=px-(px-view.x)*r;view.y=py-(py-view.y)*r;view.k=k2;applyView();
+}
+svg.addEventListener("wheel",e=>{
+  e.preventDefault();viewTouched=true;
+  const rect=svg.getBoundingClientRect();
+  zoomAt(e.clientX-rect.left,e.clientY-rect.top,Math.exp(-e.deltaY*0.0016));
+},{passive:false});
+
+const pointers=new Map();
+let panning=false,panStart=null,dragMoved=false,pinch0=null;
+function pointerXY(e){return {cx:e.clientX,cy:e.clientY};}
+function pinchState(){
+  const pts=[...pointers.values()];
+  if(pts.length<2)return null;
+  const rect=svg.getBoundingClientRect();
+  return {
+    dist:Math.hypot(pts[0].cx-pts[1].cx,pts[0].cy-pts[1].cy),
+    midX:(pts[0].cx+pts[1].cx)/2-rect.left,
+    midY:(pts[0].cy+pts[1].cy)/2-rect.top
+  };
+}
+function applyPinch(){
+  const now=pinchState();
+  if(!now||!pinch0)return;
+  const k2=clamp(pinch0.k*(now.dist/Math.max(8,pinch0.dist)),0.18,3.2);
+  const r=k2/pinch0.k;
+  view.k=k2;
+  view.x=now.midX-(pinch0.midX-pinch0.vx)*r;
+  view.y=now.midY-(pinch0.midY-pinch0.vy)*r;
+  applyView();
+}
+svg.addEventListener("pointerdown",e=>{
+  pointers.set(e.pointerId,pointerXY(e));
+  if(pointers.size>=2){
+    const p=pinchState();
+    pinch0=p?{...p,vx:view.x,vy:view.y,k:view.k}:null;
+    panning=false;dragMoved=true;viewTouched=true;
+    svg.classList.add("panning");
+    return;
+  }
+  panning=true;dragMoved=false;panStart={x:e.clientX,y:e.clientY,vx:view.x,vy:view.y};
+  svg.classList.add("panning");
+});
+window.addEventListener("pointermove",e=>{
+  if(pointers.has(e.pointerId))pointers.set(e.pointerId,pointerXY(e));
+  if(pinch0&&pointers.size>=2){applyPinch();return;}
+  if(!panning)return;
+  const dx=e.clientX-panStart.x,dy=e.clientY-panStart.y;
+  if(Math.abs(dx)+Math.abs(dy)>(usesTouchCopy()?14:4)){dragMoved=true;viewTouched=true;}
+  if(!dragMoved)return;
+  view.x=panStart.vx+dx;view.y=panStart.vy+dy;applyView();
+});
+function endPan(e){
+  if(e&&e.pointerId!=null)pointers.delete(e.pointerId);
+  if(pointers.size<2)pinch0=null;
+  if(pointers.size===1){
+    const leftover=[...pointers.values()][0];
+    panning=true;panStart={x:leftover.cx,y:leftover.cy,vx:view.x,vy:view.y};
+  }
+  if(pointers.size===0){panning=false;svg.classList.remove("panning");}
+  setTimeout(()=>{if(pointers.size===0)dragMoved=false;},0);
+}
+// selection/activation on pointerup: setPointerCapture-free, so the event target is the real element
+svg.addEventListener("pointerup",e=>{
+  if(dragMoved||pinch0){endPan(e);return;}
+  const t=e.target;
+  const ng=t.closest?t.closest("g.node"):null;
+  const eg=t.closest?t.closest("g.edge"):null;
+  if(ng)select(ng.dataset.id);
+  else if(eg)onEdgeActivate(+eg.dataset.i,e);
+  else{clearSel();unpinTT();}
+  endPan(e);
+});
+svg.addEventListener("pointercancel",endPan);
+window.addEventListener("pointerup",endPan);
+window.addEventListener("pointercancel",endPan);
+window.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){closeChrome();clearSel();unpinTT();}
+});
+window.addEventListener("resize",()=>{if(isNarrow()&&!viewTouched)fit();});
+
+function fit(){
+  const rect=svg.getBoundingClientRect();
+  if(isNarrow()){
+    // Readable first paint: keep node labels at engine size and start at the
+    // entry columns. Pinch/drag still reach the rest of the graph.
+    view.k=1;
+    const entry=learnerEntryId();
+    if(entry&&pos[entry]){
+      view.x=16-pos[entry].x+8;
+      view.y=Math.max(20,rect.height/2-(pos[entry].y+NODE_H/2));
+    }else{
+      view.x=16;
+      view.y=Math.max(20,(rect.height-(maxY+TOP))/2);
+    }
+    applyView();
+    return;
+  }
+  const s=Math.min(rect.width/(maxX+LEFT),rect.height/(maxY+TOP))*0.96;
+  view.k=clamp(s,0.18,1.4);
+  view.x=(rect.width-(maxX+LEFT)*view.k)/2;view.y=(rect.height-(maxY+TOP)*view.k)/2;
+  applyView();
+  const entry=learnerEntryId();
+  if(entry&&pos[entry]){
+    view.k=clamp(Math.max(view.k,0.92),0.18,1.4);
+    centerOn(entry);
+  }
+}
+function closeHeaderChrome(){
+  const hdr=document.querySelector("header");
+  hdr.classList.remove("search-open","menu-open");
+  $("#btn-search-toggle").setAttribute("aria-expanded","false");
+  $("#btn-more").setAttribute("aria-expanded","false");
+}
+function closeChrome(){
+  closeHeaderChrome();
+  guidePinned=false;
+  legend.classList.remove("is-open");
+  $("#btn-legend").setAttribute("aria-expanded","false");
+  $("#btn-guide").setAttribute("aria-expanded","false");
+  if(isNarrow())setPanelOpen(false);
+  unpinTT();
+  syncScrim();
+}
+function anyOverlay(){
+  return panel.classList.contains("is-open")&&isNarrow()
+    ||legend.classList.contains("is-open")
+    ||(tt.style.display==="block"&&(isNarrow()||isCoarse()))
+    ||document.querySelector("header").classList.contains("menu-open");
+}
+function syncScrim(){
+  const on=anyOverlay();
+  $("#scrim").classList.toggle("is-on",on);
+  $("#scrim").hidden=!on;
+}
+function setPanelOpen(open){
+  panel.classList.toggle("is-open",!!open);
+  $("#btn-guide").setAttribute("aria-expanded",open&&!state.sel?"true":"false");
+  syncScrim();
+}
+let guidePinned=false;
+function syncFitLabel(){$("#btn-fit").textContent=isNarrow()?"Reset view":"Fit";}
+syncFitLabel();
+window.addEventListener("resize",syncFitLabel);
+$("#btn-fit").addEventListener("click",()=>{closeHeaderChrome();fit();syncScrim();});
+$("#btn-reset").addEventListener("click",()=>{guidePinned=false;clearSel();fit();closeChrome();});
+$("#btn-search-toggle").addEventListener("click",()=>{
+  const hdr=document.querySelector("header");
+  const open=!hdr.classList.contains("search-open");
+  hdr.classList.toggle("search-open",open);
+  hdr.classList.remove("menu-open");
+  $("#btn-search-toggle").setAttribute("aria-expanded",open);
+  $("#btn-more").setAttribute("aria-expanded","false");
+  if(open){searchInput.focus();searchInput.select();}
+  else{results.style.display="none";searchInput.blur();}
+});
+$("#btn-more").addEventListener("click",()=>{
+  const hdr=document.querySelector("header");
+  const open=!hdr.classList.contains("menu-open");
+  hdr.classList.toggle("menu-open",open);
+  hdr.classList.remove("search-open");
+  $("#btn-more").setAttribute("aria-expanded",open);
+  $("#btn-search-toggle").setAttribute("aria-expanded","false");
+  syncScrim();
+});
+$("#btn-legend").addEventListener("click",()=>{
+  const open=!legend.classList.contains("is-open");
+  closeHeaderChrome();
+  guidePinned=false;
+  if(isNarrow())setPanelOpen(false);
+  unpinTT();
+  legend.classList.toggle("is-open",open);
+  $("#btn-legend").setAttribute("aria-expanded",open);
+  syncScrim();
+});
+$("#btn-guide").addEventListener("click",()=>{
+  closeHeaderChrome();
+  legend.classList.remove("is-open");
+  $("#btn-legend").setAttribute("aria-expanded","false");
+  unpinTT();
+  guidePinned=true;
+  state.sel=null;
+  svg.classList.remove("dimmed");
+  Object.values(nodeEls).forEach(g=>{g.classList.remove("related");g.classList.remove("sel");g.classList.remove("match");});
+  edgeEls.forEach(g=>{g.classList.remove("related");g.classList.remove("direct");});
+  renderDefaultPanel();
+  setPanelOpen(true);
+});
+$("#scrim").addEventListener("click",()=>{
+  closeHeaderChrome();
+  legend.classList.remove("is-open");
+  $("#btn-legend").setAttribute("aria-expanded","false");
+  if(isNarrow()){guidePinned=false;setPanelOpen(false);}
+  unpinTT();
+  syncScrim();
+});
+
+// ---------- focus / selection ----------
+function applyFocus(related,keepEdges){
+  svg.classList.add("dimmed");
+  for(const id in nodeEls){nodeEls[id].classList.toggle("related",related.has(id));}
+  colEls.forEach(r=>r.classList.add("related"));
+  svg.querySelectorAll(".collabel").forEach(t=>t.classList.add("related"));
+  edgeEls.forEach((g,i)=>{
+    const rel=keepEdges.has(i);
+    g.classList.toggle("related",rel);
+    const e=DATA.edges[i];
+    g.classList.toggle("direct",rel&&(e.from===state.sel||e.to===state.sel));
+  });
+}
+function clearSel(){
+  state.sel=null;
+  svg.classList.remove("dimmed");
+  Object.values(nodeEls).forEach(g=>{g.classList.remove("related");g.classList.remove("sel");g.classList.remove("match");});
+  edgeEls.forEach(g=>{g.classList.remove("related");g.classList.remove("direct");});
+  renderDefaultPanel();
+  if(isNarrow())setPanelOpen(!!guidePinned);
+}
+function select(id){
+  state.sel=id;guidePinned=false;unpinTT();closeHeaderChrome();
+  if(isNarrow())legend.classList.remove("is-open");
+  const anc=new Set([id]),keepEdges=new Set(),stack=[id];
+  while(stack.length){
+    const cur=stack.pop();
+    DATA.edges.forEach((e,i)=>{
+      if(e.to===cur&&!anc.has(e.from)){anc.add(e.from);keepEdges.add(i);stack.push(e.from);}
+    });
+  }
+  const related=new Set(anc);
+  DATA.edges.forEach(e=>{if(e.from===id)related.add(e.to);});
+  DATA.edges.forEach((e,i)=>{if(e.from===id)keepEdges.add(i);});
+  Object.values(nodeEls).forEach(g=>g.classList.remove("sel"));
+  nodeEls[id].classList.add("sel");
+  applyFocus(related,keepEdges);
+  renderNodePanel(id,anc.size-1);
+  if(isNarrow())setPanelOpen(true);
+}
+function focusTheme(ti){
+  state.sel=null;unpinTT();
+  const related=new Set(DATA.nodes.filter(n=>n.phase===ti).map(n=>n.id));
+  const keepEdges=new Set();
+  DATA.edges.forEach((e,i)=>{if(related.has(e.from)||related.has(e.to))keepEdges.add(i);});
+  svg.classList.add("dimmed");
+  for(const id in nodeEls)nodeEls[id].classList.toggle("related",related.has(id));
+  colEls.forEach(r=>r.classList.add("related"));
+  edgeEls.forEach((g,i)=>g.classList.toggle("related",keepEdges.has(i)));
+  renderThemePanel(ti);
+}
+function focusLevel(l){
+  state.sel=null;unpinTT();
+  const related=new Set(DATA.nodes.filter(n=>LEVEL[n.id]===l).map(n=>n.id));
+  const keepEdges=new Set();
+  DATA.edges.forEach((e,i)=>{if(related.has(e.from)||related.has(e.to))keepEdges.add(i);});
+  svg.classList.add("dimmed");
+  for(const id in nodeEls)nodeEls[id].classList.toggle("related",related.has(id));
+  colEls.forEach(r=>r.classList.add("related"));
+  edgeEls.forEach((g,i)=>g.classList.toggle("related",keepEdges.has(i)));
+  renderLevelPanel(l);
+}
+
+// ---------- tooltip ----------
+const tt=$("#tt");let pinnedEdge=null;
+function showTT(html,px,py){
+  if(usesTouchCopy()){
+    tt.innerHTML=`<div class="sheet-handle"></div><div class="sheet-head narrow-only"><strong>Why this is a prerequisite</strong><button type="button" class="sheet-close" id="btn-why-close">Close</button></div>${html}`;
+    tt.style.display="block";tt.style.left="0";tt.style.top="auto";
+    const close=$("#btn-why-close");if(close)close.addEventListener("click",unpinTT);
+    syncScrim();
+    return;
+  }
+  tt.innerHTML=html;tt.style.display="block";
+  const wrap=$("#canvaswrap").getBoundingClientRect();
+  let x=px-wrap.left+14,y=py-wrap.top+14;
+  const tw=tt.offsetWidth,th=tt.offsetHeight;
+  if(x+tw>wrap.width-10)x=px-wrap.left-tw-14;
+  if(y+th>wrap.height-10)y=py-wrap.top-th-14;
+  tt.style.left=Math.max(4,x)+"px";tt.style.top=Math.max(4,y)+"px";
+}
+function hideTT(){if(pinnedEdge===null)tt.style.display="none";}
+function unpinTT(){pinnedEdge=null;tt.style.display="none";edgeEls.forEach(g=>g.classList.remove("hov"));if(typeof syncScrim==="function")syncScrim();}
+function edgeHTML(i){
+  const e=DATA.edges[i];
+  return `<div class="who">${nodeLabel(e.from)} <span class="arrow">→</span> ${nodeLabel(e.to)}</div><div>${e.why}</div>`;
+}
+function onEdgeEnter(i,ev){if(dragMoved||usesTouchCopy())return;edgeEls[i].classList.add("hov");if(pinnedEdge===null)showTT(edgeHTML(i),ev.clientX,ev.clientY);}
+function onEdgeMove(ev){if(pinnedEdge!==null||usesTouchCopy())return;showTT(tt.innerHTML,ev.clientX,ev.clientY);}
+function onEdgeLeave(i){if(usesTouchCopy())return;edgeEls[i].classList.remove("hov");if(pinnedEdge!==i)hideTT();}
+function onEdgeActivate(i,ev){
+  if(pinnedEdge===i){unpinTT();syncScrim();return;}
+  pinnedEdge=i;edgeEls.forEach(g=>g.classList.remove("hov"));edgeEls[i].classList.add("hov");
+  if(isNarrow()){legend.classList.remove("is-open");setPanelOpen(false);}
+  showTT(edgeHTML(i),ev.clientX,ev.clientY);
+}
+
+// ---------- panel ----------
+const panel=$("#panel");
+function themeChip(ti){return `<span class="chip" style="background:${THEMES[ti].color}">${THEMES[ti].name}</span>`;}
+function levelChip(l){const c=LCOL[l];return `<span class="chip" style="background:${c}${LUM(c)>0.28?";color:var(--ink)":""}">Level ${l}</span>`;}
+function depBlock(dir,e){
+  const other=dir==="req"?e.from:e.to;
+  return `<div class="dep"><b data-goto="${other}">${dir==="req"?"← ":"→ "}${nodeLabel(other)}</b><p>${e.why}</p></div>`;
+}
+function gotoHandler(){
+  panel.querySelectorAll("[data-goto]").forEach(b=>{
+    if(b.dataset.goto==="__back")return;
+    b.addEventListener("click",()=>{select(b.dataset.goto);centerOn(b.dataset.goto);});
+  });
+}
+function bindBack(){
+  panel.querySelectorAll("[data-goto='__back']").forEach(el=>{
+    el.addEventListener("click",()=>{guidePinned=false;clearSel();});
+  });
+}
+function sheetChrome(title){
+  return `<div class="sheet-handle"></div><div class="sheet-head narrow-only"><strong>${title}</strong><button type="button" class="sheet-close" data-goto="__back">Close</button></div>`;
+}
+function renderNodePanel(id,ancCount){
+  const n=nodeById(id);
+  const reqs=DATA.edges.filter(e=>e.to===id).sort((a,b)=>LEVEL[a.from]-LEVEL[b.from]);
+  const unl=DATA.edges.filter(e=>e.from===id).sort((a,b)=>LEVEL[a.to]-LEVEL[b.to]);
+  let h=`${sheetChrome(n.label)}<span class="backlink" data-goto="__back">← overview</span><br>
+  ${levelChip(LEVEL[id])} ${themeChip(n.phase)}
+  ${n.id===learnerEntryId()?`<p class="here-summary" style="margin-top:10px">Where you're starting.</p>`:learnerStateOf(n)==="known"?`<p style="color:var(--muted);font-size:14.5px">In your comfortable set — still here if you want to review.</p>`:""}
+  <h2>${n.label}</h2><p>${n.desc}</p>
+  <h3>Rough outline — study in this order</h3>
+  <ol class="outline">${n.outline.map(o=>`<li>${o}</li>`).join("")}</ol>
+  <h3>Key ideas</h3><ul>${n.ideas.map(i=>`<li>${i}</li>`).join("")}</ul>
+  <h3>Mastery check — prove you know this</h3>
+  ${n.questions.map((q,i)=>`<div class="dep"><b>Q${i+1}. ${q.q}</b><details><summary>Show answer</summary><p>${q.a}</p></details></div>`).join("")}
+  <h3>Study sources</h3><ul>${n.sources.map(s=>`<li>${s.u?`<a href="${s.u}" target="_blank" rel="noopener">${s.t}</a>`:s.t}</li>`).join("")}</ul>`;
+  h+=`<h3>Requires — why these are prerequisites (${reqs.length})</h3>`;
+  h+=reqs.length?reqs.map(e=>depBlock("req",e)).join(""):"<p style='color:var(--muted)'>Nothing — this is an entry point.</p>";
+  h+=`<h3>Unlocks (${unl.length})</h3>`;
+  h+=unl.length?unl.map(e=>depBlock("unl",e)).join(""):"<p style='color:var(--muted)'>Nothing directly — this is a terminal destination.</p>";
+  h+=`<p style="margin-top:14px;font-size:14px;color:var(--muted)">Graph focus: this node (highlighted), its ${ancCount} transitive prerequisite${ancCount===1?"":"s"}, and its direct downstream targets.</p>`;
+  panel.innerHTML=h;
+  bindBack();
+  gotoHandler();
+}
+function renderThemePanel(ti){
+  const ids=DATA.nodes.filter(n=>n.phase===ti).map(n=>n.id);
+  panel.innerHTML=`${sheetChrome(THEMES[ti].name)}<span class="backlink" data-goto="__back">← overview</span><br>${themeChip(ti)}
+  <h2>${THEMES[ti].name}</h2>
+  <p>${THEME_BLURBS[ti]||""}</p>
+  <h3>Concepts in this theme (${ids.length})</h3>
+  ${ids.map(i=>`<div class="dep"><b data-goto="${i}">${nodeLabel(i)}</b> <span style="font-size:14px;color:var(--muted)">Level ${LEVEL[i]}</span><p>${nodeById(i).desc}</p></div>`).join("")}`;
+  bindBack();
+  gotoHandler();
+  if(isNarrow())setPanelOpen(true);
+}
+function renderLevelPanel(l){
+  const ids=DATA.nodes.filter(n=>LEVEL[n.id]===l).map(n=>n.id);
+  panel.innerHTML=`${sheetChrome("Level "+l)}<span class="backlink" data-goto="__back">← overview</span><br>${levelChip(l)}
+  <h2>Level ${l}</h2>
+  <p>Everything on this level can be studied in parallel: nothing here depends on anything else at the same level, and every prerequisite sits strictly to the left.</p>
+  <h3>Concepts at this level (${ids.length})</h3>
+  ${ids.map(i=>`<div class="dep"><b data-goto="${i}">${nodeLabel(i)}</b> <span style="font-size:14px;color:var(--muted)">${THEMES[nodeById(i).phase].name}</span><p>${nodeById(i).desc}</p></div>`).join("")}`;
+  bindBack();
+  gotoHandler();
+  if(isNarrow())setPanelOpen(true);
+}
+function renderDefaultPanel(){
+  const nodeVerb=usesTouchCopy()?"Tap":"Click";
+  const arrowLine=usesTouchCopy()
+    ?"Tap any <b>arrow</b> for its rationale (tap again to dismiss). Drag to pan, pinch to zoom, search to jump."
+    :"Hover or click any <b>arrow</b> for its rationale (click again to pin). Drag to pan, scroll to zoom, search to jump.";
+  const colorLine=usesTouchCopy()
+    ?"the tint deepens from the entry level at the left to the frontier at the right — the theme's depth ramp, also drawn in the Levels sheet (tap a band to focus that level)."
+    :"the tint deepens from the entry level at the left to the frontier at the right — the theme's depth ramp, also drawn as the legend bar bottom-left (click a band to focus that level).";
+  const startHTML=hasLearnerData()?(function(){
+    const entry=learnerEntryId();
+    const note=learnerNote()||"Where you're starting is marked on the map. Quieter nodes are ones you already reported as comfortable — they're still here if you want to review.";
+    const jump=entry?`<p><b class="here-jump" data-goto="${entry}">Start here: ${nodeLabel(entry)}</b></p>`:"";
+    return `<div class="here-summary" id="learner-start"><h3>Your starting point</h3><p>${note}</p>${jump}</div>`;
+  })():"";
+  panel.innerHTML=`${sheetChrome("How to read this map")}
+  <h2 style="margin-top:0">Concept dependency map</h2>
+  <p>This map lays out the ${DATA.nodes.length} concepts between ${hasLearnerData()?"where you're starting":"zero background"} and the end goal: <b>${GOAL_STATEMENT}</b></p>
+  ${startHTML}
+  <h3>How to read it</h3>
+  <ul>
+    <li><b>Columns are topological levels.</b> An arrow A → B means learn A before B, so B always sits to the right of A. Everything in one column can be learned in parallel once the columns to its left are done.</li>
+    <li><b>Color encodes depth:</b> ${colorLine}</li>
+    <li>${nodeVerb} any <b>node</b> for its description, a <b>rough study outline</b> (ordered steps), key ideas, sources, and — for every arrow touching it — <b>why</b> that prerequisite holds.</li>
+    <li>${nodeVerb === "Tap" ? "Tapping" : "Clicking"} a node also lights up its entire prerequisite chain: what you'd need to study, in the graph's own order.</li>
+    <li>${arrowLine}</li>
+  </ul>
+  <h3>A suggested path through the graph</h3>
+  <ul>
+    ${SUGGESTED_PATH.map(s=>`<li><b>${s.h}:</b> ${s.t}</li>`).join("")}
+  </ul>
+  <h3>Themes</h3>
+  <div>${THEMES.map((p,i)=>`<span class="chipbtn" data-phase="${i}" style="margin:2px"><span class="dot" style="background:${p.color}"></span>${p.name}</span>`).join("")}</div>
+  <p style="font-size:14px;color:var(--muted)">${nodeVerb} a theme to highlight its nodes across the graph.</p>
+  <h3>Sources</h3>
+  <p style="font-size:14.5px">${GOAL_SOURCES_NOTE}</p>`;
+  bindBack();
+  gotoHandler();
+  panel.querySelectorAll("[data-phase]").forEach(b=>{
+    b.addEventListener("click",()=>focusTheme(+b.dataset.phase));
+  });
+}
+
+// ---------- search ----------
+const searchInput=$("#search"),results=$("#results");
+searchInput.addEventListener("input",()=>{
+  const q=searchInput.value.trim().toLowerCase();
+  if(!q){results.style.display="none";return;}
+  const matches=DATA.nodes.filter(n=>
+    n.label.toLowerCase().includes(q)||n.desc.toLowerCase().includes(q)||n.ideas.some(i=>i.toLowerCase().includes(q))||n.outline.some(o=>o.toLowerCase().includes(q))
+  ).slice(0,8);
+  results.innerHTML=matches.map(n=>`<div data-id="${n.id}">${n.label}<span class="rphase">${THEMES[n.phase].name}</span></div>`).join("")||"<div><i>No matches</i></div>";
+  results.style.display="block";
+  results.querySelectorAll("[data-id]").forEach(r=>{
+    r.addEventListener("click",()=>{
+      Object.values(nodeEls).forEach(g=>g.classList.remove("match"));
+      nodeEls[r.dataset.id].classList.add("match");
+      select(r.dataset.id);centerOn(r.dataset.id);
+      results.style.display="none";searchInput.value="";
+    });
+  });
+});
+document.addEventListener("click",e=>{if(!e.target.closest(".searchwrap"))results.style.display="none";});
+function centerOn(id){
+  const p=pos[id],rect=svg.getBoundingClientRect();
+  const cxg=p.x+NODE_W/2,cyg=p.y+NODE_H/2;
+  view.x=rect.width/2-cxg*view.k;view.y=rect.height/2-cyg*view.k;applyView();
+}
+
+// ---------- legend & init ----------
+const legend=$("#legend");
+(function buildLegend(){
+  const stops=LCOL.map((c,i)=>`${c} ${Math.round(100*i/(NLEVELS-1))}%`).join(", ");
+  const bandVerb=usesTouchCopy()?"Tap":"Click";
+  legend.innerHTML=`<div class="sheet-handle"></div>
+  <div class="sheet-head narrow-only"><strong>Topological levels</strong><button type="button" class="sheet-close" id="btn-legend-close">Close</button></div>
+  <div class="bar" style="background:linear-gradient(90deg, ${stops})"></div>
+  <div class="barlabels"><span>0</span><span>topological level →</span><span>${MAXL}</span></div>
+  <div class="cap">Every column is a dependency level: all its prerequisites sit strictly to the left, so a level can be studied in parallel. ${bandVerb} a band below to focus it.</div>
+  <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:5px">${LCOL.map((c,i)=>`<span class="chipbtn lvlchip" data-level="${i}" style="border-color:${c};font-size:14px;padding:1px 6px">${i}</span>`).join("")}</div>`;
+  legend.querySelectorAll(".lvlchip").forEach(b=>b.addEventListener("click",()=>{
+    if(isNarrow()){legend.classList.remove("is-open");$("#btn-legend").setAttribute("aria-expanded","false");}
+    focusLevel(+b.dataset.level);
+  }));
+  const close=$("#btn-legend-close");if(close)close.addEventListener("click",()=>{legend.classList.remove("is-open");$("#btn-legend").setAttribute("aria-expanded","false");syncScrim();});
+})();
+$("#stats").textContent=`${DATA.nodes.length} concepts · ${DATA.edges.length} prerequisite links · ${NLEVELS} topological levels · build ${BUILD}`;
+$("#hint").innerHTML=hintCopy();
+renderDefaultPanel();
+if(!isNarrow())panel.classList.add("is-open");
+fit();
+
+// ---------- theme toggle (engine): Themed ↔ Default, re-skins palette, fonts, and the depth ramp live ----------
+const ANCHORS_THEMED=ANCHORS.slice();
+let themedOn=true;
+function recolorGraph(){
+  LCOL.length=0;LCOL.push(...Array.from({length:NLEVELS},(_,l)=>levelColor(l)));
+  cols.forEach((c,i)=>colEls[i].setAttribute("fill",LCOL[c.level]));
+  svg.querySelectorAll(".collabel").forEach(t=>t.setAttribute("fill",LCOL[+t.dataset.level]));
+  for(const id in nodeEls){const c=LCOL[LEVEL[id]],rc=nodeEls[id].querySelector("rect.main");rc.setAttribute("fill",c);rc.setAttribute("stroke",c);}
+  const stops=LCOL.map((c,i)=>`${c} ${Math.round(100*i/(NLEVELS-1))}%`).join(", ");
+  const bar=legend.querySelector(".bar");if(bar)bar.style.background=`linear-gradient(90deg, ${stops})`;
+  legend.querySelectorAll(".lvlchip").forEach(b=>b.style.borderColor=LCOL[+b.dataset.level]);
+}
+function setTheme(on){
+  themedOn=on;
+  const t=on?THEME:THEME_DEFAULT;
+  applyTheme(t);
+  const ramp=on?ANCHORS_THEMED:THEME_DEFAULT.anchors;
+  if(ramp&&ramp.length>=2){ANCHORS.length=0;ANCHORS.push(...ramp);}
+  recolorGraph();
+  $("#btn-theme").textContent=on?"Themed":"Default";
+}
+$("#btn-theme").addEventListener("click",()=>setTheme(!themedOn));
+// deep link: open with #node-id to start with that concept selected
+(function(){
+  const id=location.hash&&location.hash.slice(1);
+  if(id&&nodeEls[id]){select(id);centerOn(id);}
+})();
+</script>
+</body>
+</html>
