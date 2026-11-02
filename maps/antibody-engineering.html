@@ -1,0 +1,3234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Immunology → B-cell Antibody Engineering · Prerequisite Map</title>
+<style>
+  :root{
+    --ink:#1e293b; --muted:#64748b; --line:#e2e8f0; --bg:#f8fafc; --panel:#ffffff;
+    --accent:#2563eb;
+    /* engine defaults — the MAP-THEME block in the page's script overrides all of these at startup */
+    --ink-2:#334155; --dep-bg:#fbfdff; --edge:#bcc7d4; --edge-related:#7c8aa0;
+    --hover-bg:#eff6ff; --match:#f59e0b; --btn-hover-border:#94a3b8;
+    --overlay-bg:rgba(255,255,255,.92); --overlay-bg-2:rgba(255,255,255,.85);
+    --font-display:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --font-body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --safe-t:env(safe-area-inset-top,0px); --safe-r:env(safe-area-inset-right,0px);
+    --safe-b:env(safe-area-inset-bottom,0px); --safe-l:env(safe-area-inset-left,0px);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;height:100dvh;margin:0;overflow:hidden;overscroll-behavior:none;-webkit-text-size-adjust:100%}
+  body{font-family:var(--font-body);color:var(--ink);background:var(--bg);display:flex;flex-direction:column;max-width:100%}
+  header{display:flex;align-items:center;gap:14px;padding:10px 16px;padding-left:max(16px,var(--safe-l));padding-right:max(16px,var(--safe-r));padding-top:max(10px,var(--safe-t));background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap;position:relative;z-index:30}
+  .brand{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;min-width:0}
+  header h1{font-size:17px;margin:0;font-weight:650;font-family:var(--font-display)}
+  header .stats{font-size:14px;color:var(--muted)}
+  .spacer{flex:1}
+  .toolbar{display:flex;align-items:center;gap:8px}
+  .toolbar-actions{display:flex;align-items:center;gap:8px}
+  @media (min-width:901px){
+    .brand,.toolbar,.toolbar-actions{display:contents}
+  }
+  .searchwrap{position:relative}
+  #search{width:230px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;font-size:15px;outline:none;background:var(--panel);color:var(--ink)}
+  #search:focus{border-color:var(--accent)}
+  #results{position:absolute;top:36px;left:0;width:300px;max-height:260px;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px rgba(15,23,42,.12);display:none;z-index:50}
+  #results div{padding:7px 10px;font-size:15px;cursor:pointer}
+  #results div:hover{background:var(--hover-bg)}
+  #results .rphase{color:var(--muted);font-size:14px;margin-left:6px}
+  button{padding:6px 11px;border:1px solid var(--line);background:var(--panel);border-radius:8px;font-size:15px;cursor:pointer;color:var(--ink)}
+  button:hover{border-color:var(--btn-hover-border)}
+  .iconbtn{display:none;align-items:center;justify-content:center;width:44px;height:44px;padding:0;flex-shrink:0}
+  .iconbtn svg{display:block}
+  .narrow-only{display:none}
+  main{flex:1;display:flex;min-height:0;min-width:0}
+  #canvaswrap{flex:1;position:relative;overflow:hidden;min-width:0;min-height:0}
+  #graph{width:100%;height:100%;display:block;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+  #graph.panning{cursor:grabbing}
+  #legend{position:absolute;left:12px;bottom:12px;background:var(--overlay-bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:14px;max-width:340px;z-index:20}
+  #legend .bar{height:10px;border-radius:5px}
+  #legend .barlabels{display:flex;justify-content:space-between;margin-top:3px;color:var(--muted)}
+  #legend .cap{margin-top:4px;color:var(--muted);line-height:1.4}
+  .sheet-head{display:none;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+  .sheet-head strong{font-size:15px;font-family:var(--font-display)}
+  .sheet-handle{display:none;width:36px;height:4px;border-radius:999px;background:var(--line);margin:0 auto 10px}
+  .sheet-close{min-height:44px;padding:8px 12px}
+  #hint{position:absolute;left:12px;top:12px;font-size:14px;color:var(--muted);background:var(--overlay-bg-2);border:1px solid var(--line);border-radius:8px;padding:5px 9px;z-index:20}
+  #tt{position:absolute;display:none;max-width:330px;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgba(15,23,42,.18);padding:10px 12px;font-size:14.5px;z-index:40;pointer-events:none;line-height:1.45}
+  #tt .who{font-weight:650;font-size:14px;margin-bottom:4px}
+  #tt .who .arrow{color:var(--accent)}
+  #panel{width:400px;flex-shrink:0;background:var(--panel);border-left:1px solid var(--line);overflow-y:auto;padding:18px 20px 40px}
+  #panel h2{font-size:19px;margin:6px 0 6px;line-height:1.3;font-family:var(--font-display)}
+  #panel h3{font-size:14px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:18px 0 8px}
+  #panel p{font-size:15px;line-height:1.55;margin:6px 0}
+  #panel ul,#panel ol{margin:4px 0;padding-left:20px}
+  #panel li{font-size:15px;line-height:1.5;margin:3px 0}
+  #panel ol.outline li{margin:6px 0}
+  #panel ol.outline li::marker{color:var(--muted);font-weight:650;font-size:14px}
+  #panel details{margin-top:6px}
+  #panel summary{cursor:pointer;color:var(--accent);font-size:14px}
+  #panel details p{margin:6px 0 2px;font-size:14.5px;color:var(--ink-2)}
+  #panel .chip{display:inline-block;font-size:14px;font-weight:600;letter-spacing:.03em;padding:3px 9px;border-radius:999px;color:#fff}
+  .dep{border:1px solid var(--line);border-radius:10px;padding:9px 11px;margin:8px 0;background:var(--dep-bg)}
+  .dep b{font-size:15px;cursor:pointer;color:var(--accent)}
+  .dep b:hover{text-decoration:underline}
+  .dep p{margin:4px 0 2px;font-size:14.5px;color:var(--ink-2)}
+  #panel a{color:var(--accent);text-decoration:none;font-size:15px}
+  #panel a:hover{text-decoration:underline}
+  .backlink{font-size:14.5px;color:var(--accent);cursor:pointer}
+  .backlink:hover{text-decoration:underline}
+  #scrim{display:none}
+  .colbg{opacity:.05}
+  .collabel{font-size:14px;font-weight:650;filter:brightness(.62) saturate(1.15)}
+  .node rect.main{stroke-width:1.3;cursor:pointer}
+  .node text{font-size:14px;fill:var(--ink);pointer-events:none;font-weight:520}
+  .node{cursor:pointer}
+  .edge path.line{stroke:var(--edge);stroke-width:1.3;fill:none;transition:stroke-width .1s}
+  .edge polygon{fill:var(--edge)}
+  .edge path.hit{stroke:transparent;stroke-width:16;fill:none;pointer-events:stroke;cursor:pointer}
+  svg.dimmed .node:not(.related){opacity:.13}
+  svg.dimmed .edge:not(.related){opacity:.05}
+  svg.dimmed .colbg{opacity:.02}
+  svg.dimmed .collabel:not(.related){opacity:.2}
+  .edge.related path.line{stroke:var(--edge-related);stroke-width:1.7}
+  .edge.related polygon{fill:var(--edge-related)}
+  .edge.direct path.line{stroke:var(--accent);stroke-width:2.1}
+  .edge.direct polygon{fill:var(--accent)}
+  .edge.hov path.line{stroke:var(--accent);stroke-width:2.6}
+  .edge.hov polygon{fill:var(--accent)}
+  .node.related rect.main{stroke-width:2.2}
+  .node.sel rect.main{stroke-width:2.8}
+  .node.match rect.main{stroke:var(--match);stroke-width:2.6}
+  .chipbtn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:999px;padding:2px 9px;font-size:14px;font-weight:600;cursor:pointer;background:var(--panel)}
+  .chipbtn:hover{border-color:var(--btn-hover-border)}
+  .chipbtn .dot{width:8px;height:8px;border-radius:50%}
+  @media (pointer:coarse){
+    .edge path.hit{stroke-width:28}
+  }
+  @media (max-width:900px){
+    header{z-index:70;flex-wrap:nowrap;gap:8px;padding:8px 12px;padding-left:max(12px,var(--safe-l));padding-right:max(12px,var(--safe-r));padding-top:max(8px,var(--safe-t))}
+    .brand{flex:1}
+    header h1{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    header .stats,.spacer{display:none}
+    .iconbtn,.narrow-only{display:inline-flex}
+    .sheet-head.narrow-only{display:flex}
+    .toolbar{position:relative;flex-shrink:0}
+    .searchwrap{display:none;flex:1;min-width:0}
+    header.search-open .brand{display:none}
+    header.search-open .searchwrap{display:block}
+    header.search-open #btn-more{display:none}
+    #search{width:100%;min-height:44px;font-size:16px;padding:10px 12px}
+    #results{left:0;right:0;width:100%;top:calc(100% + 6px);max-height:min(50dvh,360px)}
+    #results div{min-height:44px;display:flex;align-items:center;padding:10px 12px}
+    .toolbar-actions{display:none;position:absolute;top:calc(100% + 6px);right:0;flex-direction:column;align-items:stretch;min-width:196px;padding:8px;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(15,23,42,.16);z-index:80}
+    header.menu-open .toolbar-actions{display:flex}
+    .toolbar-actions button{min-height:44px;width:100%;text-align:left;padding:10px 12px}
+    button,.iconbtn,.chipbtn,#panel .backlink,#panel summary{min-height:44px}
+    .chipbtn{padding:10px 14px}
+    #hint{display:none}
+    #legend{display:none;position:fixed;left:0;right:0;bottom:0;top:auto;max-width:none;max-height:min(52dvh,460px);overflow:auto;z-index:60;border-radius:16px 16px 0 0;border:1px solid var(--line);background:var(--panel);padding:12px 16px calc(16px + var(--safe-b));box-shadow:0 -8px 28px rgba(15,23,42,.16)}
+    #legend.is-open{display:block}
+    #legend .lvlchip{min-width:44px;min-height:44px;justify-content:center}
+    #tt{position:fixed;left:0;right:0;bottom:0;top:auto;max-width:none;max-height:min(42dvh,360px);overflow:auto;pointer-events:auto;border-radius:16px 16px 0 0;padding:12px 16px calc(16px + var(--safe-b));z-index:70}
+    #panel .backlink{display:inline-flex;align-items:center;min-height:44px;padding-right:8px}
+    #tt .sheet-handle,#legend .sheet-handle,#panel .sheet-handle{display:block}
+    button,.iconbtn{touch-action:manipulation}
+    #panel,#legend,#tt{-webkit-overflow-scrolling:touch}
+    #panel{position:fixed;left:0;right:0;bottom:0;width:100%;max-height:min(58dvh,520px);border-left:none;border-top:1px solid var(--line);border-radius:16px 16px 0 0;padding:14px 16px calc(18px + var(--safe-b));z-index:60;transform:translateY(110%);box-shadow:0 -8px 28px rgba(15,23,42,.16)}
+    #panel.is-open{transform:translateY(0)}
+    #scrim.is-on{display:block;position:fixed;inset:0;background:rgba(15,23,42,.28);z-index:45}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <h1>Immunology → B-cell Antibody Engineering</h1>
+    <span class="stats" id="stats"></span>
+  </div>
+  <div class="spacer"></div>
+  <div class="toolbar">
+    <button type="button" id="btn-search-toggle" class="iconbtn narrow-only" aria-label="Search concepts" aria-expanded="false" title="Search">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.25" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.2 15.2 21 21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <div class="searchwrap">
+      <input id="search" type="search" placeholder="Search concepts…" autocomplete="off" enterkeyhint="search">
+      <div id="results"></div>
+    </div>
+    <div class="toolbar-actions" id="toolbar-actions">
+      <button type="button" id="btn-theme" title="Toggle themed / default skin">Themed</button>
+      <button type="button" id="btn-fit" title="Zoom to fit">Fit</button>
+      <button type="button" id="btn-reset" title="Clear selection">Reset</button>
+      <button type="button" id="btn-legend" class="narrow-only" aria-expanded="false">Levels</button>
+      <button type="button" id="btn-guide" class="narrow-only" aria-expanded="false">Guide</button>
+    </div>
+    <button type="button" id="btn-more" class="iconbtn narrow-only" aria-label="More controls" aria-expanded="false" aria-controls="toolbar-actions" title="More">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="6" r="1.7" fill="currentColor"/><circle cx="12" cy="12" r="1.7" fill="currentColor"/><circle cx="12" cy="18" r="1.7" fill="currentColor"/></svg>
+    </button>
+  </div>
+</header>
+<main>
+  <div id="canvaswrap">
+    <svg id="graph" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div id="hint">A → B means “learn A before B”. Hover or click any arrow to see <b>why</b> it is a prerequisite.</div>
+    <div id="legend"></div>
+    <div id="tt"></div>
+  </div>
+  <aside id="panel"></aside>
+</main>
+<div id="scrim" hidden></div>
+
+<script>
+/*DATA-START*/
+const DATA =
+{
+  "nodes": [
+    {
+      "id": "central-dogma",
+      "phase": 0,
+      "label": "Gene expression",
+      "desc": "How DNA becomes protein: transcription, splicing, translation, and the regulatory elements (promoters, enhancers, polyA signals) that decide when and where a gene is expressed.",
+      "outline": [
+        "Transcription: promoters, RNA polymerase, enhancers as docking sites",
+        "RNA processing: capping, splicing, polyadenylation — and alternative polyA",
+        "Translation and secretion: ribosomes, signal (leader) peptides, ER → Golgi export",
+        "Cassette tricks: IRES, 2A peptides, splice donors — how engineered constructs hijack expression",
+        "Membrane vs secreted isoforms from the same gene (the BCR/antibody switch)"
+      ],
+      "ideas": [
+        "Promoters & enhancers — the IgH locus is driven by Eμ and the 3′ regulatory region",
+        "Splicing, polyadenylation, and cassette tricks: 2A peptides, IRES, splice donors",
+        "Membrane-bound vs secreted antibody isoforms come from alternative polyadenylation"
+      ],
+      "sources": [
+        {
+          "t": "Janeway's Immunobiology, ch. 1–5",
+          "u": "https://www.ncbi.nlm.nih.gov/books/NBK10757/"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What are the steps from gene to protein, and where is regulation applied?",
+          "a": "Transcription (promoter/enhancer control), splicing, polyadenylation, translation — regulation acts at each step, including alternative polyA choice and mRNA stability."
+        },
+        {
+          "q": "How does one IgH gene yield both a membrane BCR and a secreted antibody?",
+          "a": "Alternative polyadenylation: transcripts use membrane-exon or secreted-exon termini, producing membrane Ig or secreted Ig from the same VDJ exon."
+        },
+        {
+          "q": "Why do engineered antibody cassettes include splice donors and 2A peptides?",
+          "a": "Splice donors splice the engineered VH into endogenous constant-region exons so expression rides the native locus; 2A peptides release separate heavy and light chains from one transcript."
+        }
+      ]
+    },
+    {
+      "id": "protein-structure",
+      "phase": 0,
+      "label": "Protein structure & binding",
+      "desc": "Folding, domains, and binding interfaces — the vocabulary for describing an antibody as a physical object rather than a sequence.",
+      "outline": [
+        "Amino acids → secondary structure → tertiary folds",
+        "Domains as discrete folding units with their own surfaces",
+        "Forces at interfaces: H-bonds, salt bridges, hydrophobic burial, shape complementarity",
+        "Disulfides, oxidative folding in the ER, chaperone quality control",
+        "PTMs: glycosylation, deamidation, oxidation — where they happen and why they matter"
+      ],
+      "ideas": [
+        "Domains and folds; antibodies are modular multi-domain proteins",
+        "Noncovalent forces at interfaces: H-bonds, electrostatics, hydrophobic effect",
+        "Disulfide bonding and folding quality control in the ER",
+        "Post-translational modifications (glycosylation, oxidation)"
+      ],
+      "sources": [
+        {
+          "t": "Janeway's Immunobiology, ch. 4"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What stabilizes a protein-protein interface?",
+          "a": "Shape complementarity plus many weak forces — hydrogen bonds, salt bridges, hydrophobic burial — acting cooperatively."
+        },
+        {
+          "q": "Why is ER folding quality control critical for antibodies?",
+          "a": "Ig domains need intradomain disulfides and chaperone-assisted folding; misfolded chains are retained and degraded, so folding efficiency caps secretion."
+        },
+        {
+          "q": "Name a PTM that changes antibody function.",
+          "a": "N297 glycosylation — required for FcγR and C1q binding; without it the Fc is functionally silent."
+        }
+      ]
+    },
+    {
+      "id": "dna-repair",
+      "phase": 0,
+      "label": "DNA repair & recombination",
+      "desc": "Double-strand break repair (NHEJ, HDR), base excision repair, and mismatch repair — the ordinary cellular machinery that B cells deliberately co-opt to diversify antibodies.",
+      "outline": [
+        "Lesion taxonomy: mismatches, abasic sites, single- and double-strand breaks",
+        "NHEJ: Ku-mediated end recognition, processing, XRCC4/ligase-4 ligation — fast and sloppy",
+        "HDR: homology search and donor-templated repair",
+        "BER: UNG removes uracil, APE1 nicks; MMR: MutSα/MutLα recognize U:G",
+        "When repair goes wrong: chromosomal translocations (e.g. MYC–IgH)"
+      ],
+      "ideas": [
+        "NHEJ: Ku, DNA-PKcs, XRCC4/ligase 4 — this is what joins V, D and J segments",
+        "HDR from a homologous donor — what CRISPR knock-ins exploit",
+        "BER (UNG/APE1) and MMR (MSH2/MSH6) — mis-repair of AID lesions is the point",
+        "Mis-joined breaks → chromosomal translocations (the oncogenic shadow of antibody diversity)"
+      ],
+      "sources": [
+        {
+          "t": "Chi, Li & Qiu (2020) Immunology — V(D)J, SHM & CSR mechanism review",
+          "u": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7341547/"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Which repair pathways does antibody diversification co-opt?",
+          "a": "NHEJ joins V(D)J and switch-region breaks; BER (UNG/APE1) and MMR (MSH2/MSH6) mis-repair AID lesions into mutations; HDR is the knock-in route engineers exploit."
+        },
+        {
+          "q": "How does deliberate mis-repair create the SHM mutation spectrum?",
+          "a": "UNG-created abasic sites give transversions at C:G; MSH2/MSH6 recruitment brings error-prone Polη and A:T mutations — correct repair would erase the diversity."
+        },
+        {
+          "q": "What pathological event shares this machinery?",
+          "a": "Oncogenic chromosomal translocations such as MYC-IgH, from mis-joined double-strand breaks."
+        }
+      ]
+    },
+    {
+      "id": "receptors-signaling",
+      "phase": 0,
+      "label": "Receptor signaling basics",
+      "desc": "How cell-surface receptors convert ligand binding into phosphorylation cascades, second messengers, and cell-fate decisions.",
+      "outline": [
+        "Receptor anatomy: extracellular ligand binding, transmembrane anchor, intracellular tail",
+        "Phosphorylation cascades: kinases, phosphatases, adaptor proteins",
+        "ITAM vs ITIM: the activation/inhibition motif pair",
+        "Signal integration: strength, duration and context → different gene programs",
+        "Transcription-factor endpoints (NF-κB, MAPK, PLCγ → calcium)"
+      ],
+      "ideas": [
+        "Kinases, phosphatases, adaptor proteins",
+        "ITAM/ITIM logic: activation vs inhibition motifs",
+        "Signal strength and duration → different cell fates"
+      ],
+      "sources": [
+        {
+          "t": "Janeway's Immunobiology, ch. 7"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What does an ITAM recruit that an ITIM does not?",
+          "a": "ITAM tyrosines recruit kinase-activating cascades (Src/Syk family); ITIMs recruit phosphatases (SHP/SHIP) that suppress signaling."
+        },
+        {
+          "q": "Why is signal strength, not just signal presence, decisive?",
+          "a": "Different strength and duration regimes select different fates — survival, tolerance, or activation — from the same receptor."
+        },
+        {
+          "q": "What second messengers and transcription factors do receptor cascades converge on?",
+          "a": "PLC-gamma/calcium, MAPK and NF-kappaB — relaying receptor state into gene-expression programs."
+        }
+      ]
+    },
+    {
+      "id": "immune-overview",
+      "phase": 1,
+      "label": "Innate vs adaptive immunity",
+      "desc": "The lay of the land: barrier and innate defenses, the clonally distributed adaptive system, and immunological memory.",
+      "outline": [
+        "Barriers and innate sensors: skin, mucosa, pattern-recognition receptors (TLRs)",
+        "Inflammation: cytokines, chemokines, leukocyte recruitment",
+        "The adaptive cast: B cells, T cells, antigen receptors, clonal selection",
+        "Memory: primary vs secondary responses, and why vaccines work",
+        "Self vs non-self discrimination as the organizing design problem"
+      ],
+      "ideas": [
+        "Innate sensors and inflammation (pattern-recognition receptors; first pass at complement)",
+        "Clonal selection: one cell → one receptor specificity",
+        "Memory as the basis of vaccination and recall",
+        "Self vs non-self discrimination as the organizing problem"
+      ],
+      "sources": [
+        {
+          "t": "Janeway's Immunobiology, ch. 1–3",
+          "u": "https://www.ncbi.nlm.nih.gov/books/NBK10757/"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What distinguishes adaptive from innate immunity?",
+          "a": "Adaptive: clonally distributed rearranged receptors with specificity and memory. Innate: encoded pattern recognition, immediate, no clonal memory."
+        },
+        {
+          "q": "State the clonal selection principle.",
+          "a": "Antigen selects the pre-existing clone whose receptor fits it; that clone expands and differentiates — one cell, one specificity."
+        },
+        {
+          "q": "Why does immunological memory underwrite vaccination?",
+          "a": "Memory lymphocytes respond faster and with higher affinity than naive cells, preventing disease before primary responses develop."
+        }
+      ]
+    },
+    {
+      "id": "hematopoiesis",
+      "phase": 1,
+      "label": "Hematopoiesis & lineages",
+      "desc": "The hematopoietic stem-cell family tree that produces every immune cell — and exactly where the B lineage branches off.",
+      "outline": [
+        "HSCs: self-renewal versus differentiation",
+        "Common lymphoid vs myeloid progenitors",
+        "B-lineage commitment: E2A, EBF, PAX5 and IL-7 receptor signaling",
+        "Where it happens: bone-marrow niches and stromal support"
+      ],
+      "ideas": [
+        "HSC → common lymphoid progenitor → B lineage",
+        "IL-7 and transcription factors (E2A, EBF, PAX5) commit cells to the B fate",
+        "Lymphoid vs myeloid branches"
+      ],
+      "sources": [
+        {
+          "t": "Janeway's Immunobiology, ch. 1 & 8"
+        }
+      ],
+      "questions": [
+        {
+          "q": "From what, and under which cytokine, do B cells arise?",
+          "a": "From common lymphoid progenitors of hematopoietic stem cells; IL-7 drives early B-lineage development."
+        },
+        {
+          "q": "Which transcription factors commit progenitors to the B fate?",
+          "a": "E2A, EBF1 and PAX5 activate the B-lineage program."
+        },
+        {
+          "q": "What does the lineage tree tell you about B cell development?",
+          "a": "B cells are one terminus of the HSC tree via common lymphoid progenitors — development continues that differentiation program in the marrow."
+        }
+      ]
+    },
+    {
+      "id": "lymphoid-tissues",
+      "phase": 1,
+      "label": "Lymphoid tissues & trafficking",
+      "desc": "Bone marrow, spleen, and lymph nodes: the anatomical stages on which development, activation, and germinal-center drama physically play out.",
+      "outline": [
+        "Bone marrow: the primary site — development and plasma-cell retirement",
+        "Lymph-node anatomy: B follicles, T zones, germinal centers",
+        "Spleen: marginal-zone vs follicular B cells",
+        "Trafficking: homing receptors and chemokine gradients (CXCR4/5, CCR7)",
+        "Mucosa-associated lymphoid tissue and IgA (a brief look ahead)"
+      ],
+      "ideas": [
+        "Follicles (B zones) vs T zones",
+        "Chemokine positioning: CXCR4/CXCL12 and CXCR5/CXCL13 segregate dark and light zones",
+        "Bone marrow is both the nursery (development) and the retirement home (long-lived plasma cells)"
+      ],
+      "sources": [
+        {
+          "t": "Janeway's Immunobiology, ch. 1, 10"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Name the anatomical homes of B cell development, activation, and long-term antibody secretion.",
+          "a": "Development: bone marrow. Activation and germinal centers: follicles of spleen and lymph nodes. Long-lived plasma cells: bone marrow survival niches."
+        },
+        {
+          "q": "Which chemokine axes position cells in follicles vs dark zones?",
+          "a": "CXCR5-CXCL13 draws cells to follicles and light zones; CXCR4-CXCL12 draws them to dark zones."
+        },
+        {
+          "q": "Why does the bone marrow appear twice in the B cell story?",
+          "a": "It is both the nursery (development) and the retirement home (long-lived plasma cell survival niches)."
+        }
+      ]
+    },
+    {
+      "id": "antigen-epitope",
+      "phase": 1,
+      "label": "Antigens & epitopes",
+      "desc": "What antibodies actually recognize: antigens, epitopes (linear vs conformational), haptens, and molecular valency.",
+      "outline": [
+        "Definitions: immunogen vs antigen vs hapten; where adjuvants fit",
+        "Epitope types: linear vs conformational (discontinuous)",
+        "Valency: mono-, oligo- and multivalent antigens",
+        "Affinity vs avidity, with a worked example",
+        "Why epitope type predicts which discovery platform can find an antibody against it"
+      ],
+      "ideas": [
+        "Immunogen vs antigen vs hapten",
+        "Linear vs conformational (discontinuous) epitopes — display platforms and B-cell cloning differ in which they can find",
+        "Valency and multivalency",
+        "Affinity vs avidity — defined here, used everywhere"
+      ],
+      "sources": [
+        {
+          "t": "Janeway's Immunobiology, ch. 1, 4"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Distinguish linear from conformational epitopes — with a discovery consequence.",
+          "a": "Linear: contiguous residues; conformational: discontinuous residues brought together by folding. Denatured antigens and some display formats miss conformational epitopes, while single B cell cloning preserves them."
+        },
+        {
+          "q": "Define affinity and avidity.",
+          "a": "Affinity: one binding site's KD. Avidity: amplified effective binding from multivalent engagement."
+        },
+        {
+          "q": "What is a hapten?",
+          "a": "A small molecule that binds antibody but immunizes only when linked to a carrier protein."
+        }
+      ]
+    },
+    {
+      "id": "antibody-structure",
+      "phase": 2,
+      "label": "Antibody architecture",
+      "desc": "The molecule itself: heavy and light chains, Ig-fold domains, Fab vs Fc, hinge, CDRs vs framework, and the conserved N297 glycan.",
+      "outline": [
+        "Chains: heavy (VH–CH1–hinge–CH2–CH3) and light (VL–CL); κ vs λ",
+        "The Ig fold: a β-sandwich domain with an internal disulfide",
+        "Variable vs constant regions; how CDRs are defined (Kabat / Chothia / IMGT)",
+        "Fab vs Fc: the proteolysis map (papain, pepsin) and the hinge",
+        "The N297 glycan and what it licenses",
+        "The VH/VL interface: framework packing and canonical loop classes"
+      ],
+      "ideas": [
+        "VH/VL pair into the paratope; CH2/CH3 form the Fc",
+        "Six CDR loops (L1–3, H1–3); CDR-H3 carries most of the diversity",
+        "Framework residues support loop conformations and VH/VL packing — why humanization is risky",
+        "The N297 glycan in CH2 licenses FcγR and C1q binding"
+      ],
+      "sources": [
+        {
+          "t": "Janeway's Immunobiology, ch. 4"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Sketch the antibody chain layout.",
+          "a": "Two heavy chains (VH-CH1-hinge-CH2-CH3) and two light chains (VL-CL); VH/VL pair into the paratope; CH2-CH3 form the Fc."
+        },
+        {
+          "q": "Which CDR is most diverse and why?",
+          "a": "CDR-H3 — it is assembled at the V-D-J junction, carrying both germline and junctional diversity."
+        },
+        {
+          "q": "Why is N297 glycosylation structurally decisive?",
+          "a": "The CH2 glycan is required for FcγR and C1q engagement — it licenses all Fc effector function."
+        }
+      ]
+    },
+    {
+      "id": "antibody-binding",
+      "phase": 2,
+      "label": "Antigen–antibody interaction",
+      "desc": "Antigen recognition as measurable physics: paratope–epitope complementarity, affinity (KD), kinetics (kon/koff), specificity, and cross-reactivity.",
+      "outline": [
+        "Interface anatomy: which paratope residues touch which epitope residues",
+        "Affinity: KD and its components kon and koff",
+        "Avidity: multivalent binding math",
+        "Specificity vs cross-reactivity vs polyspecificity",
+        "Measurement principles: equilibrium vs kinetic assays (SPR/BLI concepts)"
+      ],
+      "ideas": [
+        "KD = koff/kon — what each rate means and which to select on",
+        "Avidity from multivalent binding (IgM, immune complexes)",
+        "SPR and BLI as the workhorse kinetic measurements",
+        "Specificity vs polyspecificity — the difference between a drug and a liability"
+      ],
+      "sources": [
+        {
+          "t": "Janeway's Immunobiology, ch. 4 + Appendix I (Immunologist's Toolbox)"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Relate KD to kon and koff.",
+          "a": "KD = koff/kon — the ratio of dissociation to association rates; each rate is separately selectable."
+        },
+        {
+          "q": "When would you select on slow off-rate rather than on affinity?",
+          "a": "When residence time at low antigen concentration drives efficacy — a slow koff keeps the antibody bound after antigen drains."
+        },
+        {
+          "q": "What is polyspecificity and why is it disqualifying?",
+          "a": "Reactivity to many unrelated surfaces or antigens — it predicts tissue cross-reactivity and rapid clearance in vivo."
+        }
+      ]
+    },
+    {
+      "id": "isotypes",
+      "phase": 2,
+      "label": "Isotypes & subclasses",
+      "desc": "Same binding site, different constant regions: IgM, IgD, IgG1–4, IgA1–2, IgE — and what each is good at.",
+      "outline": [
+        "The five classes: μ, δ, γ, α, ε — where each is found in the body",
+        "Human IgG subclasses 1–4: hinge, effector profile, half-life differences",
+        "IgM pentamers (avidity logic) and IgA dimers at mucosa",
+        "Effector mapping: complement fixation and FcγR binding by subclass",
+        "Mouse vs human subclass table — the translation trap"
+      ],
+      "ideas": [
+        "Subclass ↔ effector mapping: C1q binds IgG1/IgG3 well, IgG2/IgG4 poorly",
+        "IgM pentamers: low affinity but huge avidity",
+        "Mouse vs human subclass differences — a trap when borrowing mouse data",
+        "Isotype choice is the first effector-engineering decision"
+      ],
+      "sources": [
+        {
+          "t": "Janeway's Immunobiology, ch. 4, 10"
+        },
+        {
+          "t": "Stone et al. (2024) J Allergy Clin Immunol",
+          "u": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11437839/"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Which human IgG subclasses bind C1q strongly?",
+          "a": "IgG1 and IgG3; IgG2 weakly; IgG4 essentially not at all."
+        },
+        {
+          "q": "Why is IgM low-affinity but high-avidity?",
+          "a": "Pentameric valency (10 sites) multiplies weak monovalent binding into strong total attachment."
+        },
+        {
+          "q": "Why are mouse subclass data a translation trap?",
+          "a": "Mouse IgG subclasses have different effector and half-life profiles than the human subclasses sharing their numbers."
+        }
+      ]
+    },
+    {
+      "id": "bcr-signaling",
+      "phase": 2,
+      "label": "BCR complex & signaling",
+      "desc": "The B cell receptor: membrane-bound antibody plus Igα/Igβ signal transducers; tonic survival signals and antigen-triggered activation. See also Receptor signaling basics (not drawn as an arrow): The BCR is an antigen receptor whose signaling output decides survival, proliferation and tolerance. You need the generic receptor-signaling toolkit to read its wiring diagrams.",
+      "outline": [
+        "BCR anatomy: membrane Ig plus Igα/Igβ and their ITAMs",
+        "Proximal cascade: Lyn, Syk, BTK, BLNK",
+        "Tonic signaling: what survival signals mean (and BAFF dependence)",
+        "Antigen-induced activation: crosslinking and the CD19/CD21 co-receptor",
+        "Reading signal strength: how development and activation use the same receptor differently"
+      ],
+      "ideas": [
+        "mIg + CD79a/b (Igα/Igβ) ITAM cascade",
+        "Tonic (survival) vs antigen-induced signaling",
+        "Signal-strength thresholds shape selection and tolerance",
+        "CD19 co-receptor amplification"
+      ],
+      "sources": [
+        {
+          "t": "Janeway's Immunobiology, ch. 7"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Which subunits carry the BCR signal, and through which motif?",
+          "a": "Igalpha/Igbeta (CD79a/b) ITAMs, phosphorylated by Lyn and Syk, cascading through BTK and BLNK."
+        },
+        {
+          "q": "Tonic vs antigen-induced signaling — what differs?",
+          "a": "Tonic: ligand-independent survival signaling. Antigen-induced: crosslinking-driven activation amplified through the CD19 co-receptor."
+        },
+        {
+          "q": "What does the CD19 co-receptor do?",
+          "a": "It amplifies BCR signaling — lowering the activation threshold through enhanced PI3K recruitment."
+        }
+      ]
+    },
+    {
+      "id": "mhc-tcr",
+      "phase": 3,
+      "label": "Antigen presentation & TCR",
+      "desc": "Just enough T-cell side: how peptides ride MHC molecules and how TCRs read peptide–MHC — the language B cells use to ask for help.",
+      "outline": [
+        "MHC-I vs MHC-II: source of peptides, cell distribution, peptide length",
+        "Processing routes: proteasome (cytosolic) vs endosomal (internalized antigen)",
+        "TCR + CD3 + CD4/CD8 recognition geometry",
+        "Professional APCs and co-stimulation (B7–CD28) as the safety switch",
+        "B cells as APCs: BCR-mediated uptake supercharges presentation"
+      ],
+      "ideas": [
+        "MHC-I vs MHC-II presentation pathways",
+        "B cells as professional APCs: BCR-mediated uptake → presentation",
+        "TCR recognition plus CD4 co-receptor"
+      ],
+      "sources": [
+        {
+          "t": "Janeway's Immunobiology, ch. 6"
+        }
+      ],
+      "questions": [
+        {
+          "q": "MHC-I vs MHC-II: source, presenters, audience?",
+          "a": "MHC-I: cytosolic proteins, all nucleated cells, shown to CD8 T cells. MHC-II: endosomal/extracellular proteins, professional APCs including B cells, shown to CD4 T cells."
+        },
+        {
+          "q": "Why is co-stimulation mandatory for T cell activation?",
+          "a": "Antigen recognition without B7-CD28 co-stimulation produces anergy — the two-signal design prevents responses to self alone."
+        },
+        {
+          "q": "How do B cells act as antigen-presenting cells?",
+          "a": "BCR-mediated uptake boosts MHC-II loading — a B cell presents the very antigen it recognizes, coupling help to specificity."
+        }
+      ]
+    },
+    {
+      "id": "t-cell-help",
+      "phase": 3,
+      "label": "T cell help & co-stimulation",
+      "desc": "T-dependent vs T-independent activation: CD40–CD40L, T follicular helper cells, and the cytokines (IL-4, IL-21) that license germinal-center entry and isotype choice. See also MHC & TCR (not drawn as an arrow): Tfh help is a peptide–MHC-II conversation — that hardware now reaches this node through the epitope, so the drawn arrow is not repeated as a skip.",
+      "outline": [
+        "T-dependent vs T-independent antigens, contrasted",
+        "T–B collaboration at the border: linked recognition",
+        "CD40–CD40L: the help signal; hyper-IgM syndrome as the knockout evidence",
+        "Tfh differentiation: BCL6, ICOS, CXCR5",
+        "The cytokine menu: IL-4, IL-21, TGF-β and their isotype outcomes"
+      ],
+      "ideas": [
+        "Linked recognition: the B cell and the T cell must see the same antigen",
+        "CD40–CD40L: without it there is no germinal center (hyper-IgM syndrome proves it)",
+        "IL-4 steers IgE (IgG1 in mouse, IgG4 in human); TGF-β steers IgA",
+        "T-independent antigens: repetitive epitopes, weak memory, no affinity-quality control"
+      ],
+      "sources": [
+        {
+          "t": "Janeway's Immunobiology, ch. 9–10"
+        },
+        {
+          "t": "Crotty (2019) Immunity — Tfh cell biology",
+          "u": "https://doi.org/10.1016/j.immuni.2019.05.001"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Define linked recognition.",
+          "a": "The helper T cell must recognize a peptide of the same antigen the B cell bound — coupling help to genuine antigen encounter."
+        },
+        {
+          "q": "What does CD40-CD40L deficiency prove?",
+          "a": "Hyper-IgM syndrome: without CD40 help, B cells cannot form germinal centers or class-switch — help is non-optional."
+        },
+        {
+          "q": "Which cytokines steer which isotypes?",
+          "a": "IL-4 steers IgE (IgG1 in mouse, IgG4 in human); TGF-beta steers IgA; IFN-gamma biases other subclasses."
+        }
+      ]
+    },
+    {
+      "id": "ig-genetics",
+      "phase": 4,
+      "label": "Ig gene loci",
+      "desc": "The germline hardware: multiple V, D, and J segments at the Igh, Igκ, and Igλ loci, arranged as half-assembled genes waiting for recombination.",
+      "outline": [
+        "Locus maps: Igh (V–D–J–C), Igκ and Igλ — segment counts and order",
+        "RSS anatomy: 7-mer, 12- or 23-bp spacer, 9-mer",
+        "Why germline segments are non-functional alone",
+        "Regulatory elements: promoters, Eμ and 3′RR enhancers",
+        "Allelic polymorphism: why human germline content differs between people"
+      ],
+      "ideas": [
+        "Segment arrays upstream of constant-region exons",
+        "Recombination signal sequences (RSS) flank every segment — the RAG target",
+        "Enhancers (Eμ, 3′RR) drive locus transcription and make segments accessible"
+      ],
+      "sources": [
+        {
+          "t": "Janeway's Immunobiology, ch. 5"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What are RSSs and the 12/23 rule?",
+          "a": "Recombination signal sequences (heptamer-spacer-nonamer) flanking every segment; RAG pairs a 12-bp-spacer RSS with a 23-bp-spacer RSS."
+        },
+        {
+          "q": "Why is a germline V segment alone non-functional?",
+          "a": "It has no joined coding connection to constant-region exons — the V-region exon exists only after somatic recombination."
+        },
+        {
+          "q": "What do the Emu and 3-prime RR enhancers do?",
+          "a": "Drive IgH locus transcription and chromatin accessibility — making segments available to RAG and expression possible after joining."
+        }
+      ]
+    },
+    {
+      "id": "vdj-recombination",
+      "phase": 4,
+      "label": "V(D)J recombination",
+      "desc": "The somatic cut-and-paste reaction that assembles a V-region exon: RAG1/2 cuts at RSS pairs (the 12/23 rule), then error-prone junction repair adds P/N nucleotides via TdT. See also DNA repair & recombination (not drawn as an arrow): RAG cuts are double-strand breaks; the joining is done by the cell's general NHEJ machinery. V(D)J recombination is DNA repair with a sequence-specific nuclease bolted on.",
+      "outline": [
+        "RAG1/2: the nuclease and its synaptic complex",
+        "The 12/23 rule and how pairing is enforced",
+        "Hairpin opening → P-nucleotides; TdT → N-nucleotides",
+        "Exonucleolytic trimming → junctional diversity",
+        "Counting diversity: combinatorial × junctional; why CDR3 sits at the junction",
+        "The order of rearrangement: D→J, V→DJ, then light chains"
+      ],
+      "ideas": [
+        "Combinatorial diversity (segment choice) × junctional diversity (trimming + N-addition)",
+        "CDR-H3 is assembled at the junction — the root of its centrality",
+        "Order: heavy chain (D→J, then V→DJ) precedes light chain (V→J)",
+        "The diversity arithmetic: ~10^9–10^11 receptors from a few hundred gene segments"
+      ],
+      "sources": [
+        {
+          "t": "Chi, Li & Qiu (2020) Immunology",
+          "u": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7341547/"
+        },
+        {
+          "t": "Janeway's Immunobiology, ch. 5"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Name the three junctional-diversity mechanisms.",
+          "a": "Hairpin-opening P nucleotides, exonucleolytic trimming, and TdT-mediated N-nucleotide addition."
+        },
+        {
+          "q": "Why is CDR-H3 junctional?",
+          "a": "It spans the V-D-J joins — its center is not germline-encoded at all."
+        },
+        {
+          "q": "State the rearrangement order and its logic.",
+          "a": "Heavy D-to-J then V-to-DJ, tested by the pre-BCR; then light V-to-J — order prevents wasted rearrangements."
+        }
+      ]
+    },
+    {
+      "id": "b-cell-development",
+      "phase": 4,
+      "label": "B cell development",
+      "desc": "Pro-B → pre-B → immature B in the bone marrow: a timed rearrangement program with life-or-death checkpoints at every stage. See also Hematopoiesis & lineages (not drawn as an arrow): B cell development is the continuation of the HSC lineage program: the stages (pro-B, pre-B, immature) inherit the transcription-factor and cytokine logic of hematopoiesis. See also Lymphoid tissues & trafficking (not drawn as an arrow): Early B cell development is stromal-cell-nursed and site-specific (bone marrow). Knowing the anatomy explains the signaling environments each stage needs. The quality gate between heavy- and light-chain rearrangement: surrogate light chain (VpreB/λ5) + μ heavy chain forms a pre-BCR; only productive rearrangements pass and proliferate.",
+      "outline": [
+        "Stage ladder: HSC → CLP → pro-B → pre-B → immature B",
+        "Rearrangement timeline per stage; the RAG on/off windows",
+        "IL-7 signaling and stage transitions",
+        "The light-chain rearrangement and receptor-editing window",
+        "Exit to periphery: transitional B cells and BAFF-dependent selection",
+        "Surrogate light chain: VpreB and λ5"
+      ],
+      "ideas": [
+        "Stage-by-stage Ig gene expression: heavy chain first, then light chain",
+        "IL-7 dependence and stromal-cell niches",
+        "Immature B cells test autoreactivity before exiting the marrow",
+        "Transitional stages in the spleen before final maturation",
+        "Feedback inhibition halts further VH→DJ attempts on the other allele"
+      ],
+      "sources": [
+        {
+          "t": "Janeway's Immunobiology, ch. 8"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Order the developmental stages with their rearrangement events.",
+          "a": "Pro-B (D-to-J, then V-to-DJ), pre-B (light chain V-to-J), immature B (surface IgM), transitional, mature follicular — with checkpoints between."
+        },
+        {
+          "q": "Where does self-reactivity get tested, and where does maturation finish?",
+          "a": "At the immature-B stage in marrow against self-antigen; transitional cells then compete for BAFF-dependent maturation in the periphery."
+        },
+        {
+          "q": "What is receptor editing and when does it run?",
+          "a": "Renewed RAG-mediated light-chain rearrangement in self-reactive immature B cells — replacing the light chain to change specificity."
+        },
+        {
+          "q": "What is the pre-BCR composed of?",
+          "a": "Rearranged mu heavy chain plus surrogate light chain (VpreB/lambda5) plus Igalpha/Igbeta."
+        },
+        {
+          "q": "What two consequences does pre-BCR signaling trigger?",
+          "a": "Clonal proliferation of productive pre-B cells, and feedback inhibition of further heavy-chain rearrangement."
+        }
+      ]
+    },
+    {
+      "id": "allelic-exclusion",
+      "phase": 4,
+      "label": "Allelic exclusion",
+      "desc": "One heavy chain and one light chain per cell: successful rearrangement feeds back to shut down the other allele — the reason each B cell has a single specificity.",
+      "outline": [
+        "The observation: one functional heavy and one light chain per cell",
+        "Mechanism: pre-BCR feedback plus chromatin shutdown of the second allele",
+        "Isotypic exclusion: κ tries first, λ second",
+        "Consequences: monospecificity — and the design implications for edited cells",
+        "When exclusion fails: dual-expressor cells and mispairing risk"
+      ],
+      "ideas": [
+        "Pre-BCR feedback suppresses the second Igh allele",
+        "κ before λ at the light-chain loci",
+        "Engineering relevance: edited B cells risk mispairing an engineered chain with an endogenous partner"
+      ],
+      "sources": [
+        {
+          "t": "Janeway's Immunobiology, ch. 8"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What enforces one productive heavy chain per cell?",
+          "a": "Pre-BCR feedback suppresses RAG activity and second-allele accessibility; light chains follow kappa-before-lambda order."
+        },
+        {
+          "q": "Why is allelic exclusion a design constraint for B cell engineering?",
+          "a": "Without it, engineered and endogenous chains mispair — creating unknown BCR specificities and autoreactivity risks."
+        },
+        {
+          "q": "Why does kappa rearrange before lambda?",
+          "a": "Isotypic ordering: kappa attempts first and lambda only runs if kappa fails — which is why lambda-expressing cells mark failed kappa attempts."
+        }
+      ]
+    },
+    {
+      "id": "central-tolerance",
+      "phase": 4,
+      "label": "Central B cell tolerance",
+      "desc": "The bone-marrow quality filter: strongly self-reactive immature B cells are deleted, receptor-edited (RAG back on), or anergized.",
+      "outline": [
+        "The self-antigen menu of the marrow",
+        "Fate map by signal strength: deletion vs editing vs anergy",
+        "Receptor-editing mechanics: RAG reactivation and light-chain replacement",
+        "The numbers: Wardemann 2003 — most precursor human B cells are self-reactive",
+        "What escapes, and why that matters for autoimmunity and drug polyspecificity"
+      ],
+      "ideas": [
+        "Receptor editing as a second chance",
+        "Clonal deletion for strong self-antigen encounters",
+        "Anergy for weak/subthreshold self-signals",
+        "Wardemann 2003: the majority of naive human B cells are initially self-reactive and edited"
+      ],
+      "sources": [
+        {
+          "t": "Janeway's Immunobiology, ch. 8"
+        },
+        {
+          "t": "Wardemann et al. (2003) Science — precursor autoantibody editing"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Name the three fates of self-reactive immature B cells.",
+          "a": "Clonal deletion, receptor editing (a new light chain via renewed RAG), or anergy — chosen by signal strength."
+        },
+        {
+          "q": "What did Wardemann 2003 establish?",
+          "a": "Most early human immature B cells are self-reactive; editing and deletion remove the majority before maturity."
+        },
+        {
+          "q": "Why is receptor editing called a second chance?",
+          "a": "RAG reactivates to replace the light chain, giving the self-reactive cell a new specificity instead of death."
+        }
+      ]
+    },
+    {
+      "id": "naive-repertoire",
+      "phase": 4,
+      "label": "Naive repertoire statistics",
+      "desc": "The output distribution: which V/J genes get used, how long CDR3s run, and how much baseline autoreactivity survives tolerance. Reading immune repertoires at scale: IgH/IgL amplicons, germline annotation, clonotypes, and lineage trees — the data layer of modern antibody discovery.",
+      "outline": [
+        "Follicular naive B cells: recirculation and life span",
+        "Diversity statistics: CDR3 length, V/J usage, N-addition profiles",
+        "B1 and marginal-zone B cells as parallel lineages (brief)",
+        "Baseline polyspecificity that survives tolerance",
+        "Why this distribution is the template for naive libraries",
+        "Sampling: PBMC subsets and tissues; RNA vs genomic-DNA templates"
+      ],
+      "ideas": [
+        "Diversity estimates (~10^9–10^11) and CDR3 length distributions",
+        "Germline gene-usage bias — some VH genes dominate",
+        "Baseline polyspecificity that tolerance leaves behind",
+        "This distribution is the blueprint that naive and synthetic libraries imitate",
+        "Multiplex primer sets and 5′RACE for unbiased V-region capture"
+      ],
+      "sources": [
+        {
+          "t": "Janeway's Immunobiology, ch. 5"
+        },
+        {
+          "t": "Wardemann et al. (2003) Science"
+        },
+        {
+          "t": "Georgiou et al. (2014) Nat Biotechnol — high-throughput antibody repertoire"
+        }
+      ],
+      "questions": [
+        {
+          "q": "How large is the naive repertoire, and what shapes its composition?",
+          "a": "Roughly 10^9 to 10^11 specificities, shaped by V/J usage bias, CDR3 length distributions, N-addition — and filtered by tolerance."
+        },
+        {
+          "q": "Why do synthetic libraries imitate naive-repertoire statistics?",
+          "a": "Natural CDR3 lengths, compositions and framework pairings correlate with foldable, expressible, functional binding sites."
+        },
+        {
+          "q": "What baseline polyspecificity survives tolerance?",
+          "a": "A fraction of mature naive cells remains weakly polyreactive — the pool from which pathogenic autoreactivity can later emerge."
+        },
+        {
+          "q": "5-prime RACE vs multiplex primers — the tradeoff?",
+          "a": "5-prime RACE with UMIs is unbiased across V families; multiplex primer sets carry family-coverage bias but are simpler."
+        },
+        {
+          "q": "What is a clonotype?",
+          "a": "A unique V(D)J rearrangement (usually CDR3-defined) — the unit of lineage and expansion analysis."
+        }
+      ]
+    },
+    {
+      "id": "b-cell-activation",
+      "phase": 5,
+      "label": "B cell activation & EF response",
+      "desc": "Meeting antigen: T-dependent activation at the T–B border, plus the extrafollicular plasmablast response that supplies early, lower-quality antibody. See also Antigens & epitopes (not drawn as an arrow): B cells activate when their BCRs multivalently crosslink antigen. Valency and avidity, not just affinity, drive activation — so you need epitope/valency concepts first. See also T cell help & co-stimulation (not drawn as an arrow): Full B cell activation needs two signals: BCR engagement plus T cell help (CD40L, cytokines). One signal alone gives tolerance, not antibody.",
+      "outline": [
+        "Antigen encounter: follicles and the T–B border",
+        "Two-signal integration: BCR + CD40/cytokines",
+        "The extrafollicular plasmablast program: IRF4 → BLIMP1 → XBP1",
+        "T-independent activation routes and their quality-control limits",
+        "The fate branch point: GC vs plasmablast vs memory"
+      ],
+      "ideas": [
+        "Two-signal requirement: BCR signal + T cell help",
+        "Extrafollicular plasmablasts: fast antibody, some SHM, less selection",
+        "T-independent routes and their quality-control limits"
+      ],
+      "sources": [
+        {
+          "t": "Janeway's Immunobiology, ch. 10"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What two signals trigger full B cell activation?",
+          "a": "BCR crosslinking (signal 1) plus T cell help — CD40L and cytokines (signal 2)."
+        },
+        {
+          "q": "What are extrafollicular plasmablasts?",
+          "a": "Rapidly differentiated antibody secretors outside follicles — early serum antibody with limited mutation and selection."
+        },
+        {
+          "q": "Why is extrafollicular antibody lower quality?",
+          "a": "Less mutation and weaker selection than germinal-center output — speed is traded for quality."
+        }
+      ]
+    },
+    {
+      "id": "gc-reaction",
+      "phase": 5,
+      "label": "Germinal center reaction",
+      "desc": "Nature's directed-evolution reactor: dark-zone proliferation and mutation, light-zone selection by antigen capture and limiting Tfh help, with cycles of re-entry. See also Lymphoid tissues & trafficking (not drawn as an arrow): Germinal centers are follicular structures; dark/light-zone organization is chemokine-segregated anatomy (CXCL12 vs CXCL13 gradients).",
+      "outline": [
+        "GC initiation: seeded cells commit to the BCL6 program",
+        "Zoning: dark vs light zone, CXCR4/CXCR5 chemokine gradients",
+        "The dark-zone program: proliferation and AID-driven mutation",
+        "The light-zone program: antigen capture from FDCs, pMHC presentation",
+        "Tfh limitation and cyclic re-entry (10–30% win re-selection per cycle)",
+        "Exit decisions: plasma cell vs memory vs another round"
+      ],
+      "ideas": [
+        "Dark zone = proliferation + SHM; light zone = selection",
+        "Tfh help is limiting: peptide–MHC density on the B cell is the fitness metric",
+        "Follicular dendritic cells display antigen as the selection substrate",
+        "Only ~10–30% of light-zone cells win re-entry per cycle"
+      ],
+      "sources": [
+        {
+          "t": "De Silva & Klein (2015) Nat Rev Immunol",
+          "u": "https://www.nature.com/articles/nri3804"
+        },
+        {
+          "t": "Victora & Nussenzweig (2022) Annu Rev Immunol",
+          "u": "https://www.annualreviews.org/content/journals/10.1146/annurev-immunol-120419-022408"
+        },
+        {
+          "t": "Mesin, Ersching & Victora (2016) Immunity",
+          "u": "https://www.cell.com/immunity/fulltext/S1074-7613(16)30345-4"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Contrast dark zone and light zone.",
+          "a": "Dark: rapid proliferation plus SHM. Light: antigen capture from FDCs, pMHC presentation to limiting Tfh cells, selection and exit decisions."
+        },
+        {
+          "q": "What fraction of light-zone cells win re-entry per cycle?",
+          "a": "Roughly 10 to 30 percent; the rest die or exit the GC."
+        },
+        {
+          "q": "Which transcription factor defines the GC state?",
+          "a": "BCL6 — its program enables AID expression and suppresses activation and apoptosis genes."
+        }
+      ]
+    },
+    {
+      "id": "shm",
+      "phase": 5,
+      "label": "Somatic hypermutation",
+      "desc": "The mutator: AID deaminates cytosines in V regions, and repair of the U:G lesion is deliberately error-prone, sprinkling point mutations at hotspot motifs. See also DNA repair & recombination (not drawn as an arrow): SHM is DNA repair gone deliberately sloppy: AID's U:G lesions are processed by UNG (base excision) and MSH2/MSH6 (mismatch repair) into mutations instead of correct repairs.",
+      "outline": [
+        "AID: expression, WRCY hotspot targeting, single-stranded-DNA deamination",
+        "U:G outcome 1: faithful replication → transitions at C:G",
+        "U:G outcome 2: UNG → abasic site → transversions",
+        "U:G outcome 3: MSH2/MSH6 → Polη → mutations at A:T",
+        "Targeting logic: why only V regions (transcription-coupled access, accessory factors)",
+        "The statistical fingerprint: mutation spectra and hotspots"
+      ],
+      "ideas": [
+        "AID: C→U deamination on single-stranded DNA, targeting WRCY hotspots",
+        "UNG/APE1 route → transversions; MSH2/MSH6 + Polη route → A:T mutations",
+        "Transcription-coupled targeting to V regions over C regions",
+        "This is the random-variation generator that selection acts on"
+      ],
+      "sources": [
+        {
+          "t": "Di Noia & Neuberger (2007) Annu Rev Biochem",
+          "u": "https://doi.org/10.1146/annurev.biochem.76.061705.090740"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What reaction does AID catalyze, and where?",
+          "a": "Cytosine-to-uracil deamination on single-stranded DNA of V regions, preferentially at WRCY hotspots."
+        },
+        {
+          "q": "How do repair choices generate the mutation spectrum?",
+          "a": "Faithful replication gives transitions at C:G; UNG/APE1 gives transversions; MSH2/MSH6-Pol-eta patch repair mutates A:T — all deliberate mis-repairs."
+        },
+        {
+          "q": "How is mutation targeted to V regions only?",
+          "a": "Transcription-coupled accessibility and accessory factors concentrate AID on expressed V loci, sparing C regions."
+        }
+      ]
+    },
+    {
+      "id": "affinity-maturation",
+      "phase": 5,
+      "label": "Affinity maturation & selection",
+      "desc": "Darwin in a follicle: mutants compete for antigen on FDCs and for Tfh help; higher affinity wins re-entry, clonal expansion, and exit as memory or plasma cells. See also Antigen–antibody interaction (not drawn as an arrow): Germinal centers literally select on this quantity: higher-affinity BCRs capture antigen better, present more peptide, and win Tfh help. Affinity is the fitness function.",
+      "outline": [
+        "Selection step 1: affinity-scaled antigen capture from FDCs",
+        "Selection step 2: pMHC density competing for limiting Tfh help",
+        "MYC as the selection license; re-entry to the dark zone and division counts",
+        "Clonal dynamics: interference, bursts, pruning",
+        "Selection noise → breadth; what serum-affinity trajectories look like",
+        "What GCs select against: damaging mutations, poor expression, self-binding"
+      ],
+      "ideas": [
+        "Selection on affinity — and against damaging mutations",
+        "Clonal interference and clonal bursts",
+        "Selection noise preserves breadth (why GCs don't converge on a single optimum)",
+        "This loop is the design template every in-vitro maturation method copies"
+      ],
+      "sources": [
+        {
+          "t": "Gitlin, Shulman & Nussenzweig (2014) Nature — clonal selection in the GC"
+        },
+        {
+          "t": "Victora & Nussenzweig (2022) Annu Rev Immunol",
+          "u": "https://www.annualreviews.org/content/journals/10.1146/annurev-immunol-120419-022408"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What are the two consecutive selection steps in the light zone?",
+          "a": "Affinity-scaled antigen capture from FDCs, then pMHC-density competition for limiting Tfh help."
+        },
+        {
+          "q": "What role does MYC play?",
+          "a": "Induced by Tfh help in selected light-zone cells, MYC licenses re-entry into the dark zone and sets division capacity."
+        },
+        {
+          "q": "Why does maturation not converge on one optimal antibody?",
+          "a": "Selection noise, drift and repeated bottlenecks preserve breadth — diversity, not perfection, is the GC product."
+        }
+      ]
+    },
+    {
+      "id": "csr",
+      "phase": 5,
+      "label": "Class switch recombination",
+      "desc": "Same antibody, new effector: AID cuts two switch regions and NHEJ splices a new constant region downstream — specificity preserved, isotype changed. See also DNA repair & recombination (not drawn as an arrow): CSR joins double-strand breaks made in two switch regions — the same NHEJ machinery that closes V(D)J joints, acting on a different chromosomal substrate. See also Isotypes & subclasses (not drawn as an arrow): CSR is the mechanism that swaps the constant region from μ to γ, ε or α. The destination states of switching are the isotypes.",
+      "outline": [
+        "Switch-region anatomy: repetitive, G-rich targets",
+        "Germline transcription and chromatin opening (I promoters)",
+        "AID cuts → double-strand breaks → NHEJ junctions between switch regions",
+        "Cytokine-specific switching menus: IL-4, TGF-β, IFN-γ",
+        "Sequential switching and the IgH 3′ regulatory region"
+      ],
+      "ideas": [
+        "Germline transcripts open switch-region chromatin for AID",
+        "Cytokine-directed isotype choice (IL-4, TGF-β, IFN-γ)",
+        "Sequential switching (e.g., IgM→IgG1→IgE)",
+        "Engineering relevance: humanized mouse loci must support human CSR to deliver useful IgG"
+      ],
+      "sources": [
+        {
+          "t": "Stavnezer, Guikema & Schrader (2008) Annu Rev Immunol",
+          "u": "https://doi.org/10.1146/annurev.immunol.26.021607.090248"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Which enzyme and which breaks drive class switching?",
+          "a": "AID creates double-strand breaks in switch regions (opened by germline transcription); NHEJ joins donor to acceptor breaks."
+        },
+        {
+          "q": "How do cytokines select the target isotype?",
+          "a": "They activate specific I promoters, producing germline transcripts that open the matching switch region to AID."
+        },
+        {
+          "q": "Can switching happen without AID?",
+          "a": "No — AID deficiency causes hyper-IgM with absent switching, proving AID is the switch reaction's initiator."
+        }
+      ]
+    },
+    {
+      "id": "memory-plasma",
+      "phase": 5,
+      "label": "Memory & plasma cells",
+      "desc": "The exit fates: memory B cells for fast recall, and long-lived plasma cells in marrow niches that secrete serum antibody for years to decades.",
+      "outline": [
+        "Plasma-cell differentiation program: IRF4 → BLIMP1 → XBP1",
+        "Short-lived vs long-lived plasma cells; the marrow niche (BAFF/APRIL, CXCL12 stroma)",
+        "Memory subsets: isotype, CD27, tissue residency",
+        "Recall kinetics: why memory beats naive",
+        "Discovery relevance: which compartments to sort from immune donors"
+      ],
+      "ideas": [
+        "LLPC survival niches (BAFF/APRIL, stromal support)",
+        "Memory recall beats the naive response in speed and affinity",
+        "Sorting antigen-experienced cells (CD27+, plasmablasts) is the entry point of immune-donor discovery"
+      ],
+      "sources": [
+        {
+          "t": "Nutt et al. (2015) Nat Rev Immunol — generation of antibody-secreting plasma cells"
+        },
+        {
+          "t": "Janeway's Immunobiology, ch. 10"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Which transcription-factor cascade defines plasma-cell differentiation?",
+          "a": "IRF4 to BLIMP1 to XBP1 — shutting BCR programs and building the secretory apparatus."
+        },
+        {
+          "q": "Where do long-lived plasma cells reside, and on what?",
+          "a": "Bone marrow survival niches, supported by stromal CXCL12 and BAFF/APRIL signals."
+        },
+        {
+          "q": "Why sort memory B cells and plasmablasts for discovery?",
+          "a": "They are enriched for antigen-experienced, class-switched, affinity-matured antibodies with native VH/VL pairs."
+        }
+      ]
+    },
+    {
+      "id": "peripheral-tolerance",
+      "phase": 5,
+      "label": "Peripheral tolerance",
+      "desc": "Second-line policing of self-reactive cells that escaped the marrow — and the immunological reason polyspecific antibodies make dangerous drugs.",
+      "outline": [
+        "Peripheral checkpoints: chronic-antigen exposure and tonic-signal thresholds",
+        "Anergy induction and the anergic transcriptional state",
+        "Follicular exclusion and death by neglect",
+        "BAFF dosage as a selection-stringency dial",
+        "Autoimmunity as tolerance failure — and drug polyspecificity as its iatrogenic analogue"
+      ],
+      "ideas": [
+        "Anergy and follicular exclusion in the periphery",
+        "BAFF-dependent survival thresholds",
+        "Engineered B cells can create novel autoreactivity through chain mispairing",
+        "Autoimmunity as the failure mode tolerance exists to prevent"
+      ],
+      "sources": [
+        {
+          "t": "Janeway's Immunobiology, ch. 15"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What fates await self-reactive mature B cells in the periphery?",
+          "a": "Chronic-antigen anergy, follicular exclusion, or death — with BAFF-dependent survival thresholds deciding."
+        },
+        {
+          "q": "Why is BAFF dosage a tolerance parameter?",
+          "a": "Over-abundant BAFF rescues self-reactive cells that should die — stringency falls with excess survival factor."
+        },
+        {
+          "q": "What is follicular exclusion?",
+          "a": "Self-reactive anergic B cells are denied entry to follicles and die from lack of survival signals."
+        }
+      ]
+    },
+    {
+      "id": "fc-receptors",
+      "phase": 6,
+      "label": "Fc receptors",
+      "desc": "The Fc's dance card: activating and inhibitory FcγRs (ITAM/ITIM), FcRn, and FcεRI — who expresses what, and what each binding event implies.",
+      "outline": [
+        "Receptor census: FcγRI/IIa/IIb/IIIa/IIIb, FcεRI, FcRn, pIgR",
+        "ITAM/ITIM pairing: activating vs inhibitory signaling logic",
+        "Cell-type expression map: NK cells, macrophages, neutrophils, DCs, endothelium",
+        "Affinity classes: high-affinity FcγRI vs immune-complex-dependent low-affinity receptors",
+        "Allotypes: FcγRIIIa-158V/F and clinical ADCC responses"
+      ],
+      "ideas": [
+        "FcγRI, IIa, IIIa activating; FcγRIIb inhibitory",
+        "Cell-type expression map: NK cells → FcγRIIIa (ADCC); macrophages → ADCP",
+        "Allotypes matter: FcγRIIIa-158V carriers respond better to ADCC-mechanism drugs",
+        "This contact map is the substrate of all Fc engineering"
+      ],
+      "sources": [
+        {
+          "t": "Janeway's Immunobiology, ch. 10"
+        },
+        {
+          "t": "Nimmerjahn & Ravetch (2008) Nat Rev Immunol — Fcγ receptors as immune regulators"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Sort the Fc gamma receptors by signaling polarity.",
+          "a": "Activating (ITAM): FcγRI, IIa, IIIa. Inhibitory (ITIM): FcγRIIb. FcγRI binds monomeric IgG; the others need immune complexes."
+        },
+        {
+          "q": "Why does the FcγRIIIa-158V/F allotype matter clinically?",
+          "a": "158V carriers have higher-affinity receptors and better ADCC responses to FcγRIIIa-dependent antibodies."
+        },
+        {
+          "q": "Which effector cells express which receptor?",
+          "a": "NK cells: FcγRIIIa (ADCC). Macrophages: FcγRI/IIa (ADCP). Neutrophils: FcγRIIa/IIIb."
+        }
+      ]
+    },
+    {
+      "id": "effector-functions",
+      "phase": 6,
+      "label": "ADCC · ADCP · CDC",
+      "desc": "What antibodies actually do: ADCC (NK killing), ADCP (macrophage engulfment), CDC (complement lysis) — and how assays measure each. See also Complement system (not drawn as an arrow): CDC is complement doing the killing after antibody tags the target. Effector engineering tunes C1q engagement — you need the cascade to know what you are tuning. See also Complement system (folded, not a node): Complement is the innate cascade that CDC uses — learn it as part of effector functions. The cascade antibody recruits: C1q-initiated classical pathway, C3b opsonization, and membrane-attack-complex lysis.",
+      "outline": [
+        "ADCC: the NK-cell synapse, FcγRIIIa, killing readouts",
+        "ADCP: macrophage phagocytosis and trogocytosis",
+        "CDC: C1q engagement and IgG hexamer geometry",
+        "Potency factors: epitope position, antigen density, Fc variant",
+        "Assays: reporter systems vs primary cells; allotype-matched donors"
+      ],
+      "ideas": [
+        "ADCC via FcγRIIIa: the workhorse tumor-killing mechanism",
+        "ADCP and trogocytosis",
+        "CDC needs C1q engagement and antibody hexamer geometry",
+        "Reporter assays vs primary-cell assays — know which you're reading"
+      ],
+      "sources": [
+        {
+          "t": "Stone et al. (2024) J Allergy Clin Immunol",
+          "u": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11437839/"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Define ADCC, ADCP and CDC.",
+          "a": "ADCC: NK killing via FcγRIIIa. ADCP: macrophage engulfment via FcγRs. CDC: C1q-initiated complement lysis."
+        },
+        {
+          "q": "What modulates each mechanism's potency?",
+          "a": "Epitope position, antigen density, Fc variant and glycoform, and — for CDC — antibody hexamer geometry on the target surface."
+        },
+        {
+          "q": "Which Fc gamma receptor drives NK-cell ADCC?",
+          "a": "FcγRIIIa — NK cells use it to recognize and kill antibody-coated targets."
+        }
+      ]
+    },
+    {
+      "id": "fcrn-pk",
+      "phase": 6,
+      "label": "FcRn & pharmacokinetics",
+      "desc": "Why IgG lasts ~3 weeks: FcRn grabs antibody in acidic endosomes, recycles it, and releases it at neutral pH — the basis of half-life engineering.",
+      "outline": [
+        "FcRn biology: expression, the pH switch (His310/His435)",
+        "Trafficking: pinocytosis → acidic endosome → recycle or degrade",
+        "Half-life math: why IgG ≈ 3 weeks; the binding–catabolism relationship",
+        "Engineering to extend: YTE and LS — and the neutral-pH trap",
+        "Engineering to deplete: ABDEG mutants and anti-FcRn mAbs for autoantibody clearance",
+        "Transport roles: across the placenta and mucosal barriers (brief)"
+      ],
+      "ideas": [
+        "pH-dependent binding via His310/His435",
+        "Endosomal rescue vs lysosomal degradation",
+        "Half-life variants only work if neutral-pH release is preserved — tighten too much and clearance worsens",
+        "Dosing implications: weekly → monthly → seasonal prophylaxis"
+      ],
+      "sources": [
+        {
+          "t": "Roopenian & Akilesh (2007) Nat Rev Immunol — the neonatal Fc receptor comes of age"
+        },
+        {
+          "t": "Ramdani et al. (2022) Int J Mol Sci",
+          "u": "https://www.mdpi.com/1422-0067/23/17/9604"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Explain FcRn's pH switch.",
+          "a": "Fc binds FcRn tightly at endosomal pH 6 (protonated His310/His435) and releases at pH 7.4 — recycling IgG away from lysosomes."
+        },
+        {
+          "q": "Why can tighter FcRn binding backfire?",
+          "a": "If neutral-pH release fails, the antibody cannot detach from FcRn and is degraded — clearance rises and half-life falls."
+        },
+        {
+          "q": "Name two validated half-life mutations.",
+          "a": "YTE (M252Y/S254T/T256E) and LS (M428L/N434S)."
+        }
+      ]
+    },
+    {
+      "id": "assays",
+      "phase": 7,
+      "label": "Assays & characterization",
+      "desc": "The measurement toolbox: binding (ELISA, flow), kinetics (SPR/BLI), purity and aggregation (SEC), thermal stability (DSF), expression yield, and effector reporter assays.",
+      "outline": [
+        "ELISA formats: direct, indirect, sandwich — what each tells you",
+        "Flow cytometry: panels, gating, antigen-probe staining",
+        "SPR/BLI: reading sensorgrams, extracting kon/koff/KD",
+        "Biophysics: SEC (aggregation), DSF (Tm), DLS",
+        "Functional assays: neutralization and ADCC reporters",
+        "Assay design as selection design: stringency lives in the parameters"
+      ],
+      "ideas": [
+        "KD, kon, koff measurement literacy",
+        "FACS with fluorochrome-labeled antigen probes — the workhorse of cell-based selection",
+        "SEC monomer % and DSF Tm as first-pass developability",
+        "Assay design IS selection design"
+      ],
+      "sources": [
+        {
+          "t": "Janeway's Immunobiology, Appendix I"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What does an SPR sensorgram give that ELISA does not?",
+          "a": "Real-time kinetics — kon, koff and KD — versus endpoint binding only."
+        },
+        {
+          "q": "Which assays flag developability earliest?",
+          "a": "SEC (aggregation), DSF (thermal stability), and AC-SINS/PSR (self-association and polyspecificity)."
+        },
+        {
+          "q": "How is assay design also selection design?",
+          "a": "Antigen presentation, stringency and gates determine which variants survive screening — the assay is the selection."
+        }
+      ]
+    },
+    {
+      "id": "antibody-formats",
+      "phase": 7,
+      "label": "Antibody formats",
+      "desc": "Cutting and re-stitching the molecule: scFv, Fab, VHH/nanobodies, Fc-fusions, and the bispecific architectures that solve chain pairing.",
+      "outline": [
+        "Full-length IgG as the baseline format",
+        "Fragments: Fv, scFv, Fab — size, valency, expression tradeoffs",
+        "Single domains: VHH/nanobodies and VNARs",
+        "Half-life workarounds for small formats: PEGylation, Fc-fusion, albumin binding",
+        "Multispecific architectures: knobs-into-holes, CrossMab, common light chain, BiTE, TandAbs",
+        "Choosing format from target biology: soluble vs membrane vs tissue access"
+      ],
+      "ideas": [
+        "scFv (VH-linker-VL) vs Fab (adds CH1/CL)",
+        "VHH: single-domain, thermostable, folds without a partner",
+        "Knobs-into-holes, CrossMab, common light chain — pairing solutions",
+        "Format choice sets valency, size, and tissue penetration"
+      ],
+      "sources": [
+        {
+          "t": "Brinkmann & Kontermann (2017) mAbs — the making of bispecific antibodies"
+        },
+        {
+          "t": "Hamers-Casterman et al. (1993) Nature — camelid heavy-chain antibodies"
+        }
+      ],
+      "questions": [
+        {
+          "q": "scFv vs Fab — one structural sentence.",
+          "a": "scFv is VH-linker-VL on a single chain; Fab pairs VH-CH1 with VL-CL via a disulfide — more stable, no linker."
+        },
+        {
+          "q": "Why do VHH nanobodies need half-life engineering?",
+          "a": "Fifteen-kilodalton single domains clear renally in minutes to hours — PEGylation, albumin binding or Fc fusion restore persistence."
+        },
+        {
+          "q": "What problem does a common light chain solve?",
+          "a": "Both heavy chains are engineered to share one light chain — eliminating light-chain mispairing in bispecifics."
+        }
+      ]
+    },
+    {
+      "id": "display-technologies",
+      "phase": 7,
+      "label": "Display technologies",
+      "desc": "Genotype–phenotype linkage at scale: phage (10^10–11 clones), yeast (FACS-quantifiable), mammalian (full IgG, native folding), and ribosome/mRNA display. See also Gene expression (not drawn as an arrow): Every display platform works by physically linking a gene to the protein it encodes. That genotype–phenotype linkage is the whole trick, and it is a gene-expression trick. See also mAbs & hybridomas (folded, not a node): Hybridoma fusion is the classical binder source that display technologies generalized. Köhler & Milstein's 1975 trick: immortalize a single B cell by fusing it to a myeloma — the monoclonal antibody becomes a manufacturable object.",
+      "outline": [
+        "The core principle: physical linkage of gene and protein",
+        "Phage: pIII fusions, helper phage, panning cycles",
+        "Yeast: Aga2 display, FACS quantitation of expression AND binding",
+        "Mammalian: full-length IgG display; selection integrated with developability",
+        "Cell-free: ribosome and mRNA display for maximum diversity",
+        "Platform choice matrix: diversity vs fidelity vs drug-like format"
+      ],
+      "ideas": [
+        "Phage: pIII fusion + panning, the endless E. coli cycle",
+        "Yeast: eukaryotic folding plus quantitative FACS gating on expression AND binding",
+        "Mammalian display: screen the actual drug format",
+        "mRNA/ribosome display: biggest libraries, no cells at all"
+      ],
+      "sources": [
+        {
+          "t": "Beerli & Rader (2011) mAbs — mining human antibody repertoires",
+          "u": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3180084/"
+        },
+        {
+          "t": "Platform overview: 'Can antibodies be vegan?'",
+          "u": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11028021/"
+        }
+      ],
+      "questions": [
+        {
+          "q": "State the genotype-phenotype linkage principle.",
+          "a": "The gene encoding each variant physically travels with its protein product, so selecting binding recovers the encoding gene."
+        },
+        {
+          "q": "Match platform to strength.",
+          "a": "Phage: largest diversity. Yeast: quantitative FACS on expression and binding. Mammalian: native folding and full IgG format. mRNA display: cell-free maximum diversity."
+        },
+        {
+          "q": "Why does mammalian display de-risk developability early?",
+          "a": "It displays the actual drug format in a relevant folding environment — expression and stability are selected together with binding."
+        }
+      ]
+    },
+    {
+      "id": "library-design",
+      "phase": 7,
+      "label": "Library design",
+      "desc": "Deciding what diversity to encode: naive (natural), immune (donor-primed), or synthetic (designed CDRs on chosen frameworks). See also The naive repertoire (not drawn as an arrow): A naive library samples what development left standing — repertoire composition is the raw diversity you encode, kept as a note so display hardware can sit adjacent. See also Display technologies (not drawn as an arrow): Platform constraints — transformation limits, display level, folding environment — dictate library design choices. The platform and the library co-evolve. The selection game: rounds of binding, washing, and elution — with stringency ramps, off-rate selection, and negative selections against off-targets. See also Central B cell tolerance (not drawn as an arrow): Natural tolerance is the immune system's counter-selection. Display campaigns replicate it deliberately: negative selections against off-targets and polyspecific binders. See also Assays & characterization (not drawn as an arrow): Screening — FACS gates, panning rounds, counterscreens — is assay design under selection pressure. Stringency lives in the assay parameters.",
+      "outline": [
+        "Source choice: naive vs immune vs synthetic — what each buys",
+        "Framework selection: single scaffold vs multiple; consensus vs germline-derived",
+        "CDR diversification: trinucleotide synthesis vs degenerate codons",
+        "Loop-by-loop strategy: length ranges and composition per CDR (especially H3)",
+        "Quality control: frame rate, stop codons, naturalness filters",
+        "Library size realism: what transformation limits actually buy"
+      ],
+      "ideas": [
+        "Naive libraries copy the natural repertoire's statistics",
+        "Synthetic libraries: single framework + trinucleotide-randomized CDRs (HuCAL-style)",
+        "Immune libraries: pre-enriched by real in vivo maturation",
+        "Quality filters: naturalness scoring, stop-codon removal, expression folding checks",
+        "Solution-phase vs solid-phase antigen presentation changes what you select"
+      ],
+      "sources": [
+        {
+          "t": "Knappik et al. (2000) JMB — HuCAL fully synthetic libraries"
+        },
+        {
+          "t": "Beerli & Rader (2011) mAbs",
+          "u": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3180084/"
+        },
+        {
+          "t": "Hoogenboom (1997) Trends Biotechnol — designing selection strategies"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Distinguish naive, immune and synthetic libraries.",
+          "a": "Naive: natural unselected donor diversity. Immune: donor-primed and pre-enriched by real maturation. Synthetic: designed CDRs on chosen frameworks."
+        },
+        {
+          "q": "Why trinucleotide synthesis over degenerate codons?",
+          "a": "Exact amino-acid sets per position — no stop codons, no unwanted chemistries, controlled diversity."
+        },
+        {
+          "q": "What limits library size in practice?",
+          "a": "Host transformation or transfection efficiency — you can only clone diversity you can physically package."
+        },
+        {
+          "q": "Define off-rate selection.",
+          "a": "Adding excess soluble antigen after binding and extending the wash — only slow dissociators survive; it selects residence time rather than capture."
+        },
+        {
+          "q": "What do negative selections remove?",
+          "a": "Clones binding orthologs, carriers, serum proteins or polyspecific surfaces — specificity is selected, not assumed."
+        }
+      ]
+    },
+    {
+      "id": "in-vitro-maturation",
+      "phase": 7,
+      "label": "In vitro affinity maturation",
+      "desc": "An artificial germinal center: mutagenize CDRs, display, select harder, repeat — until affinity and specificity hit spec. See also Affinity maturation & selection (not drawn as an arrow): Directed evolution is an artificial GC: mutagenize, display, select on antigen, repeat. The design borrows GC logic loop for loop.",
+      "outline": [
+        "Choosing the starting antibody: baseline affinity, epitope to preserve",
+        "Mutagenesis strategies: error-prone PCR, CDR-walk saturation, chain shuffling",
+        "Stringency design per round: less antigen, faster off-rate gates",
+        "Clone screening: kinetics confirmation plus specificity panels",
+        "Managing tradeoffs: polyspecificity creep, expression loss",
+        "Stopping criteria: diminishing returns versus specification"
+      ],
+      "ideas": [
+        "Error-prone PCR and CDR-walk saturation mutagenesis",
+        "Light-chain shuffling to re-pair the same heavy chain",
+        "Stringency design: less antigen, faster off-rate gates",
+        "Watch the classic tradeoff: affinity up, polyspecificity up"
+      ],
+      "sources": [
+        {
+          "t": "Beerli & Rader (2011) mAbs",
+          "u": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3180084/"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What is the maturation loop?",
+          "a": "Mutagenize (error-prone PCR or CDR saturation) — display — select with raised stringency — screen and repeat."
+        },
+        {
+          "q": "Name the canonical maturation tradeoff.",
+          "a": "Affinity rises while polyspecificity creeps in — specificity and developability screens must run every round."
+        },
+        {
+          "q": "What is light-chain shuffling?",
+          "a": "Re-pairing a fixed heavy chain with diverse light chains to recover affinity or alter specificity without touching the heavy chain."
+        }
+      ]
+    },
+    {
+      "id": "humanization",
+      "phase": 7,
+      "label": "Humanization & immunogenicity",
+      "desc": "Turning a mouse antibody into a drug-like human one: CDR grafting onto human frameworks, selective back-mutations, humanness scoring, and T-cell epitope risk assessment. See also mAbs & hybridomas (not drawn as an arrow): The first therapeutic mAbs were mouse, and patients made anti-mouse responses. That clinical failure created humanization — CDR grafting exists because of hybridoma side effects.",
+      "outline": [
+        "Why: the clinical immunogenicity record (HAMA, HACA)",
+        "CDR grafting: choosing human acceptor frameworks (homology or consensus)",
+        "Back-mutation logic: Vernier-zone and VH/VL-interface residues",
+        "The verification loop: re-measure affinity after every step",
+        "Humanness metrics: T20 score, human strings content, germline identity",
+        "T-cell epitope prediction for immunogenicity risk"
+      ],
+      "ideas": [
+        "CDR grafting (Jones et al. 1986) and framework back-mutations",
+        "Germline humanness metrics (e.g., human strings content)",
+        "T-cell epitope prediction for immunogenicity risk",
+        "Re-measure binding after every humanization step — back-mutations can destabilize"
+      ],
+      "sources": [
+        {
+          "t": "Stone et al. (2024) J Allergy Clin Immunol",
+          "u": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11437839/"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What is CDR grafting, and what must accompany it?",
+          "a": "Transplanting murine CDRs onto human frameworks; Vernier and interface back-mutations restore the affinity the swap costs."
+        },
+        {
+          "q": "How is humanness quantified?",
+          "a": "Germline identity, human strings content (T20-style metrics), and predicted T-cell epitope load."
+        },
+        {
+          "q": "What must accompany every humanization step?",
+          "a": "Affinity and specificity re-measurement — humanness gains can silently cost binding."
+        }
+      ]
+    },
+    {
+      "id": "transgenic-platforms",
+      "phase": 7,
+      "label": "Transgenic platforms",
+      "desc": "Immunize a mouse that makes human antibodies: human Ig loci on a mouse knockout background — native pairing, real germinal-center selection, human sequences. See also V(D)J recombination (not drawn as an arrow): Humanized mice work by replacing the mouse V/D/J/C repertoire with human segments. The platform only makes sense if you know exactly what was swapped. See also mAbs & hybridomas (not drawn as an arrow): Transgenic mice are the hybridoma workflow with a humanized antibody locus: immunize, fuse, screen. The discovery loop is unchanged; only the germline changed.",
+      "outline": [
+        "Rationale: human sequence output with natural selection machinery",
+        "Construct design: minilocus vs full-locus transgenics; endogenous JH knockout",
+        "Platform tour: HuMAb, XenoMouse, VelocImmune, OmniRat, Trianni",
+        "Workflow: immunize → hybridoma or B-cell cloning → screen",
+        "Limitations: mouse antigen processing, locus coverage, species-specific biases"
+      ],
+      "ideas": [
+        "HuMAb/XenoMouse, VelocImmune, OmniRat, Trianni",
+        "Why the humanized locus must retain class switching and SHM to be useful",
+        "Most approved fully human mAbs trace back to these platforms",
+        "Same hybridoma workflow, human output"
+      ],
+      "sources": [
+        {
+          "t": "Lønberg (2005) Nat Biotechnol — human antibodies from transgenic animals"
+        },
+        {
+          "t": "Next-generation antibody technologies review",
+          "u": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10759153/"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What was engineered in transgenic antibody mice?",
+          "a": "Mouse Ig loci knocked out and human V/D/J/C loci inserted — immunization runs the human repertoire through real selection."
+        },
+        {
+          "q": "Why must the inserted loci support CSR and SHM?",
+          "a": "Without human switching and hypermutation, output is unswitched, unmatuated IgM — not usable therapeutic IgG."
+        },
+        {
+          "q": "Name three platforms.",
+          "a": "HuMAb and XenoMouse, VelocImmune, OmniRat (also Trianni)."
+        }
+      ]
+    },
+    {
+      "id": "single-b-cell-cloning",
+      "phase": 7,
+      "label": "Single B cell cloning",
+      "desc": "Sort single antigen-specific B cells (memory, plasmablasts), amplify paired VH/VL by RT-PCR, express as recombinant IgG — native pairing, no fusion required. See also Memory & plasma cells (not drawn as an arrow): The clone you pick is usually a memory or plasmablast survivor — that cell-fate node is why the sort gates exist, kept as a note so SHM can sit adjacent. See also mAbs & hybridomas (not drawn as an arrow): Single B cell technology replaces fusion with single-cell sorting plus RT-PCR — a direct upgrade of the hybridoma's goal: one cell, one antibody, immortalized as sequence. See also Assays & characterization (not drawn as an arrow): Sorting antigen-positive B cells is flow cytometry with fluorochrome-labeled antigen probes — assay craft directly becomes discovery capability. See also Repertoire sequencing (not drawn as an arrow): Repertoire methods and single-cell cloning share primer design, germline annotation and clonotype logic. Sequencing literacy makes you faster at both.",
+      "outline": [
+        "Donor and cell choice: memory B cells vs plasmablasts vs tissue residents",
+        "Antigen probes: fluorochrome-labeled tetramers and bait design",
+        "Single-cell sorting by FACS into plates",
+        "Amplification: nested RT-PCR or 5′RACE for paired VH/VL",
+        "Expression: linear cassettes or vectors; small-scale IgG production",
+        "Screening: ELISA/flow confirmation, then kinetic ranking"
+      ],
+      "ideas": [
+        "Antigen-baited FACS: tetramers and labeled probes",
+        "Nested RT-PCR or 5′RACE per cell; linear expression cassettes for cloning-free expression",
+        "Microengraving and ISAAC to screen secretors before cloning",
+        "The best route to rare, conformational, donor-derived specificities"
+      ],
+      "sources": [
+        {
+          "t": "Tiller (2011) mAbs — single B cell antibody technologies",
+          "u": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7102800/"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Why preserve native VH/VL pairing?",
+          "a": "The in-vivo-selected pair defines specificity and affinity — random recombination changes both."
+        },
+        {
+          "q": "How are paired chains recovered?",
+          "a": "Single-cell sort, lysis, then nested RT-PCR or 5-prime RACE amplifying VH and VL from the same cell."
+        },
+        {
+          "q": "Why sort plasmablasts after vaccination?",
+          "a": "They are abundant, Ig-transcript-rich, and carry the freshest antigen-experienced antibody pairs."
+        }
+      ]
+    },
+    {
+      "id": "bispecifics",
+      "phase": 7,
+      "label": "Bispecifics & T-cell engagers",
+      "desc": "Two paratopes, one molecule: T-cell engagers (CD3 × tumor antigen), biparatopic binders, and the engineering tricks that force correct chain pairing. See also Antibody formats (not drawn as an arrow): Bispecifics are format engineering: heterodimeric Fcs, common light chains and tandem scFvs each solve the heavy/light pairing puzzle differently.",
+      "outline": [
+        "Mechanism classes: cell retargeting (T-cell engagers), receptor activation, biparatopic binding",
+        "The format zoo: IgG-like vs fragment-based (BiTE, DART, nanobody fusions)",
+        "Heavy-chain heterodimerization: knobs-into-holes and friends",
+        "Light-chain pairing: common light chain, CrossMab",
+        "Developability: half-life, aggregation, tissue-penetration tradeoffs",
+        "Clinical logic: blinatumomab and emicizumab as case studies"
+      ],
+      "ideas": [
+        "Knobs-into-holes heterodimeric Fc (Ridgway, Presta & Carter 1996)",
+        "Common light chain and CrossMab strategies",
+        "BiTE: tandem scFv, no Fc, short half-life by design",
+        "Avidity engineering: dual-antigen AND-gates for tissue selectivity"
+      ],
+      "sources": [
+        {
+          "t": "Brinkmann & Kontermann (2017) mAbs",
+          "u": "https://doi.org/10.1080/19420862.2016.1268307"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What does knobs-into-holes solve?",
+          "a": "It forces two different heavy chains to heterodimerize — preventing homodimers in bispecific assembly."
+        },
+        {
+          "q": "How do common light chains prevent mispairing?",
+          "a": "Both antigen-binding arms are engineered to use the same light chain — no wrong VL can pair."
+        },
+        {
+          "q": "What is an AND-gate bispecific?",
+          "a": "Activation requires simultaneous binding of two antigens — selectivity through dual-antigen avidity."
+        }
+      ]
+    },
+    {
+      "id": "fc-engineering",
+      "phase": 7,
+      "label": "Fc engineering",
+      "desc": "Dial in the Fc: silence it (LALA-PG, aglycosylation), extend it (YTE, LS), amplify it (afucosylation, S239D/I332E), or weaponize it against FcRn to strip pathogenic IgG. See also Fc glycosylation (not drawn as an arrow): Glycoengineering is Fc engineering without sequence changes: afucosylation boosts ADCC ~100×, aglycosylation silences everything. The glycan is an engineering surface. See also Fc glycosylation (folded, not a node): Fc glycoform (afucosylation, galactosylation) is an Fc-engineering lever, not a separate column. The sugar at N297 is a functional part of the Fc: core fucose masks FcγRIIIa, so removing it massively boosts ADCC; sialylation flips IgG anti-inflammatory.",
+      "outline": [
+        "Fc anatomy for engineering: CH2/CH3 interface sites, glycan, hinge",
+        "Silencing menu: LALA, LALA-PG, N297Q, aglycosylation; IgG4 hinge stabilization (S228P)",
+        "Half-life menu: YTE, LS, QL, PFc29, DHS — with the pH-dependence rule",
+        "Enhancement menu: afucosylation, S239D/I332E, S298A/E333A/K334A, margetuximab",
+        "FcRn antagonism: ABDEG (MST-HN) mutants and anti-FcRn mAbs",
+        "Isotype choice as the first engineering decision: IgG1 vs IgG2 vs IgG4"
+      ],
+      "ideas": [
+        "Silencing: LALA, LALA-PG, N297Q — for blocking mAbs and engagers",
+        "Half-life: YTE (M252Y/S254T/T256E), LS (M428L/N434S), PFc29 (Q311R/M428L)",
+        "ADCC boost: afucosylation; S239D/I332E; margetuximab's combo",
+        "FcRn antagonists (ABDEG mutants, anti-FcRn mAbs) to clear autoantibodies"
+      ],
+      "sources": [
+        {
+          "t": "Stone et al. (2024) J Allergy Clin Immunol",
+          "u": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11437839/"
+        },
+        {
+          "t": "Ramdani et al. (2022) Int J Mol Sci",
+          "u": "https://www.mdpi.com/1422-0067/23/17/9604"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What does LALA-PG silence?",
+          "a": "L234A/L235A cuts FcγR binding and P329G cuts the C1q/protein-G site — near-total ADCC, CDC and ADCP silencing."
+        },
+        {
+          "q": "State the FcRn half-life design rule.",
+          "a": "Raise FcRn affinity at acidic pH while preserving release at pH 7.4 — over-tightening increases clearance."
+        },
+        {
+          "q": "Which mutations amplify ADCC, by what route?",
+          "a": "Afucosylation (glyco-engineering) or S239D/I332E — both raise FcγRIIIa affinity."
+        }
+      ]
+    },
+    {
+      "id": "adc",
+      "phase": 7,
+      "label": "Antibody–drug conjugates",
+      "desc": "Antibody as targeted warhead delivery: cleavable or non-cleavable linkers, potent payloads (MMAE, DXd), drug-to-antibody ratio, and bystander killing.",
+      "outline": [
+        "Mechanism: bind → internalize → linker cleavage → payload release",
+        "Linkers: cleavable (val-cit, acid-labile) vs non-cleavable — plasma stability vs intracellular release",
+        "Payloads: tubulin inhibitors (MMAE/MMAF) vs DNA/topoisomerase agents (calicheamicin, DXd)",
+        "Conjugation chemistry: lysine, cysteine, site-specific; the DAR distribution problem",
+        "The bystander effect: permeable payloads in heterogeneous tumors",
+        "The therapeutic window: antigen density and internalization requirements"
+      ],
+      "ideas": [
+        "Linker stability in plasma vs release in the lysosome",
+        "DAR distribution and its manufacturability cost",
+        "Antigen density and internalization rate decide ADC viability",
+        "Payload class selection: tubulin vs topoisomerase inhibitors"
+      ],
+      "sources": [
+        {
+          "t": "Next-generation antibody technologies review",
+          "u": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10759153/"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What target biology makes an ADC viable?",
+          "a": "High, homogeneous antigen density with rapid internalization to lysosomes."
+        },
+        {
+          "q": "Cleavable vs non-cleavable linkers — the tradeoff?",
+          "a": "Cleavable releases payload intracellularly (bystander effect) but risks plasma instability; non-cleavable needs antibody catabolism and is cleaner but less diffusible."
+        },
+        {
+          "q": "What is DAR, and its tradeoff?",
+          "a": "Drug-to-antibody ratio — potency rises with DAR but so do aggregation, clearance and heterogeneity."
+        }
+      ]
+    },
+    {
+      "id": "developability",
+      "phase": 7,
+      "label": "Developability",
+      "desc": "Will it survive as a drug? Aggregation, viscosity, polyspecificity, CDR liabilities (deamidation NG, isomerization DG, Met/Trp oxidation), immunogenicity, and expression yield. See also Affinity maturation & selection (not drawn as an arrow): GC selection naturally filters against antibodies that express badly, aggregate, or bind self — evolution ran the first developability screen. In vitro you must run it yourself. See also Peripheral tolerance (not drawn as an arrow): Reactivity to self components (HEp-2, polyspecificity reagent) predicts clinical liabilities; peripheral tolerance is the in-vivo analogue of those counterscreens. See also Humanization & immunogenicity (not drawn as an arrow): Humanized variants flow into developability triage: framework back-mutations buy humanness at a stability price you must re-measure.",
+      "outline": [
+        "The liability taxonomy: aggregation, viscosity, polyspecificity, PTMs, immunogenicity",
+        "Sequence red flags: NG/DG motifs, Met/Trp oxidation, free cysteines, charged patches",
+        "In silico prediction: TAP, CamSol, aggregation predictors",
+        "The experimental panel: SEC, DSF, AC-SINS, PSR, CIC, HIC",
+        "Multi-objective decisions: affinity vs stability vs specificity vs yield",
+        "Engineering liabilities out: CDR substitutions that don't cost binding"
+      ],
+      "ideas": [
+        "Polyspecificity reagent (PSR) and AC-SINS as early warning screens",
+        "CDR post-translational-modification liabilities, flagged in silico",
+        "Affinity maturation can breed polyspecificity — monitor it every round",
+        "It's multi-objective: affinity vs specificity vs stability vs yield"
+      ],
+      "sources": [
+        {
+          "t": "Generative models for antibodies review (2024), developability sections",
+          "u": "https://spj.science.org/doi/10.1016/j.csbj.2024.06.016"
+        },
+        {
+          "t": "Stone et al. (2024) J Allergy Clin Immunol",
+          "u": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11437839/"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Which sequence motifs are CDR liabilities?",
+          "a": "NG (deamidation), DG (isomerization), Met/Trp oxidation, unpaired cysteines, and NxS/T glycosylation motifs."
+        },
+        {
+          "q": "Name three early developability screens.",
+          "a": "SEC or AC-SINS (self-association), PSR or HEp-2 binding (polyspecificity), DSF (thermal stability)."
+        },
+        {
+          "q": "Why does affinity maturation need developability monitoring?",
+          "a": "Maturing loops often gain broad reactivity — affinity gains can quietly purchase polyspecificity."
+        }
+      ]
+    },
+    {
+      "id": "manufacturing",
+      "phase": 7,
+      "label": "Expression & manufacturing",
+      "desc": "Making grams to kilograms: CHO/HEK expression, vector design, Protein A capture, glycoengineered cell lines (GnTI−, FUT8 KO), and formulation. See also Fc engineering (not drawn as an arrow): Every Fc variant re-opens process questions: expression yield, glycoform control, stability. Engineering and manufacturing are one decision chain.",
+      "outline": [
+        "Expression systems: transient HEK293 vs stable CHO lines and expected titers",
+        "Vector design: promoter, signal peptides, heavy:light chain ratio",
+        "Upstream process: fed-batch culture, media, temperature shifts",
+        "Downstream: Protein A capture, polishing (CEX/AEX/HIC), viral clearance",
+        "Glycoengineering in process: GnTI− and FUT8-KO cell lines",
+        "Formulation and stability: buffers, lyophilization, cold chain (brief)"
+      ],
+      "ideas": [
+        "Transient HEK for discovery; stable CHO for GMP",
+        "Expression construct choices: promoter, leader peptides, HC:LC ratio",
+        "Glycoengineering through cell line and culture control",
+        "Process consistency and biosimilarity"
+      ],
+      "sources": [
+        {
+          "t": "Next-generation antibody technologies review",
+          "u": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10759153/"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Transient HEK vs stable CHO — when and why?",
+          "a": "Transient HEK for milligram discovery batches in days; stable CHO for GMP-consistent grams-to-kilograms at regulatory scale."
+        },
+        {
+          "q": "Why does the heavy-to-light chain ratio matter?",
+          "a": "Imbalance wastes DNA, lowers yield, and contaminates product with free light chain."
+        },
+        {
+          "q": "How is glycoform controlled at process level?",
+          "a": "Cell-line engineering (GnTI-minus, FUT8 knockout) plus culture conditions — glycoform is a process variable."
+        }
+      ]
+    },
+    {
+      "id": "structure-prediction",
+      "phase": 8,
+      "label": "Structure prediction",
+      "desc": "Computing the molecule: IgFold/AlphaFold-class models predict VH/VL structures and (imperfectly) CDR-H3; docking and epitope mapping follow. See also Antigen–antibody interaction (not drawn as an arrow): Docking, epitope mapping and CDR design are computational statements of paratope–epitope geometry. Without binding concepts you cannot judge a predicted pose.",
+      "outline": [
+        "Numbering schemes first: Kabat, Chothia, IMGT, AHo",
+        "Framework prediction: homology modeling to AlphaFold-class networks",
+        "CDR loop modeling: canonical classes vs the CDR-H3 problem",
+        "Complex prediction: docking protocols and multimer networks",
+        "Epitope and paratope prediction: tools and their accuracy ceilings",
+        "Benchmark literacy: what an RMSD number means practically"
+      ],
+      "ideas": [
+        "CDR-H3 remains the hard loop — treat predictions as hypotheses",
+        "Antibody–antigen docking, epitope and paratope mapping",
+        "Predicted structures are the scaffold for ΔΔG mutation prediction",
+        "Know the failure modes before trusting a pose"
+      ],
+      "sources": [
+        {
+          "t": "IgFold — Ruffolo et al. (2023) Nat Methods"
+        },
+        {
+          "t": "AI models for protein design are driving antibody engineering",
+          "u": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10361400/"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Why is CDR-H3 prediction the hard case?",
+          "a": "Enormous length and sequence variability with few canonical classes — training data per length is sparse and conformation is antigen-dependent."
+        },
+        {
+          "q": "Name the numbering schemes and their role.",
+          "a": "Kabat, Chothia, IMGT, AHo — consistent position definitions that make loops comparable and models trainable."
+        },
+        {
+          "q": "When should a predicted pose be trusted?",
+          "a": "When it reproduces known contacts and passes interface sanity checks — and is then treated as a hypothesis for mutation testing."
+        }
+      ]
+    },
+    {
+      "id": "ml-models",
+      "phase": 8,
+      "label": "ML & generative design",
+      "desc": "Language models and generative design for antibodies: AntiBERTy/AbLang/ESM embeddings, CDR generation (DiffAb, RFdiffusion, dyMEAN), and active-learning loops.",
+      "outline": [
+        "The training corpus: Observed Antibody Space, preprocessing, deduplication",
+        "Language models: AntiBERTy, AbLang, ESM — embeddings and sequence likelihoods",
+        "Generative families: autoregressive (IgLM, ProGen) vs diffusion (DiffAb, RFdiffusion)",
+        "Antigen-conditioned design: dyMEAN, docking-plus-design pipelines",
+        "Evaluation: perplexity vs real binding; the leakage trap",
+        "Active learning: propose → predict → make → test loops"
+      ],
+      "ideas": [
+        "Sequence models trained on repertoires capture 'naturalness'",
+        "Diffusion/backbone generation: antigen-conditioned CDR design",
+        "Zero-shot mutation-effect prediction (Hie et al. 2024 evolved antibodies with general protein LMs)",
+        "Benchmarks and pitfalls: data leakage, evaluation standards"
+      ],
+      "sources": [
+        {
+          "t": "He et al. (2024) Acta Pharmacologica Sinica",
+          "u": "https://www.nature.com/articles/s41401-024-01380-y"
+        },
+        {
+          "t": "Generative models for antibodies overview (2024)",
+          "u": "https://spj.science.org/doi/10.1016/j.csbj.2024.06.016"
+        },
+        {
+          "t": "Hie et al. (2024) Nat Biotechnol — antibody evolution with language models"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What do antibody language models capture?",
+          "a": "Repertoire statistics — sequence naturalness, mutation plausibility, and embeddings useful for clustering and property prediction."
+        },
+        {
+          "q": "Autoregressive vs diffusion generation?",
+          "a": "Autoregressive models sample residues sequentially (IgLM, ProGen); diffusion models denoise structures and sequences jointly, antigen-conditioned (DiffAb, RFdiffusion)."
+        },
+        {
+          "q": "What is the data-leakage trap?",
+          "a": "Test sets containing near-copies of training homologs inflate accuracy — cluster-level splits are mandatory."
+        }
+      ]
+    },
+    {
+      "id": "in-silico-maturation",
+      "phase": 8,
+      "label": "In silico maturation",
+      "desc": "Closing the loop computationally: ΔΔG and ML affinity prediction, developability constraints, active learning — propose, predict, make, test, learn. See also Developability (not drawn as an arrow): In-silico loops that ignore expression, aggregation, and PK just propose unsynthesisable sequences — developability is a constraint on every proposal, kept as a note so in-vitro maturation can sit adjacent. See also Structure prediction (not drawn as an arrow): Mutation-effect prediction (ΔΔG, docking scores) sits on top of predicted complex structures. No structure, no structural maturation.",
+      "outline": [
+        "Define objectives: affinity ΔΔG plus expression and specificity constraints",
+        "Physics methods: Rosetta and FoldX interface energies",
+        "Learned methods: supervised ΔΔG models, zero-shot language-model likelihood",
+        "Search strategies: Bayesian optimization, evolutionary loops, gradient guidance",
+        "Multi-objective balancing with developability metrics",
+        "Validation discipline: in-silico→wet-lab confirm loops and interpreting failure"
+      ],
+      "ideas": [
+        "Physics-based (Rosetta, FoldX) vs learned ΔΔG predictors",
+        "Multi-objective optimization including developability metrics",
+        "Beware benchmark leakage inflating published expectations",
+        "Wet-lab validation remains the ground truth"
+      ],
+      "sources": [
+        {
+          "t": "Best practices for ML in antibody discovery (2024) Drug Discovery Today"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Physics-based vs learned delta-delta-G — respective risks?",
+          "a": "Physics (Rosetta, FoldX) is transparent but noisy; learned models are accurate in-distribution but extrapolate poorly — use both, trust neither blindly."
+        },
+        {
+          "q": "Why must maturation be multi-objective?",
+          "a": "Affinity gains trade against specificity, stability and yield — optimizing KD alone ships polyspecific aggregates."
+        },
+        {
+          "q": "What closes the design loop?",
+          "a": "Active learning: propose with generative models, predict, make, test, and retrain on the outcome."
+        }
+      ]
+    },
+    {
+      "id": "crispr-toolbox",
+      "phase": 8,
+      "label": "Genome engineering (CRISPR)",
+      "desc": "Writing DNA on purpose: Cas9/Cas12a cuts, RNP electroporation, AAV6 donor delivery — and the NHEJ-vs-HDR fork that decides every outcome. See also Central dogma and DNA repair (not drawn as an arrow): CRISPR is genome maintenance aimed on purpose — transcription/replication literacy and NHEJ/HR are the substrate, placed here late so the toolbox sits just under Ig-locus editing.",
+      "outline": [
+        "Nuclease choice: Cas9 vs Cas12a — PAM requirements and cut geometry",
+        "Delivery formats: plasmid, mRNA, pre-assembled RNP electroporation",
+        "Donor design: homology arms, silent mutations, cassette architecture",
+        "B-cell specifics: RNP electroporation + AAV6 donor, viability windows",
+        "Specificity: off-target prediction and unbiased validation (CHANGE-seq style)",
+        "Alternatives: base and prime editing for small, scar-free changes"
+      ],
+      "ideas": [
+        "NHEJ for disruption, HDR for knock-in — the lever B-cell engineers pull",
+        "Primary B cells: electroporation quirks and viability tradeoffs",
+        "B cell-specific promoters (CD19) to restrict nuclease expression",
+        "Base and prime editing as scar-free alternatives"
+      ],
+      "sources": [
+        {
+          "t": "Rogers & Cannon (2021) Mol Ther — genome-edited B cells",
+          "u": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8571172/"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Why do B cell knock-ins often use Cas12a?",
+          "a": "Its TTTV PAMs and staggered cuts enable clean single-cut designs at the Ig loci (native-loci editing)."
+        },
+        {
+          "q": "Why deliver Cas9 as RNP plus the donor on AAV6?",
+          "a": "RNP gives transient, controllable nuclease activity (fewer off-targets); AAV6 transduces primary B cells and supplies the HDR donor."
+        },
+        {
+          "q": "What decides the NHEJ-vs-HDR outcome?",
+          "a": "Repair-pathway competition at the cut — donor design, cell-cycle stage and cell type set the knock-in fraction."
+        }
+      ]
+    },
+    {
+      "id": "ig-locus-editing",
+      "phase": 8,
+      "label": "Ig locus editing",
+      "desc": "Reprogramming antibody specificity in situ: cassettes at the conserved J–C intron (which rides endogenous splicing and enhancers), or native-loci V-gene replacement that preserves SHM. See also Allelic exclusion (not drawn as an arrow): Edited B cells risk expressing two heavy chains or mispairing engineered and endogenous chains. Exclusion biology defines the safety problem every cassette design tries to solve. See also Genome engineering (CRISPR) (not drawn as an arrow): Ig-locus knock-ins are a CRISPR application: a DSB at a conserved J–C site plus a homologous donor carrying the antibody cassette. Cut-site and donor design are CRISPR craft.",
+      "outline": [
+        "Why edit the Ig locus: native regulation, BCR + secreted isoforms, GC access",
+        "Target-site choice: the J–C intron as a universal conserved site (Moffett 2017)",
+        "Cassette anatomy: light chain + VH + furin/2A + splice donor, enhancer-dependent promoter",
+        "Native-loci editing: Cas12a V-gene replacement and preserved SHM (Yin 2024)",
+        "Safety levers: B cell-specific promoters, mispairing minimization, biallelic checks",
+        "Characterization: BCR expression, CSR and SHM competence assays"
+      ],
+      "ideas": [
+        "The J–C intron sits downstream of all V(D)J events — a universal target (Moffett et al. 2017)",
+        "Bicistronic LC + VH + splice-donor cassettes minimize mispairing",
+        "Native-loci editing (single Cas12a cut per locus) retains hypermutation and affinity maturation (Yin et al. 2024)",
+        "Allelic exclusion still applies to edited cells"
+      ],
+      "sources": [
+        {
+          "t": "Rogers & Cannon (2021) Mol Ther",
+          "u": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8571172/"
+        },
+        {
+          "t": "Yin et al. (2024) Nat Biomed Eng",
+          "u": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12090756/"
+        },
+        {
+          "t": "Hartweger et al. (2019) J Exp Med"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Why is the J-C intron the canonical knock-in site?",
+          "a": "It is conserved across all B cells, sits downstream of every V(D)J event, and rides endogenous splicing and enhancers — both BCR and secreted isoforms work."
+        },
+        {
+          "q": "What does native-loci editing (Yin 2024) preserve that intronic cassettes damage?",
+          "a": "Efficient somatic hypermutation and affinity maturation — by replacing V genes in situ instead of inserting an intronic cassette."
+        },
+        {
+          "q": "What safety levers apply to edited B cells?",
+          "a": "B cell-specific nuclease promoters, cassette designs that minimize chain mispairing, and biallelic outcome checks."
+        }
+      ]
+    },
+    {
+      "id": "engineered-b-cell-therapy",
+      "phase": 8,
+      "label": "Engineered B cell therapy",
+      "desc": "B cells as living drug factories: ex vivo edited cells that engraft, respond to antigen like memory cells, boost on vaccination, and secrete antibody for the long haul. See also Peripheral tolerance (not drawn as an arrow): Mispairing engineered chains with endogenous partners can create novel autoreactivity; tolerance mechanisms are the last line of defense and a design constraint. Skip the clinic: dual-AAV delivery of nuclease + antibody donor edits B cells inside the body; engineered broadly-neutralizing antibodies reach neutralizing titers and affinity-mature on vaccination. See also Affinity maturation & selection (not drawn as an arrow): The promise of reprogrammed B cells is that endogenous affinity maturation will improve your antibody in vivo. You must understand the machine you are plugging into.",
+      "outline": [
+        "Why B cells: self-renewal, memory and boosting, antigen-regulated expression",
+        "Manufacturing: ex vivo isolation, editing, expansion culture (CD40L feeder systems)",
+        "Engraftment: adoptive transfer and niche competition with endogenous cells",
+        "Function: antigen-driven expansion, class switching, SHM on the engineered BCR",
+        "Clinical state: the first trials and target indications",
+        "Safety: chain mispairing, insertional mutagenesis, runaway proliferation"
+      ],
+      "ideas": [
+        "Antigen-driven expansion and memory-like behavior — self-renewing antibody supply",
+        "First clinical trials (autoimmune and cancer indications) underway",
+        "Safety: chain mispairing, off-target editing, insertional risk",
+        "Contrast with passive infusion: durability without repeated dosing",
+        "AAV-DJ pair: one codes saCas9 + sgRNA, the other the donor cassette"
+      ],
+      "sources": [
+        {
+          "t": "Trivedi et al. (2025) Nat Biotechnol — engineering B cells to treat and study disease",
+          "u": "https://www.nature.com/articles/s41587-025-02757-y"
+        },
+        {
+          "t": "Rogers & Cannon (2021) Mol Ther",
+          "u": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8571172/"
+        },
+        {
+          "t": "Nahmad et al. (2022) Nat Biotechnol",
+          "u": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7613293/"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Why are B cells attractive living drug factories?",
+          "a": "They self-renew, respond to antigen with memory-like expansion, class-switch, and secrete antibody long-term from marrow niches."
+        },
+        {
+          "q": "Which safety risks dominate engineered B cell therapy?",
+          "a": "Chain-mispairing autoreactivity, insertional mutagenesis, and escape from antigen-regulated control."
+        },
+        {
+          "q": "What happens when you vaccinate an animal carrying engineered B cells?",
+          "a": "Antigen drives clonal expansion and differentiation of the engineered clone — titers rise like a natural response."
+        },
+        {
+          "q": "What does the dual-AAV system deliver?",
+          "a": "One vector carries saCas9 with sgRNA (B cell-specific promoter); the other carries the antibody donor cassette with IgH homology arms."
+        },
+        {
+          "q": "Why express the cassette from the IgH enhancer?",
+          "a": "Expression only occurs after correct integration — membrane BCR first, secreted antibody after antigen activation; off-target expression stays off."
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "central-dogma",
+      "to": "ig-genetics",
+      "why": "Ig loci are ordinary genes with an extraordinary twist: functional V-region exons are assembled somatically from germline segments. Exons, splicing, enhancers and polyadenylation are the vocabulary the assembly story is told in."
+    },
+    {
+      "from": "protein-structure",
+      "to": "antibody-structure",
+      "why": "An antibody is a multi-domain, disulfide-stitched protein. The Ig fold, domain architecture and N-linked glycosylation are pure protein-structure vocabulary."
+    },
+    {
+      "from": "immune-overview",
+      "to": "hematopoiesis",
+      "why": "Immune cells all descend from hematopoietic stem cells; the lineage tree tells you where B cells sit and what 'B cell development' continues from."
+    },
+    {
+      "from": "immune-overview",
+      "to": "antigen-epitope",
+      "why": "The adaptive system's job is recognizing molecular shapes. Antigens and epitopes are the objects every antibody-engineering campaign is aimed at."
+    },
+    {
+      "from": "immune-overview",
+      "to": "lymphoid-tissues",
+      "why": "Immune responses happen in organized tissues. Anatomy is where B cell development and germinal centers physically live — 'where' explains 'what signals'."
+    },
+    {
+      "from": "antigen-epitope",
+      "to": "antibody-binding",
+      "why": "Everything downstream — maturation, library design, affinity ranking — optimizes one measurable quantity: how tightly an antibody surface binds an epitope."
+    },
+    {
+      "from": "antibody-structure",
+      "to": "antibody-binding",
+      "why": "The CDR loops ARE the paratope. Knowing which loops contact antigen — and that CDR-H3 dominates — is prerequisite to engineering or modeling any binding event."
+    },
+    {
+      "from": "antibody-structure",
+      "to": "isotypes",
+      "why": "Isotypes are the constant-region halves of the same molecule. Subclass differences in hinge length and effector sites are structural facts you must see first."
+    },
+    {
+      "from": "antibody-structure",
+      "to": "bcr-signaling",
+      "why": "The BCR is membrane-bound antibody plus Igα/Igβ signaling subunits. Architecture first, signaling second."
+    },
+    {
+      "from": "antibody-structure",
+      "to": "antibody-formats",
+      "why": "scFv, Fab, VHH and Fc-fusions are cut-down or re-stitched versions of the canonical architecture — you cannot reason about formats without the original."
+    },
+    {
+      "from": "antibody-structure",
+      "to": "humanization",
+      "why": "Humanization decides which framework residues to keep versus swap. That decision needs a structural picture of what framework does: VH/VL packing and loop support."
+    },
+    {
+      "from": "antibody-binding",
+      "to": "assays",
+      "why": "ELISA, SPR, BLI and flow cytometry are instruments for measuring binding and its kinetics. The vocabulary (KD, off-rate) is defined at this node."
+    },
+    {
+      "from": "isotypes",
+      "to": "fc-receptors",
+      "why": "FcγR family members discriminate by isotype and subclass. Receptor biology is meaningless without the ligand taxonomy it binds."
+    },
+    {
+      "from": "bcr-signaling",
+      "to": "b-cell-development",
+      "why": "The checkpoint tests whether V(D)J recombination produced a functional heavy chain by asking a signaling question: does a pre-BCR form and fire?"
+    },
+    {
+      "from": "bcr-signaling",
+      "to": "b-cell-activation",
+      "why": "Antigen crosslinking turns the same receptor that guards development into an activation trigger — the two-signal model needs the BCR-signal half."
+    },
+    {
+      "from": "ig-genetics",
+      "to": "vdj-recombination",
+      "why": "V(D)J recombination is site-specific recombination ON these loci. Segments, RSSs and enhancers are the hardware the reaction runs on."
+    },
+    {
+      "from": "vdj-recombination",
+      "to": "b-cell-development",
+      "why": "The checkpoint literally evaluates the reaction's output: did rearrangement produce an in-frame, functional heavy chain? No product, no passage."
+    },
+    {
+      "from": "vdj-recombination",
+      "to": "allelic-exclusion",
+      "why": "Allelic exclusion is feedback on rearrangement: a successful product shuts down further RAG activity on the other allele. Exclusion mechanics are recombination mechanics."
+    },
+    {
+      "from": "b-cell-development",
+      "to": "central-tolerance",
+      "why": "The developmental endpoint is a quality filter: self-reactive immature B cells are deleted, receptor-edited or anergized. Tolerance is the last step of development."
+    },
+    {
+      "from": "b-cell-development",
+      "to": "naive-repertoire",
+      "why": "Development's selection and failure points shape the mature naive repertoire's composition — what you sequence in blood is development's survivor list."
+    },
+    {
+      "from": "central-tolerance",
+      "to": "peripheral-tolerance",
+      "why": "Cells that escape the marrow's self-reactivity check face a second wave of policing in the periphery. The two filters are layered, and both matter for antibody drug safety."
+    },
+    {
+      "from": "b-cell-activation",
+      "to": "gc-reaction",
+      "why": "Germinal centers are seeded by a subset of activated B cells that committed to the GC program (BCL6 high). Activation is the entry gate to the reactor."
+    },
+    {
+      "from": "gc-reaction",
+      "to": "shm",
+      "why": "SHM happens in the dark zone, in dividing centroblasts, under the BCL6/AID program. The GC is the anatomical home of the mutator."
+    },
+    {
+      "from": "gc-reaction",
+      "to": "csr",
+      "why": "Most class switching occurs inside GCs, in the light zone, under Tfh cytokine direction. The GC is where effector identity gets rewritten."
+    },
+    {
+      "from": "shm",
+      "to": "affinity-maturation",
+      "why": "SHM supplies the random variation that selection acts on. No SHM, no maturation — the two are one algorithm (mutate, then select)."
+    },
+    {
+      "from": "shm",
+      "to": "ig-locus-editing",
+      "why": "Whether an engineered BCR still hypermutates depends on cassette design: Yin et al. (2024) showed native-loci editing preserves SHM where intronic cassettes cripple it."
+    },
+    {
+      "from": "csr",
+      "to": "memory-plasma",
+      "why": "The memory and plasma compartments are largely class-switched; switching rewrites effector identity without touching specificity — that pairing defines the output lineages."
+    },
+    {
+      "from": "csr",
+      "to": "transgenic-platforms",
+      "why": "Humanized mice must support human class switching (human CH genes and switch regions) or they cannot deliver IgG with human effector functions."
+    },
+    {
+      "from": "memory-plasma",
+      "to": "engineered-b-cell-therapy",
+      "why": "Engineered B cells are valuable because they inherit memory/long-lived-plasma behavior — the durable-antibody-factory property is this node's biology."
+    },
+    {
+      "from": "fc-receptors",
+      "to": "effector-functions",
+      "why": "ADCC and ADCP are FcγR-mediated; which receptor sits on which effector cell decides the mechanism. The receptor map is the effector map."
+    },
+    {
+      "from": "fc-receptors",
+      "to": "fcrn-pk",
+      "why": "FcRn is the pharmacokinetic receptor — its pH-switch recycling explains IgG half-life, placental transport, and every half-life engineering attempt."
+    },
+    {
+      "from": "effector-functions",
+      "to": "fc-engineering",
+      "why": "Fc engineering is effector-function dial-turning: afucosylation boosts ADCC, LALA-PG silences it, S239D/I332E amplifies it. The dials are the effector mechanisms."
+    },
+    {
+      "from": "effector-functions",
+      "to": "bispecifics",
+      "why": "T-cell engagers and myeloid-recruiting bispecifics are effector-retargeting designs. Knowing what is being redirected (and its cytokine risks) requires effector biology."
+    },
+    {
+      "from": "effector-functions",
+      "to": "adc",
+      "why": "ADCs pair antibody targeting with payload killing. Knowing when immune effectors help versus harm the mechanism decides whether a payload is needed at all."
+    },
+    {
+      "from": "fcrn-pk",
+      "to": "fc-engineering",
+      "why": "Half-life variants (YTE, LS, PFc29) are FcRn-contact mutations — and they only work if neutral-pH release is preserved. That design rule comes from FcRn recycling physics."
+    },
+    {
+      "from": "naive-repertoire",
+      "to": "ml-models",
+      "why": "Language models are trained on curated repertoire data. You cannot evaluate or fine-tune them without germline-annotation literacy."
+    },
+    {
+      "from": "antibody-formats",
+      "to": "display-technologies",
+      "why": "Display libraries are built from format choices (scFv vs Fab vs VHH). Format determines multivalency, pairing freedom and achievable library size."
+    },
+    {
+      "from": "library-design",
+      "to": "in-vitro-maturation",
+      "why": "Maturation campaigns are biopanning with narrower libraries and tighter affinity gates — the same selection mechanics applied iteratively."
+    },
+    {
+      "from": "library-design",
+      "to": "developability",
+      "why": "Early counterscreens (polyspecificity, developability-integrated mammalian display) prevent late-stage attrition — selection strategy is where developability starts."
+    },
+    {
+      "from": "in-vitro-maturation",
+      "to": "in-silico-maturation",
+      "why": "Computational maturation is this loop virtualized — and it is benchmarked against wet-lab directed-evolution results. Know the wet loop to judge the dry one."
+    },
+    {
+      "from": "developability",
+      "to": "manufacturing",
+      "why": "Developability triage decides which molecules deserve process development at all. It is the gate between discovery and manufacturing."
+    },
+    {
+      "from": "ml-models",
+      "to": "structure-prediction",
+      "why": "Modern predictors are neural: AntiBERTy embeddings power IgFold; diffusion networks generate backbones. Understanding the models is prerequisite to trusting the predictions."
+    },
+    {
+      "from": "ig-locus-editing",
+      "to": "engineered-b-cell-therapy",
+      "why": "The cassette-at-IgH design is what lets edited cells express a BCR plus secreted antibody and join germinal centers — therapy design is locus-editing design."
+    },
+    {
+      "from": "receptors-signaling",
+      "to": "t-cell-help",
+      "why": "T-cell help is receptor signaling with two receptors (TCR plus CD28/ICOS) — the co-stimulation logic is this node's two-signal rule applied to T–B conjugates."
+    },
+    {
+      "from": "hematopoiesis",
+      "to": "vdj-recombination",
+      "why": "V(D)J recombination runs in developing lymphocytes produced by hematopoiesis — the reaction is meaningless until you know which marrow-derived cells actually rearrange."
+    },
+    {
+      "from": "lymphoid-tissues",
+      "to": "bcr-signaling",
+      "why": "BCR signaling is interpreted in a tissue context (marrow checkpoints, follicle, T-cell zone) — the same receptor means different things in different rooms."
+    },
+    {
+      "from": "antigen-epitope",
+      "to": "t-cell-help",
+      "why": "Tfh help is antigen-specific: the B cell presents a peptide epitope on MHC-II. Linked recognition is an epitope conversation, not a generic 'T cells help B cells'."
+    },
+    {
+      "from": "mhc-tcr",
+      "to": "antigen-epitope",
+      "why": "The epitopes that drive T-B collaboration are peptides sitting in an MHC groove — epitope thinking for help presupposes presentation hardware."
+    },
+    {
+      "from": "allelic-exclusion",
+      "to": "naive-repertoire",
+      "why": "The naive repertoire is one receptor per cell because allelic exclusion shut the other allele down — repertoire statistics are exclusion statistics."
+    },
+    {
+      "from": "affinity-maturation",
+      "to": "engineered-b-cell-therapy",
+      "why": "The affinity you want to encode in an engineered B cell is the product of maturation — without that target, locus editing has nothing specific to write."
+    },
+    {
+      "from": "peripheral-tolerance",
+      "to": "memory-plasma",
+      "why": "Memory and plasma cells are the survivors of peripheral checkpoints; a clone that failed those filters never becomes the long-lived factory you later clone or engineer."
+    },
+    {
+      "from": "assays",
+      "to": "effector-functions",
+      "why": "Killing, neutralization, and ADCC are claims you only trust after a binding or cell-based assay — effector function is an assay readout, not a cartoon."
+    },
+    {
+      "from": "display-technologies",
+      "to": "library-design",
+      "why": "A display library is only as good as the scaffold and selection system it will be panned in — library design starts from the display hardware."
+    },
+    {
+      "from": "humanization",
+      "to": "display-technologies",
+      "why": "Humanized frameworks are what you actually display and select on for a therapeutic — display without humanization just rediscovers a murine immunogen."
+    },
+    {
+      "from": "transgenic-platforms",
+      "to": "engineered-b-cell-therapy",
+      "why": "Human-Ig transgenic mice and edited primary B cells are two ways to let a B cell make a designed antibody — the platform is a prerequisite for the therapy."
+    },
+    {
+      "from": "structure-prediction",
+      "to": "engineered-b-cell-therapy",
+      "why": "The sequence you write into an Ig locus is a predicted structure–function pair — locus editing without a structure hypothesis is guessing at the receptor."
+    },
+    {
+      "from": "gc-reaction",
+      "to": "crispr-toolbox",
+      "why": "The germinal center is nature's editor; CRISPR is the synthetic one you reach for once you have seen how affinity is supposed to be rewritten in vivo."
+    },
+    {
+      "from": "crispr-toolbox",
+      "to": "ig-locus-editing",
+      "why": "Ig-locus editing is CRISPR (or a related nuclease) aimed at the same segments you just learned — the toolbox is the prerequisite for the targeting strategy."
+    },
+    {
+      "from": "in-silico-maturation",
+      "to": "engineered-b-cell-therapy",
+      "why": "A computed affinity or humanized sequence is what you encode in the B cell — in-silico maturation supplies the payload for the therapy."
+    },
+    {
+      "from": "manufacturing",
+      "to": "engineered-b-cell-therapy",
+      "why": "An engineered B-cell product still has to be grown, released, and delivered under the same quality constraints as a biologic — manufacturing is how the therapy reaches a patient."
+    },
+    {
+      "from": "single-b-cell-cloning",
+      "to": "engineered-b-cell-therapy",
+      "why": "You need a defined clone (sequence + specificity) before you rewrite a B cell to make it — single-cell cloning is how the payload is captured."
+    },
+    {
+      "from": "t-cell-help",
+      "to": "b-cell-activation",
+      "why": "Most protein antigens need linked Tfh help as signal two — activation of the B cells you later engineer is a two-signal event, not BCR crosslinking alone."
+    },
+    {
+      "from": "central-dogma",
+      "to": "dna-repair",
+      "why": "Repair pathways are genome maintenance on the same DNA that is transcribed and replicated — dogma is the substrate, NHEJ/HR are what happen when it breaks."
+    },
+    {
+      "from": "dna-repair",
+      "to": "vdj-recombination",
+      "why": "V(D)J joins are NHEJ with a nuclease bolted on — you cannot reason about coding joints and hairpins without the repair pathway they hijack."
+    },
+    {
+      "from": "immune-overview",
+      "to": "receptors-signaling",
+      "why": "The immune system's first cartoon is receptors (PRRs, antigen receptors) deciding friend from foe — signaling is how that cartoon becomes a cell-fate decision."
+    },
+    {
+      "from": "shm",
+      "to": "single-b-cell-cloning",
+      "why": "The clone worth picking is an SHM-matured cell — single-B-cell cloning captures a mutated, selected receptor, not a naive one."
+    },
+    {
+      "from": "bispecifics",
+      "to": "manufacturing",
+      "why": "A second binding arm adds aggregation, mispairing, and chain-ratio failure modes that manufacturing has to control — the format is a production problem, not a later polish."
+    },
+    {
+      "from": "fc-engineering",
+      "to": "manufacturing",
+      "why": "Fc mutations that change effector function or half-life also change expression and stability — manufacturing is how an Fc design becomes a releasable lot."
+    },
+    {
+      "from": "adc",
+      "to": "manufacturing",
+      "why": "Conjugation site, DAR, and linker chemistry dominate ADC process control — manufacturing is the ADC constraint, not a downstream checkbox."
+    }
+  ]
+}
+/*DATA-END*/
+;
+
+/*MAP-THEME-START*/
+// The skin — reconstructed from the legacy exemplar :root + ANCHORS so restitch
+// onto the current engine keeps the same rose/maroon immunology reading.
+const THEME={
+  name:"Marrow & Rose",
+  rationale:"Rose-paper field with a blush-to-maroon depth ramp and Source Sans body type; the graph should read as immunology before a word is parsed.",
+  webfont:"https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap",
+  fontDisplay:"'Fraunces', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif",
+  fontBody:"'Source Sans 3', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif",
+  vars:{ink:"#332028",muted:"#7A5C6B",line:"#E5D3D9",bg:"#FAF5F3",panel:"#FFFDFF",accent:"#A62555","ink-2":"#6D4E5C","dep-bg":"#F5E9ED",edge:"#8A6373","edge-related":"#C13D7B","hover-bg":"#F7ECEF",match:"#D81B60","btn-hover-border":"#B25E82","overlay-bg":"rgba(250,245,243,0.85)","overlay-bg-2":"rgba(250,245,243,0.6)"},
+  anchors:["#DCA0B4","#DC8CA6","#C1618F","#A03C77","#7C2A64","#5C1E50"]
+};
+/*MAP-THEME-END*/
+
+// ---------- theme applier (engine — edit THEME above, never this) ----------
+const appliedVars=[];
+function applyTheme(t){
+  const r=document.documentElement.style;
+  appliedVars.splice(0).forEach(k=>r.removeProperty("--"+k));
+  if(!t)return;
+  if(t.webfont&&!document.querySelector('link[href="'+t.webfont+'"]')){const l=document.createElement("link");l.rel="stylesheet";l.href=t.webfont;document.head.appendChild(l);}
+  const set=(k,v)=>{if(v){r.setProperty("--"+k,v);appliedVars.push(k);}};
+  Object.keys(t.vars||{}).forEach(k=>set(k,t.vars[k]));
+  set("font-display",t.fontDisplay);set("font-body",t.fontBody);
+}
+const THEME_DEFAULT={name:"Neutral slate",rationale:"Neutral default.",webfont:"",fontDisplay:"-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif",fontBody:"-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif",vars:{},anchors:["#1e3a8a","#2563eb","#0d9488","#16a34a","#ca8a04","#eab308"]};
+applyTheme(typeof THEME!=="undefined"?THEME:null);
+
+/*MAP-METADATA-START*/
+const THEMES=[
+ {name:"Foundations",color:"#46778E"},
+ {name:"Immune system orientation",color:"#377E70"},
+ {name:"Antibody as a molecule",color:"#587B3F"},
+ {name:"Just enough T cell",color:"#886F24"},
+ {name:"B cell development & diversity",color:"#A95F32"},
+ {name:"Germinal centers",color:"#B04A42"},
+ {name:"Effector function & PK",color:"#AF5476"},
+ {name:"Engineering toolbox",color:"#8A5FA0"},
+ {name:"Computational & B-cell frontier",color:"#565C9E"}
+];
+const THEME_BLURBS=[
+ "Molecular and cellular biology you need before any immunology: gene expression, protein physics, DNA repair, and receptor signaling. Antibody diversity is DNA repair co-opted on purpose, and antibody drugs are proteins expressed from cassettes.",
+ "The lay of the land: what the immune system is for, where B cells come from, where they live, and what they recognize. Everything downstream is set in this anatomy.",
+ "The engineering object itself: what an antibody is as a molecule, how binding is measured, how constant regions differ, and how the B cell receptor signals.",
+ "The minimum T-cell biology needed to understand how B cells get help, form germinal centers, and choose isotypes.",
+ "How the body generates antibody diversity: the loci, the recombination reaction, the developmental checkpoints, and the tolerance filters that shape the naive repertoire.",
+ "Nature's directed-evolution reactor: the germinal center runs mutate-and-select cycles that every in-vitro and in-vivo engineering loop imitates.",
+ "What antibodies do once bound: Fc receptors, complement, effector killing, recycling, and the glycans that tune all of it. This is the substrate of Fc engineering.",
+ "The applied toolbox: how monoclonal antibodies are discovered, screened, maturated, formatted, humanized, engineered, and made — from hybridoma to manufacturing.",
+ "Where the field is going: computational design, generative models, and the direct frontier of B-cell-specific antibody engineering — editing the Ig locus so the B cell itself makes the antibody you designed."
+];
+const GOAL_STATEMENT="work on B-cell-specific antibody engineering — designing antibodies, and engineering the B cells that produce them";
+const GOAL_SOURCES_NOTE="The spine follows <a href=\"https://www.ncbi.nlm.nih.gov/books/NBK10757/\" target=\"_blank\" rel=\"noopener\">Janeway's Immunobiology</a> (free older edition on NCBI Bookshelf). Mechanism nodes cite Di Noia & Neuberger 2007 (SHM), Stavnezer 2008 (CSR), Chi et al. 2020 (V(D)J/SHM/CSR); germinal-center nodes cite De Silva & Klein 2015, Mesin 2016, Victora & Nussenzweig 2022; engineering nodes cite Beerli & Rader 2011, Tiller 2011, Stone 2024, Ramdani 2022; the B-cell-engineering frontier cites Rogers & Cannon 2021, Nahmad 2022, Yin 2024, Trivedi 2025. Each node's panel links its own sources.";
+const SUGGESTED_PATH=[
+ {h:"Orientation",t:"innate vs adaptive → antigens & epitopes → antigen–antibody interaction; protein structure → antibody architecture → binding."},
+ {h:"Diversity machinery",t:"Ig gene loci → V(D)J recombination → B cell development → the naive repertoire."},
+ {h:"The reactor",t:"BCR signaling → B-cell activation → germinal centers → somatic hypermutation → affinity maturation."},
+ {h:"What antibodies do",t:"isotypes → Fc receptors → effector functions → Fc engineering."},
+ {h:"The toolbox",t:"binding → assays; formats → display; naive repertoire → library design → in vitro maturation."},
+ {h:"The frontier",t:"SHM → Ig locus editing → engineered B cells (ex vivo and in vivo)."}
+];
+const BUILD=7;
+/*MAP-METADATA-END*/
+
+// ---------- topological levels ----------
+const LEVEL={};DATA.nodes.forEach(n=>LEVEL[n.id]=0);
+let changed=true,levelGuard=0;
+while(changed&&levelGuard++<=DATA.nodes.length+1){
+  changed=false;
+  for(const e of DATA.edges){
+    if(LEVEL[e.to]<LEVEL[e.from]+1){LEVEL[e.to]=LEVEL[e.from]+1;changed=true;}
+  }
+}
+const MAXL=Math.max(...Object.values(LEVEL));
+const NLEVELS=MAXL+1;
+if(changed)console.error("WARNING: cycle detected in edges — prerequisite graph is not a DAG; level layout is truncated. Run the validator.");
+DATA.edges.forEach(e=>{const span=LEVEL[e.to]-LEVEL[e.from];if(span!==1)console.error("WARNING: non-adjacent edge",e.from,"->",e.to,"span",span,"— drop, bridge, or demote to see-also; do not redraw it as a long diagonal.");});
+
+// depth color scale: early → late
+const ANCHORS=(typeof THEME!=="undefined"&&THEME.anchors&&THEME.anchors.length>=2)?THEME.anchors:["#1e3a8a","#2563eb","#0d9488","#16a34a","#ca8a04","#eab308"]; // depth ramp — set in MAP-THEME
+function hex2rgb(h){return [1,3,5].map(i=>parseInt(h.slice(i,i+2),16));}
+function rgb2hex(r){return "#"+r.map(v=>v.toString(16).padStart(2,"0")).join("");}
+function levelColor(l){
+  const t=MAXL?l/MAXL:0,seg=t*(ANCHORS.length-1);
+  const i=Math.min(Math.floor(seg),ANCHORS.length-2),f=seg-i;
+  const a=hex2rgb(ANCHORS[i]),b=hex2rgb(ANCHORS[i+1]);
+  return rgb2hex(a.map((v,k)=>Math.round(v+(b[k]-v)*f)));
+}
+const LCOL=Array.from({length:NLEVELS},(_,l)=>levelColor(l));
+const LUM=h=>{const a=hex2rgb(h).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*a[0]+.7152*a[1]+.0722*a[2]};
+
+// ---------- helpers ----------
+const $=s=>document.querySelector(s);
+const SVGNS="http://www.w3.org/2000/svg";
+function svgEl(tag,attrs){const el=document.createElementNS(SVGNS,tag);for(const k in attrs)el.setAttribute(k,attrs[k]);return el;}
+function nodeById(id){return DATA.nodes.find(n=>n.id===id);}
+function nodeLabel(id){return nodeById(id).label;}
+function wrapLabel(t){
+  const max=17,words=t.split(" "),lines=[];let cur="";
+  for(const w of words){const cand=cur?cur+" "+w:w;if(cand.length<=max||!cur){cur=cand;}else{lines.push(cur);cur=w;}}
+  if(cur)lines.push(cur);
+  return lines.slice(0,3);
+}
+function mq(q){return typeof matchMedia==="function"&&matchMedia(q).matches;}
+function isNarrow(){return mq("(max-width:900px)");}
+function isCoarse(){return mq("(pointer: coarse)");}
+function usesTouchCopy(){return isNarrow()||isCoarse();}
+function hintCopy(){
+  return usesTouchCopy()
+    ? "A → B means “learn A before B”. Tap any arrow to see <b>why</b> it is a prerequisite."
+    : "A → B means “learn A before B”. Hover or click any arrow to see <b>why</b> it is a prerequisite.";
+}
+
+// ---------- layout: columns = topological levels ----------
+const NODE_W=200,NODE_H=52,GAP_Y=16,GAP_X=74,TOP=64,LEFT=56,MAX_PER_COL=10;
+const cols=[];
+for(let l=0;l<NLEVELS;l++){
+  const ids=DATA.nodes.filter(n=>LEVEL[n.id]===l).map(n=>n.id);
+  for(let i=0;i<ids.length;i+=MAX_PER_COL)cols.push({level:l,ids:ids.slice(i,i+MAX_PER_COL),cont:i>0});
+}
+let cx=LEFT;cols.forEach(c=>{c.x=cx;cx+=NODE_W+GAP_X;});
+const pos={};
+function assignY(){cols.forEach(c=>c.ids.forEach((id,i)=>{pos[id]={x:c.x,y:TOP+i*(NODE_H+GAP_Y)};}));}
+assignY();
+function barycenterPass(dir){
+  const seq=dir>0?cols:[...cols].reverse();
+  seq.forEach((c,ci)=>{
+    const skip=dir>0?ci===0:ci===cols.length-1;
+    if(skip)return;
+    const scored=c.ids.map((id,idx)=>{
+      let sum=0,cnt=0;
+      for(const e of DATA.edges){
+        let other=null;
+        if(e.from===id)other=e.to;else if(e.to===id)other=e.from;else continue;
+        const p2=pos[other];if(!p2)continue;
+        sum+=p2.y+NODE_H/2;cnt++;
+      }
+      return{id,idx,score:cnt?sum/cnt:pos[id].y+NODE_H/2};
+    });
+    scored.sort((a,b)=>a.score-b.score||a.idx-b.idx);
+    c.ids=scored.map(s=>s.id);
+  });
+  assignY();
+}
+for(let i=0;i<6;i++)barycenterPass(i%2===0?1:-1);
+let maxX=0,maxY=0;
+cols.forEach(c=>{maxX=Math.max(maxX,c.x+NODE_W);});
+Object.values(pos).forEach(p=>{maxY=Math.max(maxY,p.y+NODE_H);});
+
+// ---------- render ----------
+const svg=$("#graph");
+const gRoot=svgEl("g");svg.appendChild(gRoot);
+const gBg=svgEl("g"),gEdges=svgEl("g"),gNodes=svgEl("g");
+gRoot.appendChild(gBg);gRoot.appendChild(gEdges);gRoot.appendChild(gNodes);
+const edgeEls=[],nodeEls={},colEls=[];
+
+cols.forEach(c=>{
+  const color=LCOL[c.level];
+  let minY=Infinity,maxCy=-Infinity;
+  c.ids.forEach(id=>{minY=Math.min(minY,pos[id].y);maxCy=Math.max(maxCy,pos[id].y+NODE_H);});
+  const r=svgEl("rect",{x:c.x-16,y:minY-34,width:NODE_W+32,height:maxCy-minY+50,rx:14,fill:color,"class":"colbg"});
+  gBg.appendChild(r);colEls.push(r);
+  const t=svgEl("text",{x:c.x+NODE_W/2,y:minY-14,"text-anchor":"middle","class":"collabel","data-level":c.level,fill:color});
+  t.textContent="Level "+c.level+(c.cont?" (cont.)":"")+" · "+c.ids.length;
+  gBg.appendChild(t);
+});
+
+DATA.edges.forEach((e,i)=>{
+  const a=pos[e.from],b=pos[e.to];
+  const x1=a.x+NODE_W,y1=a.y+NODE_H/2,x2=b.x,y2=b.y+NODE_H/2;
+  const dx=Math.max(46,(x2-x1)*0.5);
+  const g=svgEl("g",{"class":"edge","data-i":i});
+  const line=svgEl("path",{d:`M ${x1} ${y1} C ${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2-7} ${y2}`,"class":"line"});
+  const arrow=svgEl("polygon",{points:`${x2},${y2} ${x2-8},${y2-4} ${x2-8},${y2+4}`});
+  const hit=svgEl("path",{d:`M ${x1} ${y1} C ${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2} ${y2}`,"class":"hit"});
+  g.appendChild(line);g.appendChild(arrow);g.appendChild(hit);
+  gEdges.appendChild(g);edgeEls.push(g);
+  g.addEventListener("mouseenter",ev=>onEdgeEnter(i,ev));
+  g.addEventListener("mousemove",ev=>onEdgeMove(ev));
+  g.addEventListener("mouseleave",()=>onEdgeLeave(i));
+});
+
+DATA.nodes.forEach(n=>{
+  const p=pos[n.id],color=LCOL[LEVEL[n.id]];
+  const g=svgEl("g",{"class":"node","data-id":n.id,transform:`translate(${p.x},${p.y})`});
+  const rect=svgEl("rect",{x:0,y:0,width:NODE_W,height:NODE_H,rx:10,"class":"main",fill:color,"fill-opacity":0.12,stroke:color});
+  g.appendChild(rect);
+  const lines=wrapLabel(n.label),midY=NODE_H/2;
+  const txt=svgEl("text",{"text-anchor":"middle",x:NODE_W/2});
+  lines.forEach((ln,i)=>{
+    const ts=svgEl("tspan",{x:NODE_W/2,y:midY+(i-(lines.length-1)/2)*16+4});
+    ts.textContent=ln;txt.appendChild(ts);
+  });
+  g.appendChild(txt);
+  gNodes.appendChild(g);nodeEls[n.id]=g;
+});
+
+// ---------- view transform ----------
+const state={sel:null};
+let view={x:0,y:0,k:1};
+let viewTouched=false;
+function applyView(){gRoot.setAttribute("transform",`translate(${view.x},${view.y}) scale(${view.k})`);}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function zoomAt(px,py,f){
+  const k2=clamp(view.k*f,0.18,3.2),r=k2/view.k;
+  view.x=px-(px-view.x)*r;view.y=py-(py-view.y)*r;view.k=k2;applyView();
+}
+svg.addEventListener("wheel",e=>{
+  e.preventDefault();viewTouched=true;
+  const rect=svg.getBoundingClientRect();
+  zoomAt(e.clientX-rect.left,e.clientY-rect.top,Math.exp(-e.deltaY*0.0016));
+},{passive:false});
+
+const pointers=new Map();
+let panning=false,panStart=null,dragMoved=false,pinch0=null;
+function pointerXY(e){return {cx:e.clientX,cy:e.clientY};}
+function pinchState(){
+  const pts=[...pointers.values()];
+  if(pts.length<2)return null;
+  const rect=svg.getBoundingClientRect();
+  return {
+    dist:Math.hypot(pts[0].cx-pts[1].cx,pts[0].cy-pts[1].cy),
+    midX:(pts[0].cx+pts[1].cx)/2-rect.left,
+    midY:(pts[0].cy+pts[1].cy)/2-rect.top
+  };
+}
+function applyPinch(){
+  const now=pinchState();
+  if(!now||!pinch0)return;
+  const k2=clamp(pinch0.k*(now.dist/Math.max(8,pinch0.dist)),0.18,3.2);
+  const r=k2/pinch0.k;
+  view.k=k2;
+  view.x=now.midX-(pinch0.midX-pinch0.vx)*r;
+  view.y=now.midY-(pinch0.midY-pinch0.vy)*r;
+  applyView();
+}
+svg.addEventListener("pointerdown",e=>{
+  pointers.set(e.pointerId,pointerXY(e));
+  if(pointers.size>=2){
+    const p=pinchState();
+    pinch0=p?{...p,vx:view.x,vy:view.y,k:view.k}:null;
+    panning=false;dragMoved=true;viewTouched=true;
+    svg.classList.add("panning");
+    return;
+  }
+  panning=true;dragMoved=false;panStart={x:e.clientX,y:e.clientY,vx:view.x,vy:view.y};
+  svg.classList.add("panning");
+});
+window.addEventListener("pointermove",e=>{
+  if(pointers.has(e.pointerId))pointers.set(e.pointerId,pointerXY(e));
+  if(pinch0&&pointers.size>=2){applyPinch();return;}
+  if(!panning)return;
+  const dx=e.clientX-panStart.x,dy=e.clientY-panStart.y;
+  if(Math.abs(dx)+Math.abs(dy)>(usesTouchCopy()?14:4)){dragMoved=true;viewTouched=true;}
+  if(!dragMoved)return;
+  view.x=panStart.vx+dx;view.y=panStart.vy+dy;applyView();
+});
+function endPan(e){
+  if(e&&e.pointerId!=null)pointers.delete(e.pointerId);
+  if(pointers.size<2)pinch0=null;
+  if(pointers.size===1){
+    const leftover=[...pointers.values()][0];
+    panning=true;panStart={x:leftover.cx,y:leftover.cy,vx:view.x,vy:view.y};
+  }
+  if(pointers.size===0){panning=false;svg.classList.remove("panning");}
+  setTimeout(()=>{if(pointers.size===0)dragMoved=false;},0);
+}
+// selection/activation on pointerup: setPointerCapture-free, so the event target is the real element
+svg.addEventListener("pointerup",e=>{
+  if(dragMoved||pinch0){endPan(e);return;}
+  const t=e.target;
+  const ng=t.closest?t.closest("g.node"):null;
+  const eg=t.closest?t.closest("g.edge"):null;
+  if(ng)select(ng.dataset.id);
+  else if(eg)onEdgeActivate(+eg.dataset.i,e);
+  else{clearSel();unpinTT();}
+  endPan(e);
+});
+svg.addEventListener("pointercancel",endPan);
+window.addEventListener("pointerup",endPan);
+window.addEventListener("pointercancel",endPan);
+window.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){closeChrome();clearSel();unpinTT();}
+});
+window.addEventListener("resize",()=>{if(isNarrow()&&!viewTouched)fit();});
+
+function fit(){
+  const rect=svg.getBoundingClientRect();
+  if(isNarrow()){
+    // Readable first paint: keep node labels at engine size and start at the
+    // entry columns. Pinch/drag still reach the rest of the graph.
+    view.k=1;
+    view.x=16;
+    view.y=Math.max(20,(rect.height-(maxY+TOP))/2);
+    applyView();
+    return;
+  }
+  const s=Math.min(rect.width/(maxX+LEFT),rect.height/(maxY+TOP))*0.96;
+  view.k=clamp(s,0.18,1.4);
+  view.x=(rect.width-(maxX+LEFT)*view.k)/2;view.y=(rect.height-(maxY+TOP)*view.k)/2;
+  applyView();
+}
+function closeHeaderChrome(){
+  const hdr=document.querySelector("header");
+  hdr.classList.remove("search-open","menu-open");
+  $("#btn-search-toggle").setAttribute("aria-expanded","false");
+  $("#btn-more").setAttribute("aria-expanded","false");
+}
+function closeChrome(){
+  closeHeaderChrome();
+  guidePinned=false;
+  legend.classList.remove("is-open");
+  $("#btn-legend").setAttribute("aria-expanded","false");
+  $("#btn-guide").setAttribute("aria-expanded","false");
+  if(isNarrow())setPanelOpen(false);
+  unpinTT();
+  syncScrim();
+}
+function anyOverlay(){
+  return panel.classList.contains("is-open")&&isNarrow()
+    ||legend.classList.contains("is-open")
+    ||(tt.style.display==="block"&&(isNarrow()||isCoarse()))
+    ||document.querySelector("header").classList.contains("menu-open");
+}
+function syncScrim(){
+  const on=anyOverlay();
+  $("#scrim").classList.toggle("is-on",on);
+  $("#scrim").hidden=!on;
+}
+function setPanelOpen(open){
+  panel.classList.toggle("is-open",!!open);
+  $("#btn-guide").setAttribute("aria-expanded",open&&!state.sel?"true":"false");
+  syncScrim();
+}
+let guidePinned=false;
+function syncFitLabel(){$("#btn-fit").textContent=isNarrow()?"Reset view":"Fit";}
+syncFitLabel();
+window.addEventListener("resize",syncFitLabel);
+$("#btn-fit").addEventListener("click",()=>{closeHeaderChrome();fit();syncScrim();});
+$("#btn-reset").addEventListener("click",()=>{guidePinned=false;clearSel();fit();closeChrome();});
+$("#btn-search-toggle").addEventListener("click",()=>{
+  const hdr=document.querySelector("header");
+  const open=!hdr.classList.contains("search-open");
+  hdr.classList.toggle("search-open",open);
+  hdr.classList.remove("menu-open");
+  $("#btn-search-toggle").setAttribute("aria-expanded",open);
+  $("#btn-more").setAttribute("aria-expanded","false");
+  if(open){searchInput.focus();searchInput.select();}
+  else{results.style.display="none";searchInput.blur();}
+});
+$("#btn-more").addEventListener("click",()=>{
+  const hdr=document.querySelector("header");
+  const open=!hdr.classList.contains("menu-open");
+  hdr.classList.toggle("menu-open",open);
+  hdr.classList.remove("search-open");
+  $("#btn-more").setAttribute("aria-expanded",open);
+  $("#btn-search-toggle").setAttribute("aria-expanded","false");
+  syncScrim();
+});
+$("#btn-legend").addEventListener("click",()=>{
+  const open=!legend.classList.contains("is-open");
+  closeHeaderChrome();
+  guidePinned=false;
+  if(isNarrow())setPanelOpen(false);
+  unpinTT();
+  legend.classList.toggle("is-open",open);
+  $("#btn-legend").setAttribute("aria-expanded",open);
+  syncScrim();
+});
+$("#btn-guide").addEventListener("click",()=>{
+  closeHeaderChrome();
+  legend.classList.remove("is-open");
+  $("#btn-legend").setAttribute("aria-expanded","false");
+  unpinTT();
+  guidePinned=true;
+  state.sel=null;
+  svg.classList.remove("dimmed");
+  Object.values(nodeEls).forEach(g=>{g.classList.remove("related");g.classList.remove("sel");g.classList.remove("match");});
+  edgeEls.forEach(g=>{g.classList.remove("related");g.classList.remove("direct");});
+  renderDefaultPanel();
+  setPanelOpen(true);
+});
+$("#scrim").addEventListener("click",()=>{
+  closeHeaderChrome();
+  legend.classList.remove("is-open");
+  $("#btn-legend").setAttribute("aria-expanded","false");
+  if(isNarrow()){guidePinned=false;setPanelOpen(false);}
+  unpinTT();
+  syncScrim();
+});
+
+// ---------- focus / selection ----------
+function applyFocus(related,keepEdges){
+  svg.classList.add("dimmed");
+  for(const id in nodeEls){nodeEls[id].classList.toggle("related",related.has(id));}
+  colEls.forEach(r=>r.classList.add("related"));
+  svg.querySelectorAll(".collabel").forEach(t=>t.classList.add("related"));
+  edgeEls.forEach((g,i)=>{
+    const rel=keepEdges.has(i);
+    g.classList.toggle("related",rel);
+    const e=DATA.edges[i];
+    g.classList.toggle("direct",rel&&(e.from===state.sel||e.to===state.sel));
+  });
+}
+function clearSel(){
+  state.sel=null;
+  svg.classList.remove("dimmed");
+  Object.values(nodeEls).forEach(g=>{g.classList.remove("related");g.classList.remove("sel");g.classList.remove("match");});
+  edgeEls.forEach(g=>{g.classList.remove("related");g.classList.remove("direct");});
+  renderDefaultPanel();
+  if(isNarrow())setPanelOpen(!!guidePinned);
+}
+function select(id){
+  state.sel=id;guidePinned=false;unpinTT();closeHeaderChrome();
+  if(isNarrow())legend.classList.remove("is-open");
+  const anc=new Set([id]),keepEdges=new Set(),stack=[id];
+  while(stack.length){
+    const cur=stack.pop();
+    DATA.edges.forEach((e,i)=>{
+      if(e.to===cur&&!anc.has(e.from)){anc.add(e.from);keepEdges.add(i);stack.push(e.from);}
+    });
+  }
+  const related=new Set(anc);
+  DATA.edges.forEach(e=>{if(e.from===id)related.add(e.to);});
+  DATA.edges.forEach((e,i)=>{if(e.from===id)keepEdges.add(i);});
+  Object.values(nodeEls).forEach(g=>g.classList.remove("sel"));
+  nodeEls[id].classList.add("sel");
+  applyFocus(related,keepEdges);
+  renderNodePanel(id,anc.size-1);
+  if(isNarrow())setPanelOpen(true);
+}
+function focusTheme(ti){
+  state.sel=null;unpinTT();
+  const related=new Set(DATA.nodes.filter(n=>n.phase===ti).map(n=>n.id));
+  const keepEdges=new Set();
+  DATA.edges.forEach((e,i)=>{if(related.has(e.from)||related.has(e.to))keepEdges.add(i);});
+  svg.classList.add("dimmed");
+  for(const id in nodeEls)nodeEls[id].classList.toggle("related",related.has(id));
+  colEls.forEach(r=>r.classList.add("related"));
+  edgeEls.forEach((g,i)=>g.classList.toggle("related",keepEdges.has(i)));
+  renderThemePanel(ti);
+}
+function focusLevel(l){
+  state.sel=null;unpinTT();
+  const related=new Set(DATA.nodes.filter(n=>LEVEL[n.id]===l).map(n=>n.id));
+  const keepEdges=new Set();
+  DATA.edges.forEach((e,i)=>{if(related.has(e.from)||related.has(e.to))keepEdges.add(i);});
+  svg.classList.add("dimmed");
+  for(const id in nodeEls)nodeEls[id].classList.toggle("related",related.has(id));
+  colEls.forEach(r=>r.classList.add("related"));
+  edgeEls.forEach((g,i)=>g.classList.toggle("related",keepEdges.has(i)));
+  renderLevelPanel(l);
+}
+
+// ---------- tooltip ----------
+const tt=$("#tt");let pinnedEdge=null;
+function showTT(html,px,py){
+  if(usesTouchCopy()){
+    tt.innerHTML=`<div class="sheet-handle"></div><div class="sheet-head narrow-only"><strong>Why this is a prerequisite</strong><button type="button" class="sheet-close" id="btn-why-close">Close</button></div>${html}`;
+    tt.style.display="block";tt.style.left="0";tt.style.top="auto";
+    const close=$("#btn-why-close");if(close)close.addEventListener("click",unpinTT);
+    syncScrim();
+    return;
+  }
+  tt.innerHTML=html;tt.style.display="block";
+  const wrap=$("#canvaswrap").getBoundingClientRect();
+  let x=px-wrap.left+14,y=py-wrap.top+14;
+  const tw=tt.offsetWidth,th=tt.offsetHeight;
+  if(x+tw>wrap.width-10)x=px-wrap.left-tw-14;
+  if(y+th>wrap.height-10)y=py-wrap.top-th-14;
+  tt.style.left=Math.max(4,x)+"px";tt.style.top=Math.max(4,y)+"px";
+}
+function hideTT(){if(pinnedEdge===null)tt.style.display="none";}
+function unpinTT(){pinnedEdge=null;tt.style.display="none";edgeEls.forEach(g=>g.classList.remove("hov"));if(typeof syncScrim==="function")syncScrim();}
+function edgeHTML(i){
+  const e=DATA.edges[i];
+  return `<div class="who">${nodeLabel(e.from)} <span class="arrow">→</span> ${nodeLabel(e.to)}</div><div>${e.why}</div>`;
+}
+function onEdgeEnter(i,ev){if(dragMoved||usesTouchCopy())return;edgeEls[i].classList.add("hov");if(pinnedEdge===null)showTT(edgeHTML(i),ev.clientX,ev.clientY);}
+function onEdgeMove(ev){if(pinnedEdge!==null||usesTouchCopy())return;showTT(tt.innerHTML,ev.clientX,ev.clientY);}
+function onEdgeLeave(i){if(usesTouchCopy())return;edgeEls[i].classList.remove("hov");if(pinnedEdge!==i)hideTT();}
+function onEdgeActivate(i,ev){
+  if(pinnedEdge===i){unpinTT();syncScrim();return;}
+  pinnedEdge=i;edgeEls.forEach(g=>g.classList.remove("hov"));edgeEls[i].classList.add("hov");
+  if(isNarrow()){legend.classList.remove("is-open");setPanelOpen(false);}
+  showTT(edgeHTML(i),ev.clientX,ev.clientY);
+}
+
+// ---------- panel ----------
+const panel=$("#panel");
+function themeChip(ti){return `<span class="chip" style="background:${THEMES[ti].color}">${THEMES[ti].name}</span>`;}
+function levelChip(l){const c=LCOL[l];return `<span class="chip" style="background:${c}${LUM(c)>0.28?";color:var(--ink)":""}">Level ${l}</span>`;}
+function depBlock(dir,e){
+  const other=dir==="req"?e.from:e.to;
+  return `<div class="dep"><b data-goto="${other}">${dir==="req"?"← ":"→ "}${nodeLabel(other)}</b><p>${e.why}</p></div>`;
+}
+function gotoHandler(){
+  panel.querySelectorAll("[data-goto]").forEach(b=>{
+    if(b.dataset.goto==="__back")return;
+    b.addEventListener("click",()=>{select(b.dataset.goto);centerOn(b.dataset.goto);});
+  });
+}
+function bindBack(){
+  panel.querySelectorAll("[data-goto='__back']").forEach(el=>{
+    el.addEventListener("click",()=>{guidePinned=false;clearSel();});
+  });
+}
+function sheetChrome(title){
+  return `<div class="sheet-handle"></div><div class="sheet-head narrow-only"><strong>${title}</strong><button type="button" class="sheet-close" data-goto="__back">Close</button></div>`;
+}
+function renderNodePanel(id,ancCount){
+  const n=nodeById(id);
+  const reqs=DATA.edges.filter(e=>e.to===id).sort((a,b)=>LEVEL[a.from]-LEVEL[b.from]);
+  const unl=DATA.edges.filter(e=>e.from===id).sort((a,b)=>LEVEL[a.to]-LEVEL[b.to]);
+  let h=`${sheetChrome(n.label)}<span class="backlink" data-goto="__back">← overview</span><br>
+  ${levelChip(LEVEL[id])} ${themeChip(n.phase)}
+  <h2>${n.label}</h2><p>${n.desc}</p>
+  <h3>Rough outline — study in this order</h3>
+  <ol class="outline">${n.outline.map(o=>`<li>${o}</li>`).join("")}</ol>
+  <h3>Key ideas</h3><ul>${n.ideas.map(i=>`<li>${i}</li>`).join("")}</ul>
+  <h3>Mastery check — prove you know this</h3>
+  ${n.questions.map((q,i)=>`<div class="dep"><b>Q${i+1}. ${q.q}</b><details><summary>Show answer</summary><p>${q.a}</p></details></div>`).join("")}
+  <h3>Study sources</h3><ul>${n.sources.map(s=>`<li>${s.u?`<a href="${s.u}" target="_blank" rel="noopener">${s.t}</a>`:s.t}</li>`).join("")}</ul>`;
+  h+=`<h3>Requires — why these are prerequisites (${reqs.length})</h3>`;
+  h+=reqs.length?reqs.map(e=>depBlock("req",e)).join(""):"<p style='color:var(--muted)'>Nothing — this is an entry point.</p>";
+  h+=`<h3>Unlocks (${unl.length})</h3>`;
+  h+=unl.length?unl.map(e=>depBlock("unl",e)).join(""):"<p style='color:var(--muted)'>Nothing directly — this is a terminal destination.</p>";
+  h+=`<p style="margin-top:14px;font-size:14px;color:var(--muted)">Graph focus: this node (highlighted), its ${ancCount} transitive prerequisite${ancCount===1?"":"s"}, and its direct downstream targets.</p>`;
+  panel.innerHTML=h;
+  bindBack();
+  gotoHandler();
+}
+function renderThemePanel(ti){
+  const ids=DATA.nodes.filter(n=>n.phase===ti).map(n=>n.id);
+  panel.innerHTML=`${sheetChrome(THEMES[ti].name)}<span class="backlink" data-goto="__back">← overview</span><br>${themeChip(ti)}
+  <h2>${THEMES[ti].name}</h2>
+  <p>${THEME_BLURBS[ti]||""}</p>
+  <h3>Concepts in this theme (${ids.length})</h3>
+  ${ids.map(i=>`<div class="dep"><b data-goto="${i}">${nodeLabel(i)}</b> <span style="font-size:14px;color:var(--muted)">Level ${LEVEL[i]}</span><p>${nodeById(i).desc}</p></div>`).join("")}`;
+  bindBack();
+  gotoHandler();
+  if(isNarrow())setPanelOpen(true);
+}
+function renderLevelPanel(l){
+  const ids=DATA.nodes.filter(n=>LEVEL[n.id]===l).map(n=>n.id);
+  panel.innerHTML=`${sheetChrome("Level "+l)}<span class="backlink" data-goto="__back">← overview</span><br>${levelChip(l)}
+  <h2>Level ${l}</h2>
+  <p>Everything on this level can be studied in parallel: nothing here depends on anything else at the same level, and every prerequisite sits strictly to the left.</p>
+  <h3>Concepts at this level (${ids.length})</h3>
+  ${ids.map(i=>`<div class="dep"><b data-goto="${i}">${nodeLabel(i)}</b> <span style="font-size:14px;color:var(--muted)">${THEMES[nodeById(i).phase].name}</span><p>${nodeById(i).desc}</p></div>`).join("")}`;
+  bindBack();
+  gotoHandler();
+  if(isNarrow())setPanelOpen(true);
+}
+function renderDefaultPanel(){
+  const nodeVerb=usesTouchCopy()?"Tap":"Click";
+  const arrowLine=usesTouchCopy()
+    ?"Tap any <b>arrow</b> for its rationale (tap again to dismiss). Drag to pan, pinch to zoom, search to jump."
+    :"Hover or click any <b>arrow</b> for its rationale (click again to pin). Drag to pan, scroll to zoom, search to jump.";
+  const colorLine=usesTouchCopy()
+    ?"the tint deepens from the entry level at the left to the frontier at the right — the theme's depth ramp, also drawn in the Levels sheet (tap a band to focus that level)."
+    :"the tint deepens from the entry level at the left to the frontier at the right — the theme's depth ramp, also drawn as the legend bar bottom-left (click a band to focus that level).";
+  panel.innerHTML=`${sheetChrome("How to read this map")}
+  <h2 style="margin-top:0">Concept dependency map</h2>
+  <p>This map lays out the ${DATA.nodes.length} concepts between zero background and the end goal: <b>${GOAL_STATEMENT}</b></p>
+  <h3>How to read it</h3>
+  <ul>
+    <li><b>Columns are topological levels.</b> An arrow A → B means learn A before B, so B always sits to the right of A. Everything in one column can be learned in parallel once the columns to its left are done.</li>
+    <li><b>Color encodes depth:</b> ${colorLine}</li>
+    <li>${nodeVerb} any <b>node</b> for its description, a <b>rough study outline</b> (ordered steps), key ideas, sources, and — for every arrow touching it — <b>why</b> that prerequisite holds.</li>
+    <li>${nodeVerb === "Tap" ? "Tapping" : "Clicking"} a node also lights up its entire prerequisite chain: what you'd need to study, in the graph's own order.</li>
+    <li>${arrowLine}</li>
+  </ul>
+  <h3>A suggested path through the graph</h3>
+  <ul>
+    ${SUGGESTED_PATH.map(s=>`<li><b>${s.h}:</b> ${s.t}</li>`).join("")}
+  </ul>
+  <h3>Themes</h3>
+  <div>${THEMES.map((p,i)=>`<span class="chipbtn" data-phase="${i}" style="margin:2px"><span class="dot" style="background:${p.color}"></span>${p.name}</span>`).join("")}</div>
+  <p style="font-size:14px;color:var(--muted)">${nodeVerb} a theme to highlight its nodes across the graph.</p>
+  <h3>Sources</h3>
+  <p style="font-size:14.5px">${GOAL_SOURCES_NOTE}</p>`;
+  bindBack();
+  panel.querySelectorAll("[data-phase]").forEach(b=>{
+    b.addEventListener("click",()=>focusTheme(+b.dataset.phase));
+  });
+}
+
+// ---------- search ----------
+const searchInput=$("#search"),results=$("#results");
+searchInput.addEventListener("input",()=>{
+  const q=searchInput.value.trim().toLowerCase();
+  if(!q){results.style.display="none";return;}
+  const matches=DATA.nodes.filter(n=>
+    n.label.toLowerCase().includes(q)||n.desc.toLowerCase().includes(q)||n.ideas.some(i=>i.toLowerCase().includes(q))||n.outline.some(o=>o.toLowerCase().includes(q))
+  ).slice(0,8);
+  results.innerHTML=matches.map(n=>`<div data-id="${n.id}">${n.label}<span class="rphase">${THEMES[n.phase].name}</span></div>`).join("")||"<div><i>No matches</i></div>";
+  results.style.display="block";
+  results.querySelectorAll("[data-id]").forEach(r=>{
+    r.addEventListener("click",()=>{
+      Object.values(nodeEls).forEach(g=>g.classList.remove("match"));
+      nodeEls[r.dataset.id].classList.add("match");
+      select(r.dataset.id);centerOn(r.dataset.id);
+      results.style.display="none";searchInput.value="";
+    });
+  });
+});
+document.addEventListener("click",e=>{if(!e.target.closest(".searchwrap"))results.style.display="none";});
+function centerOn(id){
+  const p=pos[id],rect=svg.getBoundingClientRect();
+  const cxg=p.x+NODE_W/2,cyg=p.y+NODE_H/2;
+  view.x=rect.width/2-cxg*view.k;view.y=rect.height/2-cyg*view.k;applyView();
+}
+
+// ---------- legend & init ----------
+const legend=$("#legend");
+(function buildLegend(){
+  const stops=LCOL.map((c,i)=>`${c} ${Math.round(100*i/(NLEVELS-1))}%`).join(", ");
+  const bandVerb=usesTouchCopy()?"Tap":"Click";
+  legend.innerHTML=`<div class="sheet-handle"></div>
+  <div class="sheet-head narrow-only"><strong>Topological levels</strong><button type="button" class="sheet-close" id="btn-legend-close">Close</button></div>
+  <div class="bar" style="background:linear-gradient(90deg, ${stops})"></div>
+  <div class="barlabels"><span>0</span><span>topological level →</span><span>${MAXL}</span></div>
+  <div class="cap">Every column is a dependency level: all its prerequisites sit strictly to the left, so a level can be studied in parallel. ${bandVerb} a band below to focus it.</div>
+  <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:5px">${LCOL.map((c,i)=>`<span class="chipbtn lvlchip" data-level="${i}" style="border-color:${c};font-size:14px;padding:1px 6px">${i}</span>`).join("")}</div>`;
+  legend.querySelectorAll(".lvlchip").forEach(b=>b.addEventListener("click",()=>{
+    if(isNarrow()){legend.classList.remove("is-open");$("#btn-legend").setAttribute("aria-expanded","false");}
+    focusLevel(+b.dataset.level);
+  }));
+  const close=$("#btn-legend-close");if(close)close.addEventListener("click",()=>{legend.classList.remove("is-open");$("#btn-legend").setAttribute("aria-expanded","false");syncScrim();});
+})();
+$("#stats").textContent=`${DATA.nodes.length} concepts · ${DATA.edges.length} prerequisite links · ${NLEVELS} topological levels · build ${BUILD}`;
+$("#hint").innerHTML=hintCopy();
+renderDefaultPanel();
+if(!isNarrow())panel.classList.add("is-open");
+fit();
+
+// ---------- theme toggle (engine): Themed ↔ Default, re-skins palette, fonts, and the depth ramp live ----------
+const ANCHORS_THEMED=ANCHORS.slice();
+let themedOn=true;
+function recolorGraph(){
+  LCOL.length=0;LCOL.push(...Array.from({length:NLEVELS},(_,l)=>levelColor(l)));
+  cols.forEach((c,i)=>colEls[i].setAttribute("fill",LCOL[c.level]));
+  svg.querySelectorAll(".collabel").forEach(t=>t.setAttribute("fill",LCOL[+t.dataset.level]));
+  for(const id in nodeEls){const c=LCOL[LEVEL[id]],rc=nodeEls[id].querySelector("rect.main");rc.setAttribute("fill",c);rc.setAttribute("stroke",c);}
+  const stops=LCOL.map((c,i)=>`${c} ${Math.round(100*i/(NLEVELS-1))}%`).join(", ");
+  const bar=legend.querySelector(".bar");if(bar)bar.style.background=`linear-gradient(90deg, ${stops})`;
+  legend.querySelectorAll(".lvlchip").forEach(b=>b.style.borderColor=LCOL[+b.dataset.level]);
+}
+function setTheme(on){
+  themedOn=on;
+  const t=on?THEME:THEME_DEFAULT;
+  applyTheme(t);
+  const ramp=on?ANCHORS_THEMED:THEME_DEFAULT.anchors;
+  if(ramp&&ramp.length>=2){ANCHORS.length=0;ANCHORS.push(...ramp);}
+  recolorGraph();
+  $("#btn-theme").textContent=on?"Themed":"Default";
+}
+$("#btn-theme").addEventListener("click",()=>setTheme(!themedOn));
+// deep link: open with #node-id to start with that concept selected
+(function(){
+  const id=location.hash&&location.hash.slice(1);
+  if(id&&nodeEls[id]){select(id);centerOn(id);}
+})();
+</script>
+</body>
+</html>
