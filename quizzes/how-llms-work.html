@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>How LLMs work · misconception quiz</title>
+<noscript><style>.feedback[hidden]{display:block !important}</style></noscript>
+<style>
+
+  :root{
+    --ink:#1e293b; --muted:#64748b; --line:#e2e8f0; --bg:#f8fafc; --panel:#ffffff;
+    --accent:#2563eb; --ink-2:#334155; --dep-bg:#fbfdff;
+    --ok:#166534; --ok-bg:#ecfdf3; --bad:#9f1239; --bad-bg:#fff1f2;
+    --font-display:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --font-body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --safe-t:env(safe-area-inset-top,0px); --safe-r:env(safe-area-inset-right,0px);
+    --safe-b:env(safe-area-inset-bottom,0px); --safe-l:env(safe-area-inset-left,0px);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);line-height:1.5}
+  header{background:var(--panel);border-bottom:1px solid var(--line);
+    padding:max(14px,var(--safe-t)) max(16px,var(--safe-r)) 14px max(16px,var(--safe-l))}
+  header h1{font-family:var(--font-display);font-size:1.25rem;font-weight:650;margin:0 0 6px;line-height:1.3}
+  header p{margin:0;color:var(--muted);font-size:15px}
+  main{max-width:40rem;margin:0 auto;
+    padding:18px max(16px,var(--safe-r)) calc(36px + var(--safe-b)) max(16px,var(--safe-l))}
+  .lede{font-size:1.05rem;line-height:1.55;margin:0 0 8px;color:var(--ink-2)}
+  article.item{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:14px 14px 8px;margin:14px 0}
+  article.item h2{font-family:var(--font-display);font-size:1.05rem;font-weight:650;
+    line-height:1.4;margin:0 0 10px}
+  .choice{margin:0 0 8px}
+  button.option{display:block;width:100%;text-align:left;min-height:44px;padding:12px 14px;
+    border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);
+    font:inherit;font-size:16px;line-height:1.45;cursor:pointer;touch-action:manipulation}
+  button.option:hover{border-color:#94a3b8}
+  button.option[aria-pressed="true"][data-correct="true"]{border-color:var(--ok);background:var(--ok-bg)}
+  button.option[aria-pressed="true"][data-correct="false"]{border-color:var(--bad);background:var(--bad-bg)}
+  .feedback{margin:8px 0 0;padding:10px 12px;border-radius:10px;background:var(--dep-bg);
+    border:1px solid var(--line);font-size:15.5px;line-height:1.5;color:var(--ink-2)}
+  .feedback.is-right{background:var(--ok-bg);border-color:#bbf7d0}
+  .feedback.is-wrong{background:var(--bad-bg);border-color:#fecdd3}
+  .reflect{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:16px}
+  .reflect h2{font-family:var(--font-display);font-size:1.05rem;margin:0 0 8px}
+  .reflect ol{margin:0;padding-left:1.2rem}
+  .reflect li{margin:6px 0;font-size:16px}
+  footer{color:var(--muted);font-size:14px;margin-top:14px}
+
+</style>
+</head>
+<body>
+<header>
+  <h1>How LLMs work</h1>
+  <p>Misconception quiz</p>
+</header>
+<main>
+  <p class="lede">Five questions on how large language models produce text. Every wrong option is a misconception people actually hold. Pick one. The note says why that choice was tempting, and what is going on instead.</p>
+    <article class="item">
+      <h2>1. At one step, before any new word appears, what does a large language model produce?</h2>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="true" aria-describedby="q1o1">A probability for every token in its vocabulary.</button>
+        <p id="q1o1" class="feedback" hidden>The model scores every token it knows, turns those scores into probabilities, and then one token is chosen from that distribution. The paragraph is that step repeated, not a document fetched whole.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q1o2">The finished paragraph, already written.</button>
+        <p id="q1o2" class="feedback" hidden>Watching a whole answer arrive makes the paragraph seem stored. The model did not emit the paragraph as one stored object. It committed to one token at a time.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q1o3">One token it is sure of, and no score for any other token.</button>
+        <p id="q1o3" class="feedback" hidden>Reading a confident reply makes the step seem to have had a single certain output. The step always has a distribution. Even a sharp distribution still assigns probability to other tokens.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q1o4">A list of pages it will read before it answers.</button>
+        <p id="q1o4" class="feedback" hidden>Fluent prose looks like the result of a search. This step does not return pages. It returns token probabilities. Looking documents up would be a different system bolted on beside the model.</p>
+      </div>
+    </article>
+    <article class="item">
+      <h2>2. You ask a question and get a fluent paragraph back. Where did that paragraph come from?</h2>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q2o1">The model looks up answers it has stored.</button>
+        <p id="q2o1" class="feedback" hidden>Specific prose that arrives fully formed looks like a system retrieved it from a file. A standard language model is not reading a stored question-and-answer entry. Each token was chosen from a distribution that depends on the tokens already in the context.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="true" aria-describedby="q2o2">The model predicts a next token, then does that again conditioned on the text so far.</button>
+        <p id="q2o2" class="feedback" hidden>Training shaped those distributions. At answer time the model does not search a cabinet of finished replies. It extends the context one token at a time.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q2o3">The model opens the page that matches the question and copies it.</button>
+        <p id="q2o3" class="feedback" hidden>Search boxes produce a result that way, and the paragraph may resemble something that exists elsewhere. Resemblance is not a live copy step. Unless a separate retrieval tool was added, the model is not opening a page when it answers.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q2o4">The model fills the blanks in a stored template for that question.</button>
+        <p id="q2o4" class="feedback" hidden>Shared answer shapes make a form letter seem to be sitting behind them. A shared shape can be a likely pattern in the next-token distributions. It is not a stored form with blanks the model fills from a record.</p>
+      </div>
+    </article>
+    <article class="item">
+      <h2>3. The sampling temperature is set near zero. What happens on the next token?</h2>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="true" aria-describedby="q3o1">The model almost always takes the single most likely token.</button>
+        <p id="q3o1" class="feedback" hidden>Near zero, sampling collapses onto the most likely token. The reply is nearly the same from run to run because that top token wins almost every time, not because a record was fetched. Small numeric differences can still change a rare step.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q3o2">The model looks up the one stored answer and returns that fact.</button>
+        <p id="q3o2" class="feedback" hidden>Repeatable replies look retrieved. Repeatability here is the choice of the top token. The model is still scoring the vocabulary, then taking the winner.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q3o3">The model checks the token against a source and keeps it only if the source agrees.</button>
+        <p id="q3o3" class="feedback" hidden>Stable answers feel verified. Temperature does not add a fact check. Nothing in this step compares the token to a document.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q3o4">The model averages every token&#x27;s probability and prints the average word.</button>
+        <p id="q3o4" class="feedback" hidden>Blending the candidates feels like what a distribution asks you to print. The model does not print a blend. It picks a token. Near zero, that pick is the most likely one.</p>
+      </div>
+    </article>
+    <article class="item">
+      <h2>4. A next-token prediction follows an instruction that appeared much earlier in the prompt. How is that possible?</h2>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="true" aria-describedby="q4o1">Attention lets that prediction use the earlier tokens, and training made instruction-following a likely continuation.</button>
+        <p id="q4o1" class="feedback" hidden>Attention is a weighted use of the earlier tokens in the context, not a second mind checking facts. Training can make &quot;continue by doing what that text asked&quot; a high-probability pattern. The prediction can still be wrong.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q4o2">The model looks up a stored plan filed under that instruction.</button>
+        <p id="q4o2" class="feedback" hidden>Following a long instruction looks like executing a saved procedure. The instruction is in the context. The model conditions on it. It does not open a plan by name.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q4o3">The model reads the instruction only after the answer, as a separate search.</button>
+        <p id="q4o3" class="feedback" hidden>Noticing the instruction and the answer as two blocks makes the answer seem written first and checked second. The instruction is already in the context when later tokens are predicted. There is no later search pass in a plain next-token model.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q4o4">The model understands the writer&#x27;s intent the way a person does, then states what is true.</button>
+        <p id="q4o4" class="feedback" hidden>Relevant replies feel like understanding. Attention moves probability toward tokens that fit the context. It is not a person deciding what is true.</p>
+      </div>
+    </article>
+    <article class="item">
+      <h2>5. The same prompt returns two different replies. What can explain that, with no one changing the model in between?</h2>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="true" aria-describedby="q5o1">Temperature above zero samples from the distribution, so a different token can win.</button>
+        <p id="q5o1" class="feedback" hidden>When temperature is above zero, each step draws from the probabilities instead of always taking the top token. A different draw early on sends the context down a different path. Two replies do not require two stored essays.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q5o2">The model looked up two stored answers and returned one, then the other.</button>
+        <p id="q5o2" class="feedback" hidden>Two coherent replies look like two records in a file. The model did not alternate between saved answers. It sampled.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q5o3">The model&#x27;s weights changed between the two replies.</button>
+        <p id="q5o3" class="feedback" hidden>Different output seems to require a different machine. The weights stayed put. The variation is in the sampling, not in a rewrite of the parameters.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q5o4">One reply is the stored fact and the other is a random error string with no distribution behind it.</button>
+        <p id="q5o4" class="feedback" hidden>Preferring the first reply makes the second one look like noise. Both replies are draws from the same kind of next-token distribution. Neither one is a lookup of a single stored fact.</p>
+      </div>
+    </article>
+  <section class="reflect">
+    <h2>Before you leave</h2>
+    <ol>
+      <li>Which item felt hardest?</li>
+      <li>Which would you like drilled?</li>
+    </ol>
+  </section>
+  <footer>Nothing you pick is saved.</footer>
+</main>
+<script>
+// Shuffling (no position memory): a new order on every load, not a fixed seed.
+// Each note lives in its option's .choice, so the feedback moves with that option.
+// Heading numbers follow the on-screen order. With JavaScript off, the authored
+// order is what the page shows.
+function rnd(n) {
+  if (window.crypto && crypto.getRandomValues) {
+    var limit = Math.floor(4294967296 / n) * n;
+    var buf = new Uint32Array(1);
+    do { crypto.getRandomValues(buf); } while (buf[0] >= limit);
+    return buf[0] % n;
+  }
+  return Math.floor(Math.random() * n);
+}
+function shuffled(items) {
+  var copy = items.slice();
+  for (var i = copy.length - 1; i > 0; i--) {
+    var j = rnd(i + 1);
+    var held = copy[i];
+    copy[i] = copy[j];
+    copy[j] = held;
+  }
+  return copy;
+}
+var questions = Array.prototype.slice.call(document.querySelectorAll("article.item"));
+var afterQuestions = questions.length ? questions[questions.length - 1].nextSibling : null;
+shuffled(questions).forEach(function (item, index) {
+  var heading = item.querySelector("h2");
+  if (heading) {
+    heading.textContent = heading.textContent.replace(/^\d+\.\s*/, (index + 1) + ". ");
+  }
+  shuffled(Array.prototype.slice.call(item.querySelectorAll(".choice"))).forEach(function (choice) {
+    item.appendChild(choice);
+  });
+  item.parentNode.insertBefore(item, afterQuestions);
+});
+
+document.querySelectorAll("article.item").forEach(function (item) {
+  item.querySelectorAll("button.option").forEach(function (button) {
+    button.addEventListener("click", function () {
+      item.querySelectorAll("button.option").forEach(function (other) {
+        other.setAttribute("aria-pressed", other === button ? "true" : "false");
+      });
+      item.querySelectorAll(".feedback").forEach(function (note) {
+        note.hidden = true;
+        note.classList.remove("is-right", "is-wrong");
+      });
+      var noteId = button.getAttribute("aria-describedby");
+      var note = document.getElementById(noteId);
+      if (!note) return;
+      note.hidden = false;
+      note.classList.add(button.getAttribute("data-correct") === "true" ? "is-right" : "is-wrong");
+    });
+  });
+});
+
+</script>
+</body>
+</html>
