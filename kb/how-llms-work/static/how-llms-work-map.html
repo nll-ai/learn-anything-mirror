@@ -1,0 +1,2314 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>How large language models work · Prerequisite Map</title>
+<style>
+  :root{
+    --ink:#1e293b; --muted:#64748b; --line:#e2e8f0; --bg:#f8fafc; --panel:#ffffff;
+    --accent:#2563eb;
+    /* engine defaults — the MAP-THEME block in the page's script overrides all of these at startup */
+    --ink-2:#334155; --dep-bg:#fbfdff; --edge:#bcc7d4; --edge-related:#7c8aa0;
+    --hover-bg:#eff6ff; --match:#f59e0b; --btn-hover-border:#94a3b8;
+    --overlay-bg:rgba(255,255,255,.92); --overlay-bg-2:rgba(255,255,255,.85);
+    --font-display:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --font-body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --safe-t:env(safe-area-inset-top,0px); --safe-r:env(safe-area-inset-right,0px);
+    --safe-b:env(safe-area-inset-bottom,0px); --safe-l:env(safe-area-inset-left,0px);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;height:100dvh;margin:0;overflow:hidden;overscroll-behavior:none;-webkit-text-size-adjust:100%}
+  body{font-family:var(--font-body);color:var(--ink);background:var(--bg);display:flex;flex-direction:column;max-width:100%}
+  header{display:flex;align-items:center;gap:14px;padding:10px 16px;padding-left:max(16px,var(--safe-l));padding-right:max(16px,var(--safe-r));padding-top:max(10px,var(--safe-t));background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap;position:relative;z-index:30}
+  .brand{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;min-width:0}
+  header h1{font-size:17px;margin:0;font-weight:650;font-family:var(--font-display)}
+  header .stats{font-size:14px;color:var(--muted)}
+  .spacer{flex:1}
+  .toolbar{display:flex;align-items:center;gap:8px}
+  .toolbar-actions{display:flex;align-items:center;gap:8px}
+  @media (min-width:901px){
+    .brand,.toolbar,.toolbar-actions{display:contents}
+  }
+  .searchwrap{position:relative}
+  #search{width:230px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;font-size:15px;outline:none;background:var(--panel);color:var(--ink)}
+  #search:focus{border-color:var(--accent)}
+  #results{position:absolute;top:36px;left:0;width:300px;max-height:260px;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px rgba(15,23,42,.12);display:none;z-index:50}
+  #results div{padding:7px 10px;font-size:15px;cursor:pointer}
+  #results div:hover{background:var(--hover-bg)}
+  #results .rphase{color:var(--muted);font-size:14px;margin-left:6px}
+  button{padding:6px 11px;border:1px solid var(--line);background:var(--panel);border-radius:8px;font-size:15px;cursor:pointer;color:var(--ink)}
+  button:hover{border-color:var(--btn-hover-border)}
+  .iconbtn{display:none;align-items:center;justify-content:center;width:44px;height:44px;padding:0;flex-shrink:0}
+  .iconbtn svg{display:block}
+  .narrow-only{display:none}
+  main{flex:1;display:flex;min-height:0;min-width:0}
+  #canvaswrap{flex:1;position:relative;overflow:hidden;min-width:0;min-height:0}
+  #graph{width:100%;height:100%;display:block;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+  #graph.panning{cursor:grabbing}
+  #legend{position:absolute;left:12px;bottom:12px;background:var(--overlay-bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:14px;max-width:340px;z-index:20}
+  #legend .bar{height:10px;border-radius:5px}
+  #legend .barlabels{display:flex;justify-content:space-between;margin-top:3px;color:var(--muted)}
+  #legend .cap{margin-top:4px;color:var(--muted);line-height:1.4}
+  .sheet-head{display:none;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+  .sheet-head strong{font-size:15px;font-family:var(--font-display)}
+  .sheet-handle{display:none;width:36px;height:4px;border-radius:999px;background:var(--line);margin:0 auto 10px}
+  .sheet-close{min-height:44px;padding:8px 12px}
+  #hint{position:absolute;left:12px;top:12px;font-size:14px;color:var(--muted);background:var(--overlay-bg-2);border:1px solid var(--line);border-radius:8px;padding:5px 9px;z-index:20}
+  #tt{position:absolute;display:none;max-width:330px;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgba(15,23,42,.18);padding:10px 12px;font-size:14.5px;z-index:40;pointer-events:none;line-height:1.45}
+  #tt .who{font-weight:650;font-size:14px;margin-bottom:4px}
+  #tt .who .arrow{color:var(--accent)}
+  #panel{width:400px;flex-shrink:0;background:var(--panel);border-left:1px solid var(--line);overflow-y:auto;padding:18px 20px 40px}
+  #panel h2{font-size:19px;margin:6px 0 6px;line-height:1.3;font-family:var(--font-display)}
+  #panel h3{font-size:14px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:18px 0 8px}
+  #panel p{font-size:15px;line-height:1.55;margin:6px 0}
+  #panel ul,#panel ol{margin:4px 0;padding-left:20px}
+  #panel li{font-size:15px;line-height:1.5;margin:3px 0}
+  #panel ol.outline li{margin:6px 0}
+  #panel ol.outline li::marker{color:var(--muted);font-weight:650;font-size:14px}
+  #panel details{margin-top:6px}
+  #panel summary{cursor:pointer;color:var(--accent);font-size:14px}
+  #panel details p{margin:6px 0 2px;font-size:14.5px;color:var(--ink-2)}
+  #panel .chip{display:inline-block;font-size:14px;font-weight:600;letter-spacing:.03em;padding:3px 9px;border-radius:999px;color:#fff}
+  .dep{border:1px solid var(--line);border-radius:10px;padding:9px 11px;margin:8px 0;background:var(--dep-bg)}
+  .dep b{font-size:15px;cursor:pointer;color:var(--accent)}
+  .dep b:hover{text-decoration:underline}
+  .dep p{margin:4px 0 2px;font-size:14.5px;color:var(--ink-2)}
+  #panel a{color:var(--accent);text-decoration:none;font-size:15px}
+  #panel a:hover{text-decoration:underline}
+  .backlink{font-size:14.5px;color:var(--accent);cursor:pointer}
+  .backlink:hover{text-decoration:underline}
+  #scrim{display:none}
+  .colbg{opacity:.05}
+  .collabel{font-size:14px;font-weight:650;filter:brightness(.62) saturate(1.15)}
+  .node rect.main{stroke-width:1.3;cursor:pointer}
+  .node text{font-size:14px;fill:var(--ink);pointer-events:none;font-weight:520}
+  .node{cursor:pointer}
+  .edge path.line{stroke:var(--edge);stroke-width:1.3;fill:none;transition:stroke-width .1s}
+  .edge polygon{fill:var(--edge)}
+  .edge path.hit{stroke:transparent;stroke-width:16;fill:none;pointer-events:stroke;cursor:pointer}
+  svg.dimmed .node:not(.related){opacity:.13}
+  svg.dimmed .edge:not(.related){opacity:.05}
+  svg.dimmed .colbg{opacity:.02}
+  svg.dimmed .collabel:not(.related){opacity:.2}
+  .edge.related path.line{stroke:var(--edge-related);stroke-width:1.7}
+  .edge.related polygon{fill:var(--edge-related)}
+  .edge.direct path.line{stroke:var(--accent);stroke-width:2.1}
+  .edge.direct polygon{fill:var(--accent)}
+  .edge.hov path.line{stroke:var(--accent);stroke-width:2.6}
+  .edge.hov polygon{fill:var(--accent)}
+  .node.related rect.main{stroke-width:2.2}
+  .node.sel rect.main{stroke-width:2.8}
+  .node.match rect.main{stroke:var(--match);stroke-width:2.6}
+  .node.learner-known rect.main{fill-opacity:0.08;stroke-opacity:0.5}
+  .node.learner-frontier rect.main{stroke-width:2.35}
+  .node .here-ring{fill:none;stroke:var(--accent);stroke-width:1.6;opacity:.88}
+  .node .here-flag{font-size:14px;font-weight:650;fill:var(--accent)}
+  .here-summary{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:10px 0 4px;background:var(--dep-bg)}
+  .here-summary h3{margin-top:0}
+  .here-jump{color:var(--accent);cursor:pointer}
+  .here-jump:hover{text-decoration:underline}
+  .chipbtn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:999px;padding:2px 9px;font-size:14px;font-weight:600;cursor:pointer;background:var(--panel)}
+  .chipbtn:hover{border-color:var(--btn-hover-border)}
+  .chipbtn .dot{width:8px;height:8px;border-radius:50%}
+  @media (pointer:coarse){
+    .edge path.hit{stroke-width:28}
+  }
+  @media (max-width:900px){
+    header{z-index:70;flex-wrap:nowrap;gap:8px;padding:8px 12px;padding-left:max(12px,var(--safe-l));padding-right:max(12px,var(--safe-r));padding-top:max(8px,var(--safe-t))}
+    .brand{flex:1}
+    header h1{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    header .stats,.spacer{display:none}
+    .iconbtn,.narrow-only{display:inline-flex}
+    .sheet-head.narrow-only{display:flex}
+    .toolbar{position:relative;flex-shrink:0}
+    .searchwrap{display:none;flex:1;min-width:0}
+    header.search-open .brand{display:none}
+    header.search-open .searchwrap{display:block}
+    header.search-open #btn-more{display:none}
+    #search{width:100%;min-height:44px;font-size:16px;padding:10px 12px}
+    #results{left:0;right:0;width:100%;top:calc(100% + 6px);max-height:min(50dvh,360px)}
+    #results div{min-height:44px;display:flex;align-items:center;padding:10px 12px}
+    .toolbar-actions{display:none;position:absolute;top:calc(100% + 6px);right:0;flex-direction:column;align-items:stretch;min-width:196px;padding:8px;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(15,23,42,.16);z-index:80}
+    header.menu-open .toolbar-actions{display:flex}
+    .toolbar-actions button{min-height:44px;width:100%;text-align:left;padding:10px 12px}
+    button,.iconbtn,.chipbtn,#panel .backlink,#panel summary{min-height:44px}
+    .chipbtn{padding:10px 14px}
+    #hint{display:none}
+    #legend{display:none;position:fixed;left:0;right:0;bottom:0;top:auto;max-width:none;max-height:min(52dvh,460px);overflow:auto;z-index:60;border-radius:16px 16px 0 0;border:1px solid var(--line);background:var(--panel);padding:12px 16px calc(16px + var(--safe-b));box-shadow:0 -8px 28px rgba(15,23,42,.16)}
+    #legend.is-open{display:block}
+    #legend .lvlchip{min-width:44px;min-height:44px;justify-content:center}
+    #tt{position:fixed;left:0;right:0;bottom:0;top:auto;max-width:none;max-height:min(42dvh,360px);overflow:auto;pointer-events:auto;border-radius:16px 16px 0 0;padding:12px 16px calc(16px + var(--safe-b));z-index:70}
+    #panel .backlink{display:inline-flex;align-items:center;min-height:44px;padding-right:8px}
+    #tt .sheet-handle,#legend .sheet-handle,#panel .sheet-handle{display:block}
+    button,.iconbtn{touch-action:manipulation}
+    #panel,#legend,#tt{-webkit-overflow-scrolling:touch}
+    #panel{position:fixed;left:0;right:0;bottom:0;width:100%;max-height:min(58dvh,520px);border-left:none;border-top:1px solid var(--line);border-radius:16px 16px 0 0;padding:14px 16px calc(18px + var(--safe-b));z-index:60;transform:translateY(110%);box-shadow:0 -8px 28px rgba(15,23,42,.16)}
+    #panel.is-open{transform:translateY(0)}
+    #scrim.is-on{display:block;position:fixed;inset:0;background:rgba(15,23,42,.28);z-index:45}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <h1>Tokens and vectors → the next token</h1>
+    <span class="stats" id="stats"></span>
+  </div>
+  <div class="spacer"></div>
+  <div class="toolbar">
+    <button type="button" id="btn-search-toggle" class="iconbtn narrow-only" aria-label="Search concepts" aria-expanded="false" title="Search">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.25" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.2 15.2 21 21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <div class="searchwrap">
+      <input id="search" type="search" placeholder="Search concepts…" autocomplete="off" enterkeyhint="search">
+      <div id="results"></div>
+    </div>
+    <div class="toolbar-actions" id="toolbar-actions">
+      <button type="button" id="btn-theme" title="Toggle themed / default skin">Themed</button>
+      <button type="button" id="btn-fit" title="Zoom to fit">Fit</button>
+      <button type="button" id="btn-reset" title="Clear selection">Reset</button>
+      <button type="button" id="btn-legend" class="narrow-only" aria-expanded="false">Levels</button>
+      <button type="button" id="btn-guide" class="narrow-only" aria-expanded="false">Guide</button>
+    </div>
+    <button type="button" id="btn-more" class="iconbtn narrow-only" aria-label="More controls" aria-expanded="false" aria-controls="toolbar-actions" title="More">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="6" r="1.7" fill="currentColor"/><circle cx="12" cy="12" r="1.7" fill="currentColor"/><circle cx="12" cy="18" r="1.7" fill="currentColor"/></svg>
+    </button>
+  </div>
+</header>
+<main>
+  <div id="canvaswrap">
+    <svg id="graph" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div id="hint">A → B means “learn A before B”. Hover or click any arrow to see <b>why</b> it is a prerequisite.</div>
+    <div id="legend"></div>
+    <div id="tt"></div>
+  </div>
+  <aside id="panel"></aside>
+</main>
+<div id="scrim" hidden></div>
+
+<script>
+/*DATA-START*/
+const DATA =
+{
+  "nodes": [
+    {
+      "id": "vectors",
+      "phase": 0,
+      "label": "Vectors",
+      "desc": "A vector is an ordered list of numbers. In a language model, tokens, weights, and hidden states are vectors, and comparison between them is a numeric operation on those lists.",
+      "outline": [
+        "Write a vector as a column of numbers with a fixed length",
+        "Add two vectors of the same length by adding corresponding entries",
+        "Multiply a vector by a single number by scaling every entry",
+        "Refuse to add vectors of different lengths"
+      ],
+      "ideas": [
+        "The length of the list is the dimension. Two vectors must share it before you add them or take their dot product.",
+        "A word or a token will later be a vector of learned numbers, not a dictionary definition.",
+        "Mikolov and colleagues showed that representing discrete items as vectors lets geometric comparisons stand in for similarity."
+      ],
+      "sources": [
+        {
+          "t": "Mikolov et al., arXiv — Efficient estimation of word representations in vector space",
+          "u": "https://arxiv.org/abs/1301.3781"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What is a vector, for the purposes of this map?",
+          "a": "An ordered list of numbers of a fixed length. Adding two vectors adds them entry by entry. Scaling multiplies every entry by the same number."
+        },
+        {
+          "q": "What breaks if you add a vector of length 3 to a vector of length 768?",
+          "a": "There is no entry-by-entry sum. The dimensions differ, so the operation the network uses, including the dot product, is undefined until both lists have the same length."
+        },
+        {
+          "q": "A token is a discrete piece of text. What will a model store in its place, once embeddings exist?",
+          "a": "A learned vector of numbers. Similarity and attention will compare those vectors, which is the move Mikolov and colleagues used for discrete items."
+        }
+      ]
+    },
+    {
+      "id": "scores",
+      "phase": 0,
+      "label": "Raw scores",
+      "desc": "A raw score is a number that ranks options but is not yet a probability. It can be negative, and a list of scores need not add to 1. Softmax is what turns such a list into probabilities.",
+      "outline": [
+        "Write a score next to each option, allowing negatives",
+        "Notice the list need not add to 1",
+        "See that adding the same constant to every score does not change which option wins",
+        "Hold the conversion into probabilities for the softmax step"
+      ],
+      "ideas": [
+        "Scores order options. They are not probabilities until they are non-negative and add to 1.",
+        "Logits, the network's last scores over the vocabulary, are this kind of number.",
+        "Attention starts from scores too, before the softmax that turns them into weights."
+      ],
+      "sources": [
+        {
+          "t": "Vaswani et al., arXiv — Attention is all you need",
+          "u": "https://arxiv.org/abs/1706.03762"
+        }
+      ],
+      "questions": [
+        {
+          "q": "How does a raw score differ from a probability?",
+          "a": "A score can be any real number, and a list of scores need not add to 1. A probability is between 0 and 1, and the probabilities of a complete set of alternatives add to 1."
+        },
+        {
+          "q": "What breaks if you treat a logit of 4 as 'probability 4'?",
+          "a": "4 is outside the 0-to-1 range, and it is not comparable to a logit of 2 until both sit inside a list that has been normalized. The ranking may be real; the probability is not there yet."
+        },
+        {
+          "q": "The model produces one score per token in the vocabulary. What are those scores called before softmax, and what are they not?",
+          "a": "Logits: raw scores. They are not the next-token distribution. Softmax converts that list into probabilities."
+        }
+      ]
+    },
+    {
+      "id": "text",
+      "phase": 0,
+      "label": "Text as a sequence",
+      "desc": "Text is an ordered sequence of pieces, not a bag of words. Position matters: the same pieces in a different order are a different sequence, and a language model predicts the next piece given the ones so far.",
+      "outline": [
+        "Split a sentence into an ordered list and keep the order",
+        "See that swapping two pieces changes the sequence",
+        "Treat 'what comes next' as a question about the list so far",
+        "Do not throw the order away and hope a count of pieces is enough"
+      ],
+      "ideas": [
+        "Order is part of the data. A model that cannot tell positions apart cannot tell 'dog bites man' from 'man bites dog'.",
+        "Prediction here is next-piece prediction, which needs a sequence to continue.",
+        "The pieces are not yet tokens. Tokenization is the choice of which pieces the vocabulary contains."
+      ],
+      "sources": [
+        {
+          "t": "Radford et al. — Language models are unsupervised multitask learners",
+          "u": "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf"
+        },
+        {
+          "t": "Vaswani et al., arXiv — Attention is all you need",
+          "u": "https://arxiv.org/abs/1706.03762"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Why is text a sequence rather than a set of words?",
+          "a": "The order changes the meaning and changes which piece comes next. A language model is trained to predict the next piece of an ordered sequence, as Radford and colleagues do for decoder-only models."
+        },
+        {
+          "q": "What breaks if two sentences that use the same words in opposite orders are encoded as the same object?",
+          "a": "The model cannot represent the difference, so it cannot prefer one continuation over the other for the right reason. Position has been deleted."
+        },
+        {
+          "q": "What question does next-token training ask about a sequence?",
+          "a": "Given the pieces so far, in order, which piece comes next. The target is the following piece, not a label attached to the whole document."
+        }
+      ]
+    },
+    {
+      "id": "sensitivity",
+      "phase": 0,
+      "label": "Small input changes",
+      "desc": "A small change in an input or a weight changes the output by a small amount, and the rate of that change is a derivative. Gradient descent follows those rates downhill on a loss.",
+      "outline": [
+        "Change one input number a little and watch the output number",
+        "Call the rate of that response a derivative",
+        "See a gradient as the list of those rates, one per weight or input",
+        "Note the sign: a positive rate means the output rises when the input rises"
+      ],
+      "ideas": [
+        "A derivative is a local rate of change, not the output itself.",
+        "The gradient of a loss with respect to the weights says which way each weight pushes the loss.",
+        "Kingma and Ba build Adam on stochastic gradient descent, which steps weights using those rates."
+      ],
+      "sources": [
+        {
+          "t": "Kingma and Ba, arXiv — Adam: a method for stochastic optimization",
+          "u": "https://arxiv.org/abs/1412.6980"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What does a derivative tell you that the output value alone does not?",
+          "a": "The local rate at which the output changes when an input changes. The sign says whether a small increase in the input raises or lowers the output."
+        },
+        {
+          "q": "What breaks if you update a weight by a fixed nudge that ignores the gradient?",
+          "a": "You do not know whether that nudge increases or decreases the loss. Gradient descent uses the derivative to step in the direction that reduces the loss."
+        },
+        {
+          "q": "Adam is an optimizer. What simpler procedure is it a variant of, and what does that procedure consume?",
+          "a": "Stochastic gradient descent. It consumes gradients of the loss with respect to the weights, estimated on a batch, and steps the weights to reduce the loss."
+        }
+      ]
+    },
+    {
+      "id": "dot",
+      "phase": 1,
+      "label": "Dot product",
+      "desc": "The dot product multiplies corresponding entries of two vectors and adds those products. It is large when the vectors point similarly. Attention scores and embedding comparisons are dot products.",
+      "outline": [
+        "Line up two vectors of the same dimension",
+        "Multiply entry by entry",
+        "Add the products to get one number",
+        "Read a large positive result as alignment and a result near zero as unrelated directions"
+      ],
+      "ideas": [
+        "The dot product is a single number, not a vector.",
+        "It needs equal dimensions. That is why queries and keys are projected to the same size.",
+        "Vaswani and colleagues' attention score between a query and a key is a dot product, later scaled and passed through softmax."
+      ],
+      "sources": [
+        {
+          "t": "Vaswani et al., arXiv — Attention is all you need",
+          "u": "https://arxiv.org/abs/1706.03762"
+        },
+        {
+          "t": "Mikolov et al., arXiv — Efficient estimation of word representations in vector space",
+          "u": "https://arxiv.org/abs/1301.3781"
+        }
+      ],
+      "questions": [
+        {
+          "q": "How do you compute a dot product?",
+          "a": "Multiply corresponding entries of two equal-length vectors and add those products. The result is one number. It is large and positive when the vectors are aligned."
+        },
+        {
+          "q": "What breaks if a query vector and a key vector have different lengths?",
+          "a": "The entry-by-entry product is undefined, so there is no attention score. The projections that build queries and keys have to land in the same dimension."
+        },
+        {
+          "q": "In scaled dot-product attention, what is the score between one query and one key, before the softmax?",
+          "a": "Their dot product, divided by the square root of the key dimension. Vaswani and colleagues define the attention weights as a softmax over those scaled scores."
+        }
+      ]
+    },
+    {
+      "id": "matmul",
+      "phase": 1,
+      "label": "Matrix multiply",
+      "desc": "A matrix is a stack of vectors that maps one list of numbers to another by dot products. A neural layer's weights are a matrix. Multiplying by that matrix is how a layer transforms a hidden vector.",
+      "outline": [
+        "See each row of a matrix as a vector",
+        "Compute the output entry as the dot product of that row with the input",
+        "Stack those entries into the output vector",
+        "Check the inner dimensions match, or the dots are illegal"
+      ],
+      "ideas": [
+        "Matrix multiplication is many dot products sharing one input.",
+        "A linear layer is this map, often followed by adding a bias vector.",
+        "Queries, keys, values, and the feed-forward layer are all matrix maps of this kind."
+      ],
+      "sources": [
+        {
+          "t": "Vaswani et al., arXiv — Attention is all you need",
+          "u": "https://arxiv.org/abs/1706.03762"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What is one output entry of a matrix-vector product?",
+          "a": "The dot product of one row of the matrix with the input vector. The whole product is those dot products stacked into a new vector."
+        },
+        {
+          "q": "What breaks if the matrix has rows of length 512 and the input vector has length 768?",
+          "a": "The row and the input cannot be dotted. The layer is the wrong shape for that input, and the forward pass is undefined."
+        },
+        {
+          "q": "A transformer projects the hidden state into queries with a learned matrix. What operation is that projection?",
+          "a": "A matrix-vector product: each query coordinate is a dot product of a row of the query matrix with the hidden vector."
+        }
+      ]
+    },
+    {
+      "id": "tokens",
+      "phase": 1,
+      "label": "Tokens",
+      "desc": "A tokenizer splits text into tokens from a fixed vocabulary. Byte-pair encoding builds that vocabulary by repeatedly merging the most frequent pair of symbols, so rare words become sequences of subword pieces.",
+      "outline": [
+        "Start from characters, or bytes, as the seed vocabulary",
+        "Count adjacent pairs and merge the most frequent pair into a new symbol",
+        "Repeat until the vocabulary reaches the size you will use",
+        "Encode new text by applying those merges, so an unknown word becomes known pieces"
+      ],
+      "ideas": [
+        "The model never sees characters it was not given a token for, except as sequences of smaller tokens.",
+        "Sennrich, Haddow, and Birch adapt byte-pair encoding so a fixed vocabulary can represent an open vocabulary.",
+        "A token is an integer id into that vocabulary. The embedding table has one vector per id."
+      ],
+      "sources": [
+        {
+          "t": "Sennrich, Haddow, and Birch, arXiv — Neural machine translation of rare words with subword units",
+          "u": "https://arxiv.org/abs/1508.07909"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What does byte-pair encoding add to the vocabulary at each step?",
+          "a": "The most frequent adjacent pair of current symbols, merged into one new symbol. Repeating this produces a vocabulary of variable-length subword pieces from a small seed."
+        },
+        {
+          "q": "What breaks if the model uses a fixed word vocabulary and the test text contains a word that was never seen?",
+          "a": "That word has no id. Subword encoding avoids the dead end: the unseen word is a sequence of pieces that are in the vocabulary, which is why Sennrich and colleagues preferred it to a back-off dictionary."
+        },
+        {
+          "q": "You are about to look up an embedding. What does the tokenizer hand you?",
+          "a": "A sequence of token ids, each an index into the fixed vocabulary. The embedding table will turn each id into a vector."
+        }
+      ]
+    },
+    {
+      "id": "distrib",
+      "phase": 1,
+      "label": "Distributions",
+      "desc": "A discrete distribution assigns a probability to each option in a finite set so the probabilities are non-negative and add to 1. The next-token prediction is a distribution over the vocabulary.",
+      "outline": [
+        "List the options, here the token vocabulary",
+        "Require each assigned number to be at least 0",
+        "Require the numbers to add to 1",
+        "Read a sample as drawing one option with those probabilities"
+      ],
+      "ideas": [
+        "A distribution is the normalized object. Logits are not.",
+        "The training target is a distribution that puts mass 1 on the actual next token.",
+        "Temperature will reshape this distribution later, before a token is drawn."
+      ],
+      "sources": [
+        {
+          "t": "Vaswani et al., arXiv — Attention is all you need",
+          "u": "https://arxiv.org/abs/1706.03762"
+        },
+        {
+          "t": "Holtzman et al., arXiv — The curious case of neural text degeneration",
+          "u": "https://arxiv.org/abs/1904.09751"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What two conditions make a list of numbers a discrete distribution?",
+          "a": "Every number is at least 0, and the numbers add to 1. Each number is then the probability of one option."
+        },
+        {
+          "q": "What breaks if the model's 'probabilities' over tokens add to 1.3?",
+          "a": "They are not a distribution, so they cannot be sampling weights or a cross-entropy target. Something skipped the normalization, or double-counted."
+        },
+        {
+          "q": "At a decoding step, what is the distribution over?",
+          "a": "The vocabulary. One probability per token, adding to 1. Sampling draws the next token from that distribution, which Holtzman and colleagues compare across decoding methods."
+        }
+      ]
+    },
+    {
+      "id": "slope",
+      "phase": 1,
+      "label": "Gradients",
+      "desc": "The gradient of the loss is the vector of partial derivatives, one per weight. Stochastic gradient descent steps each weight in the opposite direction of its partial derivative.",
+      "outline": [
+        "Treat the loss as a function of the weights",
+        "Take the partial derivative of the loss for each weight",
+        "Stack those partials into the gradient",
+        "Step opposite the gradient to reduce the loss, on average, on a batch"
+      ],
+      "ideas": [
+        "The gradient points toward increase of the loss. Descent flips the sign.",
+        "A batch gives a noisy estimate of the gradient. That noise is the 'stochastic' in stochastic gradient descent.",
+        "Adam keeps running averages of the gradient and of its square, but it is still driven by these partial derivatives."
+      ],
+      "sources": [
+        {
+          "t": "Kingma and Ba, arXiv — Adam: a method for stochastic optimization",
+          "u": "https://arxiv.org/abs/1412.6980"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What is in the gradient of the loss, and which way does a descent step move a weight?",
+          "a": "One partial derivative per weight. Descent subtracts a positive step size times that partial, so the weight moves opposite the direction in which the loss rises."
+        },
+        {
+          "q": "What breaks if you step in the direction of the gradient instead of against it?",
+          "a": "You increase the loss. Training wants the opposite sign. The gradient itself is not a descent direction."
+        },
+        {
+          "q": "Why is the gradient on one batch not the exact gradient on the whole corpus?",
+          "a": "It is computed from a subset. Kingma and Ba treat stochastic gradient descent as using that noisy minibatch estimate, which is what makes the procedure practical and what Adam then smooths."
+        }
+      ]
+    },
+    {
+      "id": "layer",
+      "phase": 2,
+      "label": "A neural layer",
+      "desc": "A layer maps a vector to another vector: a matrix multiplication, a bias, and often a simple nonlinearity. Stacking layers is how a network builds the hidden state that attention and the feed-forward block will use.",
+      "outline": [
+        "Multiply the input vector by the weight matrix",
+        "Add the bias vector",
+        "Apply the nonlinearity entry by entry, when the layer has one",
+        "Pass the result forward as the next vector"
+      ],
+      "ideas": [
+        "The learnable part is the matrix and the bias. Both are updated by gradient descent.",
+        "A feed-forward block in the transformer is two such linear maps with a nonlinearity between them.",
+        "Vaswani and colleagues' projections for queries, keys, and values are linear maps of this kind, without a nonlinearity between them and the dot product."
+      ],
+      "sources": [
+        {
+          "t": "Vaswani et al., arXiv — Attention is all you need",
+          "u": "https://arxiv.org/abs/1706.03762"
+        },
+        {
+          "t": "Kingma and Ba, arXiv — Adam: a method for stochastic optimization",
+          "u": "https://arxiv.org/abs/1412.6980"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What does a single linear layer compute?",
+          "a": "A matrix-vector product plus a bias vector. If a nonlinearity is part of the layer, it is applied entry by entry to that result."
+        },
+        {
+          "q": "What breaks if the weight matrix is frozen at random values and never receives a gradient step?",
+          "a": "The map stays arbitrary. Training is the update of those weights from the loss gradient. Without it the layer does not become a useful transform of the token vectors."
+        },
+        {
+          "q": "Where do the query, key, and value vectors come from in a transformer layer?",
+          "a": "From learned linear projections of the hidden vector: matrix multiplies, as Vaswani and colleagues specify. They are not separate inputs from outside the model."
+        }
+      ]
+    },
+    {
+      "id": "softmax",
+      "phase": 2,
+      "label": "Softmax",
+      "desc": "Softmax turns a list of raw scores into a distribution: exponentiate each score and divide by the sum of those exponentials. Attention weights and the next-token distribution are both softmaxes.",
+      "outline": [
+        "Exponentiate every score, which makes them positive",
+        "Add the exponentials",
+        "Divide each exponential by that sum",
+        "Check the results are positive and add to 1"
+      ],
+      "ideas": [
+        "Softmax preserves order: the largest score becomes the largest probability.",
+        "Subtracting a constant from every score does not change the softmax, which is why implementations subtract the max for stability.",
+        "Vaswani and colleagues use softmax on scaled query-key scores. The output distribution over tokens is the same function on logits."
+      ],
+      "sources": [
+        {
+          "t": "Vaswani et al., arXiv — Attention is all you need",
+          "u": "https://arxiv.org/abs/1706.03762"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What does softmax return, and what do those numbers add to?",
+          "a": "A distribution. Each output is positive, and the outputs add to 1, because each exponential is divided by the sum of the exponentials."
+        },
+        {
+          "q": "What breaks if you divide each score by the sum of the scores when some scores are negative?",
+          "a": "A negative score can make a 'probability' negative, or the sum of the raw scores can be zero. Exponentiating first is what makes every contribution positive before the division."
+        },
+        {
+          "q": "Name the two places a transformer language model applies this normalization.",
+          "a": "On the scaled query-key scores, to get attention weights, and on the vocabulary logits, to get the next-token distribution. Both are softmaxes over a list of raw scores."
+        }
+      ]
+    },
+    {
+      "id": "embed",
+      "phase": 2,
+      "label": "Token embeddings",
+      "desc": "An embedding table holds one learned vector per token id. Looking up the id is how a discrete token enters the network as a vector that can be dotted and multiplied.",
+      "outline": [
+        "Build a table with one row per vocabulary id",
+        "Initialize the rows as vectors you will train",
+        "Replace each token id in the sequence by its row",
+        "Keep the sequence of vectors in the same order as the tokens"
+      ],
+      "ideas": [
+        "The lookup is not a hand-written meaning. The row is trained.",
+        "Vaswani and colleagues add a positional encoding to these token embeddings before the first layer.",
+        "Shared geometry is why a dot product of embeddings can stand in for a relationship between tokens, the idea Mikolov and colleagues used for word vectors."
+      ],
+      "sources": [
+        {
+          "t": "Vaswani et al., arXiv — Attention is all you need",
+          "u": "https://arxiv.org/abs/1706.03762"
+        },
+        {
+          "t": "Mikolov et al., arXiv — Efficient estimation of word representations in vector space",
+          "u": "https://arxiv.org/abs/1301.3781"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What does the embedding table contain, and how is a token turned into a vector?",
+          "a": "One learned vector per vocabulary id. The token's id selects that row. The result is a vector of the model's hidden width, in the same position in the sequence."
+        },
+        {
+          "q": "What breaks if two token ids are forced to share one frozen random vector for the whole of training?",
+          "a": "The model cannot learn to treat them differently at the input. Later layers only see the same vector, so any distinction has to be rebuilt from context every time, and the table has not done its job."
+        },
+        {
+          "q": "Why can attention compare tokens with a dot product at all?",
+          "a": "Because each token has been replaced by a vector. The dot product needs those vectors. Without the embedding lookup the input is still a list of ids."
+        }
+      ]
+    },
+    {
+      "id": "loss",
+      "phase": 2,
+      "label": "A loss to shrink",
+      "desc": "The loss is a single number that is large when the model's distribution disagrees with the target. Next-token training uses cross-entropy: the negative log probability the model assigned to the actual next token.",
+      "outline": [
+        "Have the model produce a distribution over the vocabulary",
+        "Read off the probability it gave the true next token",
+        "Take the negative logarithm of that probability",
+        "Average this over tokens in the batch. That average is what gradient descent reduces"
+      ],
+      "ideas": [
+        "Cross-entropy is zero only in the limit where the model puts probability 1 on the true token.",
+        "A confident wrong token is worse than an uncertain wrong token, because the log of a tiny probability is a large negative, and the loss flips the sign.",
+        "The target distribution for ordinary pretraining puts mass 1 on the observed next token."
+      ],
+      "sources": [
+        {
+          "t": "Radford et al. — Language models are unsupervised multitask learners",
+          "u": "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf"
+        },
+        {
+          "t": "Brown et al., arXiv — Language models are few-shot learners",
+          "u": "https://arxiv.org/abs/2005.14165"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What is the next-token cross-entropy loss for one position?",
+          "a": "The negative log of the probability the model assigned to the token that actually came next. Radford and colleagues and Brown and colleagues train by predicting that next token."
+        },
+        {
+          "q": "What breaks if the loss ignores the true next token and only rewards high probability on the model's favorite token?",
+          "a": "The model is no longer trained to match the data. It can become confidently wrong. Cross-entropy scores the probability of the observed token, not the probability of the mode."
+        },
+        {
+          "q": "The model assigns probability 0.1 to the true next token. Is the loss larger or smaller than when it assigns 0.9, and why?",
+          "a": "Larger. Negative log of 0.1 is greater than negative log of 0.9. A smaller probability on the truth is a worse loss."
+        }
+      ]
+    },
+    {
+      "id": "descent",
+      "phase": 3,
+      "label": "Gradient descent",
+      "desc": "Training changes the weights by stepping against the gradient of the loss. Vaswani and colleagues optimized the transformer with Adam, a stochastic-gradient method with adaptive step sizes.",
+      "outline": [
+        "Run a forward pass and compute the loss on a batch",
+        "Back-propagate to get the gradient of that loss for every weight",
+        "Update each weight opposite its gradient, with Adam's smoothed step",
+        "Repeat on new batches. The loss on the training distribution is what this is trying to reduce"
+      ],
+      "ideas": [
+        "No gradient of the loss, no principled update. The forward pass only evaluates.",
+        "Adam is still gradient descent: it rescales steps using running averages of the gradient and its square.",
+        "The same update trains embeddings, attention projections, and feed-forward matrices. They are all weights."
+      ],
+      "sources": [
+        {
+          "t": "Kingma and Ba, arXiv — Adam: a method for stochastic optimization",
+          "u": "https://arxiv.org/abs/1412.6980"
+        },
+        {
+          "t": "Vaswani et al., arXiv — Attention is all you need",
+          "u": "https://arxiv.org/abs/1706.03762"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What two computations have to happen before a weight changes during training?",
+          "a": "A forward pass that produces the loss on a batch, and a backward pass that produces the gradient of that loss. The update then steps opposite that gradient. Vaswani and colleagues used Adam for those steps."
+        },
+        {
+          "q": "What breaks if the loss is detached from the weights, so the gradient is zero everywhere?",
+          "a": "Every update is zero. The network keeps its initial weights. A loss that is not a function of the weights cannot train them."
+        },
+        {
+          "q": "Why can one training loop update both the embedding table and the attention matrices?",
+          "a": "Both are weights that the loss depends on. The gradient has an entry for each, and Adam steps each entry. They are not trained by separate kinds of procedure."
+        }
+      ]
+    },
+    {
+      "id": "position",
+      "phase": 3,
+      "label": "Position vectors",
+      "desc": "Token embeddings do not by themselves say where a token sits. A positional encoding, added to the token vector, injects the index. Vaswani and colleagues use fixed sinusoidal vectors; later models often learn the position vectors instead.",
+      "outline": [
+        "Number the positions in the sequence",
+        "Build or look up a vector for each index",
+        "Add that vector, entry by entry, to the token embedding at that index",
+        "Keep the sum as the input to the first block"
+      ],
+      "ideas": [
+        "Without a position signal, the model is invariant to order at the input, which text is not.",
+        "Addition, not concatenation, is the combination Vaswani and colleagues specify.",
+        "The position vector has the same dimension as the token embedding, or the addition is illegal."
+      ],
+      "sources": [
+        {
+          "t": "Vaswani et al., arXiv — Attention is all you need",
+          "u": "https://arxiv.org/abs/1706.03762"
+        }
+      ],
+      "questions": [
+        {
+          "q": "How does the transformer paper tell the model about order?",
+          "a": "By adding a positional encoding to the token embedding at each position. The encoding depends on the index. Vaswani and colleagues use sinusoidal functions of the position."
+        },
+        {
+          "q": "What breaks if you add the position vector only at the last token?",
+          "a": "Earlier tokens still look like a bag. Attention among them cannot tell which came first, so the sequence the loss is defined on has been partly erased."
+        },
+        {
+          "q": "Why must the position vector have the same dimension as the token embedding?",
+          "a": "They are added entry by entry. Different lengths cannot be added, so the encoding is built in the model's hidden width."
+        }
+      ]
+    },
+    {
+      "id": "logits",
+      "phase": 3,
+      "label": "Scores over the vocab",
+      "desc": "At each position the model ends with one logit per vocabulary token. Softmax turns that list into the predictive distribution. The loss reads the probability of the true next token from that distribution.",
+      "outline": [
+        "Map the hidden vector to a vector as long as the vocabulary",
+        "Call those entries logits, still raw scores",
+        "Apply softmax to get probabilities",
+        "Hand the probability of the observed next token to the loss"
+      ],
+      "ideas": [
+        "There is one distribution per position, not one distribution for the whole document.",
+        "The row of the output projection that corresponds to a token is dotted with the hidden state to make that token's logit.",
+        "Temperature, later, divides these logits before the softmax."
+      ],
+      "sources": [
+        {
+          "t": "Vaswani et al., arXiv — Attention is all you need",
+          "u": "https://arxiv.org/abs/1706.03762"
+        },
+        {
+          "t": "Radford et al. — Language models are unsupervised multitask learners",
+          "u": "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What are the logits at one position, and what does softmax do to them?",
+          "a": "One raw score per token in the vocabulary. Softmax turns that list into a distribution that adds to 1. The next-token probability used by the loss is the entry for the true token."
+        },
+        {
+          "q": "What breaks if the output vector is only as long as the hidden width, not the vocabulary?",
+          "a": "There is no score for each token, so there is no distribution to sample or to score with cross-entropy. The last projection has to land in the vocabulary size."
+        },
+        {
+          "q": "Training asks for the probability of the actual next token. Where in this object do you read it?",
+          "a": "After the softmax, at the index of that token. The logit alone is not the probability."
+        }
+      ]
+    },
+    {
+      "id": "proj",
+      "phase": 3,
+      "label": "Queries, keys, values",
+      "desc": "From each position's vector the model builds a query, a key, and a value by three learned linear maps. The query is what this position asks. The key is what it offers to be matched. The value is what it contributes if chosen.",
+      "outline": [
+        "Take the vector at one position",
+        "Multiply by the query matrix, the key matrix, and the value matrix",
+        "Keep the three results as Q, K, and V at that position",
+        "Remember the maps are trained, not fixed formulas for 'question' and 'answer'"
+      ],
+      "ideas": [
+        "Q, K, and V are linear projections of the same hidden stream.",
+        "Attention scores compare Q and K. The mix is a mix of V, not of K.",
+        "Multi-head attention uses several smaller projections and runs this in parallel."
+      ],
+      "sources": [
+        {
+          "t": "Vaswani et al., arXiv — Attention is all you need",
+          "u": "https://arxiv.org/abs/1706.03762"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Where do Q, K, and V come from?",
+          "a": "From three learned linear projections of the vectors at each position. Vaswani and colleagues define queries, keys, and values as these projected packs, not as extra inputs."
+        },
+        {
+          "q": "What breaks if the attention mix averages the key vectors instead of the value vectors?",
+          "a": "The content that gets passed on is the match-key, not the value the position was supposed to contribute. Matching and carrying are different projections. Mixing keys confuses them."
+        },
+        {
+          "q": "Why are three matrices needed rather than one shared projection?",
+          "a": "The role in the match and the content to be retrieved are different. Separate maps let a position present one vector for matching and another vector as the payload."
+        }
+      ]
+    },
+    {
+      "id": "mask",
+      "phase": 3,
+      "label": "Hide future tokens",
+      "desc": "A decoder that predicts the next token must not look at that token, or at any later one. The causal mask sets attention scores to future positions to negative infinity so softmax gives them weight zero.",
+      "outline": [
+        "Draw the sequence left to right",
+        "At position i, allow positions 1 through i",
+        "Block positions after i",
+        "Implement the block as a mask on the scores, before softmax, not as a hope that the model will ignore them"
+      ],
+      "ideas": [
+        "The mask is what makes the model autoregressive: the distribution at i depends only on tokens up to i.",
+        "Vaswani and colleagues put this mask in the decoder self-attention so that position i cannot attend to i+1 and beyond.",
+        "A bidirectional encoder does the opposite and may see the whole sentence. A GPT-style language model does not."
+      ],
+      "sources": [
+        {
+          "t": "Vaswani et al., arXiv — Attention is all you need",
+          "u": "https://arxiv.org/abs/1706.03762"
+        },
+        {
+          "t": "Radford et al. — Language models are unsupervised multitask learners",
+          "u": "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What does the causal mask prevent, and where is it applied?",
+          "a": "It prevents position i from attending to tokens after i. It is applied to the attention scores before softmax, classically by setting forbidden scores to negative infinity so their weights become zero. Vaswani and colleagues use this in the decoder."
+        },
+        {
+          "q": "What breaks if the mask is removed during next-token training?",
+          "a": "The position can see the token it is supposed to predict. The loss collapses toward copying that token, and the model has not learned to predict from the past."
+        },
+        {
+          "q": "How is this different from a bidirectional encoder?",
+          "a": "A bidirectional encoder may attend to tokens on both sides. A decoder-only language model, as in Radford and colleagues, keeps the causal mask so each prediction uses only the prefix."
+        }
+      ]
+    },
+    {
+      "id": "qk",
+      "phase": 4,
+      "label": "Attention scores",
+      "desc": "The score from position i to position j is the dot product of i's query with j's key, divided by the square root of the key dimension. Softmax across allowable j turns those scores into weights.",
+      "outline": [
+        "Dot the query at i with the key at j",
+        "Divide by the square root of the key dimension",
+        "Do this for every allowable j",
+        "Softmax the resulting list so the weights are positive and add to 1"
+      ],
+      "ideas": [
+        "Scaling by the square root of the dimension keeps the dots from growing so large that softmax saturates.",
+        "The weights are a distribution over positions, not over the vocabulary.",
+        "A high weight means 'this query matched that key', not yet 'copy that token's identity'."
+      ],
+      "sources": [
+        {
+          "t": "Vaswani et al., arXiv — Attention is all you need",
+          "u": "https://arxiv.org/abs/1706.03762"
+        }
+      ],
+      "questions": [
+        {
+          "q": "Write the scaled dot-product score and say what softmax turns it into.",
+          "a": "The score is the query-key dot product divided by the square root of the key dimension. Softmax over positions turns the list of scores into attention weights that add to 1."
+        },
+        {
+          "q": "What breaks if you skip the division by the square root of the dimension when the dimension is large?",
+          "a": "The dot products grow in magnitude, softmax becomes nearly one-hot, and the gradient through it vanishes. Vaswani and colleagues scale for this reason."
+        },
+        {
+          "q": "Are attention weights a distribution over tokens in the vocabulary?",
+          "a": "No. They are a distribution over positions in the sequence. The vocabulary distribution is the later softmax over logits."
+        }
+      ]
+    },
+    {
+      "id": "ffn",
+      "phase": 4,
+      "label": "Feed-forward layer",
+      "desc": "After attention mixes information across positions, a position-wise feed-forward network transforms each position on its own: two linear maps with a nonlinearity between them, applied separately at every position.",
+      "outline": [
+        "Take the vector at one position after attention has been added back",
+        "Apply the first linear map and the nonlinearity",
+        "Apply the second linear map, usually back to the hidden width",
+        "Do the identical maps at every position, with no mixing between positions inside this block"
+      ],
+      "ideas": [
+        "The feed-forward network does not look at other positions. Attention already did that.",
+        "Vaswani and colleagues use two linear transformations with a ReLU in between, the inner one wider than the model width.",
+        "The same weights are used at every position. What changes is the vector they see."
+      ],
+      "sources": [
+        {
+          "t": "Vaswani et al., arXiv — Attention is all you need",
+          "u": "https://arxiv.org/abs/1706.03762"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What does the position-wise feed-forward network do, and what does it not do?",
+          "a": "It applies the same two-layer map, with a nonlinearity in the middle, independently at each position. It does not compute a new mix across positions. That mix was the attention sublayer."
+        },
+        {
+          "q": "What breaks if the feed-forward network uses a different set of weights at each position?",
+          "a": "It is no longer the transform Vaswani and colleagues specify, and it cannot be applied to a longer sequence than it was built for. Sharing the weights across positions is what makes the block a function of the vector, not of the index."
+        },
+        {
+          "q": "Why is the nonlinearity between the two linear maps necessary for this block to be more than another attention projection?",
+          "a": "Two linear maps in a row, with nothing between them, collapse into one linear map. The nonlinearity is what lets the block compute a different function of each position's vector."
+        }
+      ]
+    },
+    {
+      "id": "causal",
+      "phase": 4,
+      "label": "Causal attention",
+      "desc": "Causal attention is scaled dot-product attention after the future has been masked. In a decoder-only language model every block is of this kind: each position mixes only the values at itself and earlier.",
+      "outline": [
+        "Compute scaled query-key scores against all positions",
+        "Replace scores to future positions with negative infinity",
+        "Softmax, so those future positions get weight zero",
+        "Keep the resulting weights as the only legal mix for a next-token model"
+      ],
+      "ideas": [
+        "The mask is part of the attention definition for a language model, not a training trick you can drop at sampling time.",
+        "Radford and colleagues' GPT-2 is a decoder-only stack of this masked self-attention.",
+        "The transformer paper's encoder is not causal. Using it unchanged would leak the future into a language-model loss."
+      ],
+      "sources": [
+        {
+          "t": "Vaswani et al., arXiv — Attention is all you need",
+          "u": "https://arxiv.org/abs/1706.03762"
+        },
+        {
+          "t": "Radford et al. — Language models are unsupervised multitask learners",
+          "u": "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What is causal attention?",
+          "a": "Scaled dot-product attention in which scores to future positions are masked out before softmax, so each position's weights run only over itself and earlier positions. Decoder-only language models use this in every block."
+        },
+        {
+          "q": "What breaks if the mask is used in training and removed when sampling?",
+          "a": "Sampling would let a position depend on tokens that have not been chosen yet, which is not a computation you can run left to right. The mask stays on. Generation proceeds one token at a time because of it."
+        },
+        {
+          "q": "Which part of the original transformer is the ancestor of this block, and which part is not?",
+          "a": "The decoder's masked self-attention. The encoder attends bidirectionally and is not the language-model block. Radford and colleagues stack the masked decoder style alone."
+        }
+      ]
+    },
+    {
+      "id": "xent",
+      "phase": 4,
+      "label": "Next-token loss",
+      "desc": "Pretraining labels each position with the token that followed it and applies cross-entropy to the distribution at that position. The average of those losses over a huge corpus is the pretraining objective.",
+      "outline": [
+        "At position i, predict token i+1",
+        "Read its probability from the softmax over logits",
+        "Add the negative log of that probability into the loss",
+        "Average over positions and documents. Do not add a separate document-level label"
+      ],
+      "ideas": [
+        "The supervision is the text itself, shifted by one token. No one writes a topic label.",
+        "Brown and colleagues describe GPT-3 as an autoregressive model trained to predict the next token on a broad corpus.",
+        "Because the mask blocks the future, this target is not visible to the position that is scored."
+      ],
+      "sources": [
+        {
+          "t": "Radford et al. — Language models are unsupervised multitask learners",
+          "u": "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf"
+        },
+        {
+          "t": "Brown et al., arXiv — Language models are few-shot learners",
+          "u": "https://arxiv.org/abs/2005.14165"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What is the training target at each position?",
+          "a": "The next token in the text. The loss is the cross-entropy of the model's distribution at that position against that token. Radford and colleagues and Brown and colleagues train decoder-only models this way."
+        },
+        {
+          "q": "What breaks if the target at position i is token i, the token already in the input?",
+          "a": "The model is asked to copy a token it was given, which is not prediction. The shift by one, together with the mask, is what makes the task predictive."
+        },
+        {
+          "q": "Why does this objective not need a human label on each document?",
+          "a": "The next token is already in the text. Shifting the sequence produces the targets. That is the sense in which Radford and colleagues call the training unsupervised."
+        }
+      ]
+    },
+    {
+      "id": "attention",
+      "phase": 5,
+      "label": "Attention mix",
+      "desc": "Attention replaces the vector at position i with a weighted sum of value vectors, using the causal attention weights. Multi-head attention does this several times with different projections and concatenates the results.",
+      "outline": [
+        "Take the softmax weights from causal attention at position i",
+        "Multiply each allowable value vector by its weight",
+        "Add those weighted values. That sum is the mixed vector",
+        "For several heads, do this in parallel with separate projections, concatenate, and apply the output matrix"
+      ],
+      "ideas": [
+        "The mix is a sum of values, not a sum of tokens or of keys.",
+        "Weights come from the masked, scaled query-key softmax.",
+        "Multi-head means several such mixes. Vaswani and colleagues concatenate them and project."
+      ],
+      "sources": [
+        {
+          "t": "Vaswani et al., arXiv — Attention is all you need",
+          "u": "https://arxiv.org/abs/1706.03762"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What vector does attention write at position i?",
+          "a": "A weighted sum of the value vectors at positions i and earlier, with weights from the causal softmax of scaled query-key scores. Multi-head attention concatenates several such sums and applies an output projection."
+        },
+        {
+          "q": "What breaks if a head's weights do not add to 1?",
+          "a": "The mix is no longer a weighted average of values. Softmax was supposed to enforce that. A head with weights that add to 2 amplifies the values instead of selecting among them."
+        },
+        {
+          "q": "Why run more than one head?",
+          "a": "Different projections can match different relations at once. A single head produces one mix. Vaswani and colleagues run several in parallel and combine them, so one block is not limited to one notion of relevance."
+        }
+      ]
+    },
+    {
+      "id": "ntp",
+      "phase": 5,
+      "label": "Next-token training",
+      "desc": "Pretraining is gradient descent on the next-token loss over a large corpus. The result is a stack that, given a prefix, produces a distribution over the next token at each position.",
+      "outline": [
+        "Encode documents as token sequences with positions",
+        "Run the masked model and compute next-token cross-entropy",
+        "Step the weights with Adam to reduce that loss",
+        "Judge the run by the loss on held-out text, not by a downstream instruction score"
+      ],
+      "ideas": [
+        "The pretrained model is a next-token predictor. Instruction following is a later adaptation.",
+        "Brown and colleagues scale this objective to a large decoder-only transformer.",
+        "A lower next-token loss means the distributions put more probability on the tokens that actually followed."
+      ],
+      "sources": [
+        {
+          "t": "Brown et al., arXiv — Language models are few-shot learners",
+          "u": "https://arxiv.org/abs/2005.14165"
+        },
+        {
+          "t": "Radford et al. — Language models are unsupervised multitask learners",
+          "u": "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf"
+        },
+        {
+          "t": "Kingma and Ba, arXiv — Adam: a method for stochastic optimization",
+          "u": "https://arxiv.org/abs/1412.6980"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What is being optimized during pretraining, and with what kind of step?",
+          "a": "The next-token cross-entropy on the corpus, by stochastic gradient steps. Vaswani and colleagues used Adam; Brown and colleagues train the large decoder-only model on this objective."
+        },
+        {
+          "q": "What breaks if you pick the pretrained checkpoint by how well it follows instructions it was never trained on?",
+          "a": "You are scoring a different task. Pretraining only promised next-token loss. Instruction behavior is added later, and using it to choose the pretrained run confuses the two stages."
+        },
+        {
+          "q": "After pretraining, what can you read off at the last position of a prefix?",
+          "a": "A distribution over the vocabulary for the next token. Sampling or picking from that distribution is generation. It is not yet a guarantee that the continuation follows an instruction."
+        }
+      ]
+    },
+    {
+      "id": "residual",
+      "phase": 5,
+      "label": "Residual links",
+      "desc": "Each sublayer adds its output back onto its input, and layer normalization stabilizes the sum. The block therefore transforms the stream by a residual update rather than by replacing the vector outright.",
+      "outline": [
+        "Save the vector entering the sublayer",
+        "Compute the sublayer output, attention or feed-forward",
+        "Add that output to the saved vector",
+        "Apply layer normalization as the transformer paper does around this residual branch"
+      ],
+      "ideas": [
+        "The residual path lets a sublayer pass its input through unchanged if the learned update is near zero.",
+        "Vaswani and colleagues wrap each sublayer as LayerNorm(x + Sublayer(x)), noting the residual.",
+        "Ba, Kiros, and Hinton introduce layer normalization, which normalizes across the features of one vector."
+      ],
+      "sources": [
+        {
+          "t": "Vaswani et al., arXiv — Attention is all you need",
+          "u": "https://arxiv.org/abs/1706.03762"
+        },
+        {
+          "t": "Ba, Kiros, and Hinton, arXiv — Layer normalization",
+          "u": "https://arxiv.org/abs/1607.06450"
+        }
+      ],
+      "questions": [
+        {
+          "q": "How does a residual sublayer combine its input with what it just computed?",
+          "a": "It adds them. In the transformer, the sublayer output is added to the sublayer input, and layer normalization is applied around that residual branch."
+        },
+        {
+          "q": "What breaks if the add is replaced by 'throw away the input and keep only the sublayer output'?",
+          "a": "The direct path for the original token vector is gone. A sublayer that has not yet learned anything replaces the representation instead of making a small update, which is the failure residual links were introduced to avoid."
+        },
+        {
+          "q": "What does layer normalization act on, in one vector?",
+          "a": "The features of that single vector: it recenters and rescales them. Ba, Kiros, and Hinton define it across the summed inputs of a layer for one example, not across the batch."
+        }
+      ]
+    },
+    {
+      "id": "stack",
+      "phase": 6,
+      "label": "Stacked blocks",
+      "desc": "A decoder-only transformer is the same block repeated: causal multi-head attention, residual and layer norm, position-wise feed-forward, residual and layer norm, then the next block. The last hidden state produces the logits.",
+      "outline": [
+        "Embed tokens and add positions",
+        "Run one block: masked multi-head attention with a residual, then the feed-forward network with a residual",
+        "Repeat the block",
+        "Project the last layer's vector at each position to vocabulary logits"
+      ],
+      "ideas": [
+        "Depth is repetition of one block, not a new kind of layer at each step.",
+        "Radford and colleagues describe GPT-2 as a large transformer decoder stack trained on next-token prediction.",
+        "The stack is what later fine-tuning will keep and adapt. It is not thrown away when instruction data arrives."
+      ],
+      "sources": [
+        {
+          "t": "Vaswani et al., arXiv — Attention is all you need",
+          "u": "https://arxiv.org/abs/1706.03762"
+        },
+        {
+          "t": "Radford et al. — Language models are unsupervised multitask learners",
+          "u": "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What is inside one decoder block, in order?",
+          "a": "Masked multi-head self-attention with a residual connection and layer normalization, then a position-wise feed-forward network with its own residual and layer normalization. A decoder-only model stacks that block."
+        },
+        {
+          "q": "What breaks if each 'layer' of the stack is a different hand-designed operation rather than the same trained block?",
+          "a": "You no longer have the transformer whose weights pretraining and fine-tuning update. Depth here is repeated application of one learned block, as in the Vaswani architecture and in GPT-2."
+        },
+        {
+          "q": "After the last block, what further map produces the next-token distribution?",
+          "a": "A projection to vocabulary logits, then softmax. The stack's output is a hidden vector, not yet a distribution."
+        }
+      ]
+    },
+    {
+      "id": "sample",
+      "phase": 6,
+      "label": "Sample the next token",
+      "desc": "Generation draws the next token from the softmax distribution, appends it, and repeats. Temperature divides the logits before softmax: low temperature sharpens toward the top token, high temperature flattens. Greedy choice tends to loop and go bland.",
+      "outline": [
+        "Turn the last-position logits into a distribution, dividing by a temperature first if you use one",
+        "Draw one token, or take the max if you insist on greedy",
+        "Append that token to the prefix",
+        "Run the stack again under the same causal mask. Stop at a length or an end token"
+      ],
+      "ideas": [
+        "The model does not emit a whole paragraph in one step. It emits one token from one distribution, then conditions on it.",
+        "Holtzman and colleagues show that maximization, including greedy and large-beam search, degenerates into repetitive or bland text.",
+        "Temperature and nucleus sampling change which part of the distribution you draw from. They do not retrain the stack."
+      ],
+      "sources": [
+        {
+          "t": "Holtzman et al., arXiv — The curious case of neural text degeneration",
+          "u": "https://arxiv.org/abs/1904.09751"
+        },
+        {
+          "t": "Radford et al. — Language models are unsupervised multitask learners",
+          "u": "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf"
+        }
+      ],
+      "questions": [
+        {
+          "q": "How does a decoder-only model produce a paragraph?",
+          "a": "One token at a time. Each step reads a distribution at the current end of the prefix, draws or chooses a token, appends it, and repeats. The causal mask is what makes this left-to-right procedure well defined."
+        },
+        {
+          "q": "What breaks if you always take the single highest-probability token?",
+          "a": "The text tends to degenerate: repetitive loops or bland, high-probability phrasing. Holtzman and colleagues show that pure maximization is a poor decoding objective for open-ended text, even when the model itself is strong."
+        },
+        {
+          "q": "What does raising the temperature do to the distribution you sample from?",
+          "a": "Dividing the logits by a number greater than 1 flattens the softmax, so less likely tokens are drawn more often. A temperature below 1 sharpens the distribution toward the top token. Neither step changes the trained weights."
+        }
+      ]
+    },
+    {
+      "id": "sft",
+      "phase": 6,
+      "label": "Demonstration tuning",
+      "desc": "Supervised fine-tuning continues gradient descent on the same stack, now on demonstrations: a prompt and a desired reply written by people. The loss is still next-token cross-entropy, but only the reply tokens are the targets that matter.",
+      "outline": [
+        "Start from the pretrained weights, not from a fresh random network",
+        "Collect prompts paired with replies a person wrote",
+        "Run next-token loss on the reply, given the prompt as prefix",
+        "Step the same weights. This is Ouyang and colleagues' first stage, before any ranking"
+      ],
+      "ideas": [
+        "Demonstrations teach by example. They do not yet compare two model drafts.",
+        "The pretrained stack is the initialization. Fine-tuning does not swap in a different architecture.",
+        "Ouyang and colleagues then go on to rank model outputs. The demonstration stage is the policy those rankings start from."
+      ],
+      "sources": [
+        {
+          "t": "Ouyang et al., arXiv — Training language models to follow instructions with human feedback",
+          "u": "https://arxiv.org/abs/2203.02155"
+        }
+      ],
+      "questions": [
+        {
+          "q": "What is supervised fine-tuning on demonstrations, and what loss does it use?",
+          "a": "Continued training of the pretrained model on human-written prompt-and-reply pairs, with next-token cross-entropy on the reply. Ouyang and colleagues make this the first stage of instruction training, before the reward model."
+        },
+        {
+          "q": "What breaks if you fine-tune from random weights and skip pretraining?",
+          "a": "You throw away the next-token model that already knows the language distribution. Demonstrations are far smaller than the pretraining corpus. The procedure Ouyang and colleagues use starts from the pretrained model."
+        },
+        {
+          "q": "How is a demonstration different from a human ranking of two model samples?",
+          "a": "A demonstration is one desired reply the person wrote. A ranking compares outputs the model produced. Rankings come later and train a preference signal. Demonstrations train by imitation."
+        }
+      ]
+    },
+    {
+      "id": "instruct",
+      "phase": 6,
+      "label": "Feedback training",
+      "desc": "Enough of the machinery to explain a decoder-only model: it embeds tokens, attends causally, trains by next-token loss, and samples one token at a time. Feedback training then changes what it prefers to say, starting from demonstrations and rankings.",
+      "outline": [
+        "Explain a forward pass: tokens, embeddings plus positions, stacked causal blocks, logits, softmax",
+        "Explain pretraining as next-token cross-entropy and Adam on that loss",
+        "Explain generation as sampling from that distribution, with temperature as a decoding knob, one token at a time",
+        "Explain Ouyang and colleagues' further stages: a reward model from human rankings of model samples, then a policy update against that reward",
+        "Note the alternative: Rafailov and colleagues' direct preference optimization trains the same kind of policy from pairwise preferences without a separate reward model and reinforcement-learning loop"
+      ],
+      "ideas": [
+        "The base model is a next-token stack. Instruction following is an adaptation of that stack, not a different device.",
+        "RLHF, in the InstructGPT pipeline, is three stages: supervised demonstrations, a reward model fit to rankings, and a reinforcement-learning update of the policy.",
+        "Direct preference optimization uses the preference pairs to update the policy with a classification-style objective. The rankings are still rankings of model outputs."
+      ],
+      "sources": [
+        {
+          "t": "Ouyang et al., arXiv — Training language models to follow instructions with human feedback",
+          "u": "https://arxiv.org/abs/2203.02155"
+        },
+        {
+          "t": "Rafailov et al., arXiv — Direct preference optimization: your language model is secretly a reward model",
+          "u": "https://arxiv.org/abs/2305.18290"
+        },
+        {
+          "t": "Radford et al. — Language models are unsupervised multitask learners",
+          "u": "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf"
+        },
+        {
+          "t": "Holtzman et al., arXiv — The curious case of neural text degeneration",
+          "u": "https://arxiv.org/abs/1904.09751"
+        }
+      ],
+      "questions": [
+        {
+          "q": "From a prefix to one new token, what does the pretrained decoder-only model actually compute?",
+          "a": "It embeds the tokens, adds positions, runs a stack of causally masked attention and feed-forward blocks with residuals, projects to logits, and applies softmax. A token is then sampled from that distribution and appended. Radford and colleagues' model is this stack trained by next-token prediction."
+        },
+        {
+          "q": "What fails if you describe feedback training as something that already happened while the model was only predicting the next token of ordinary text?",
+          "a": "Pretraining predicts the next token of ordinary text. The instruction pipeline is later: demonstrations, then human rankings of sampled replies, then an update of the policy from those rankings. Ouyang and colleagues separate those stages from pretraining."
+        },
+        {
+          "q": "You have pairs of model replies and a record of which one people preferred. Name two different ways those pairs train a policy, and what the second way skips.",
+          "a": "One way fits a reward model to the rankings and then updates the policy with reinforcement learning, which is the InstructGPT pipeline. Direct preference optimization updates the policy from the pairs directly and skips the separate reward model and the reinforcement-learning loop, which is Rafailov and colleagues' method."
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "vectors",
+      "to": "dot",
+      "why": "A dot product multiplies corresponding entries of two vectors and adds. Without equal-length vectors there are no entries to pair."
+    },
+    {
+      "from": "vectors",
+      "to": "matmul",
+      "why": "A matrix-vector product is a stack of dot products against the rows. The input has to be a vector of the row length."
+    },
+    {
+      "from": "text",
+      "to": "tokens",
+      "why": "Tokenization cuts an ordered text into pieces. If the text were only a bag of words, the merges would have no adjacent pairs in order to count."
+    },
+    {
+      "from": "scores",
+      "to": "distrib",
+      "why": "A distribution is what you get once raw scores have been made non-negative and forced to add to 1. The scores are the un-normalized starting point."
+    },
+    {
+      "from": "sensitivity",
+      "to": "slope",
+      "why": "A gradient is the list of derivatives of the loss. The idea of a local rate of change is what each partial derivative is."
+    },
+    {
+      "from": "matmul",
+      "to": "layer",
+      "why": "A neural layer's linear map is a matrix multiplication plus a bias. The layer is that map, trained, not a different operation."
+    },
+    {
+      "from": "slope",
+      "to": "layer",
+      "why": "The matrix and the bias are weights. They become useful only because gradient steps can change them. A fixed random matrix is not a trained layer."
+    },
+    {
+      "from": "distrib",
+      "to": "softmax",
+      "why": "Softmax is a particular way to turn scores into a distribution: exponentials divided by their sum. Its output has to satisfy the distribution rules."
+    },
+    {
+      "from": "dot",
+      "to": "softmax",
+      "why": "Attention applies softmax to a list of dot-product scores. The dots are the scores; softmax is what makes them weights."
+    },
+    {
+      "from": "tokens",
+      "to": "embed",
+      "why": "An embedding is a row looked up by token id. Without a vocabulary of ids there is nothing for the table to index."
+    },
+    {
+      "from": "dot",
+      "to": "embed",
+      "why": "The reason to spend a vector on a token is that vectors can be compared by dot products. The table exists so later dots and matrix maps have something to eat."
+    },
+    {
+      "from": "distrib",
+      "to": "loss",
+      "why": "Cross-entropy scores a distribution, the probability of the true next token. A loss on raw scores would not be a log probability."
+    },
+    {
+      "from": "slope",
+      "to": "loss",
+      "why": "Training will follow the gradient of this number. The loss is the scalar those derivatives are taken of."
+    },
+    {
+      "from": "loss",
+      "to": "descent",
+      "why": "Gradient descent steps against the derivative of the loss. Without a loss there is no direction to call downhill."
+    },
+    {
+      "from": "layer",
+      "to": "descent",
+      "why": "The weights being stepped are the layer matrices, including projections and embeddings. Descent is the update rule for those layers."
+    },
+    {
+      "from": "embed",
+      "to": "position",
+      "why": "Position vectors are added to token embeddings. They have to share the embedding's dimension, and they exist because the embedding itself does not record the index."
+    },
+    {
+      "from": "softmax",
+      "to": "logits",
+      "why": "Vocabulary logits become the next-token distribution by the same softmax that turns any scores into probabilities."
+    },
+    {
+      "from": "embed",
+      "to": "logits",
+      "why": "The hidden vector that is projected to logits is a descendant of the token embedding. The output scores are a linear image of that vector, not of the raw token id."
+    },
+    {
+      "from": "layer",
+      "to": "proj",
+      "why": "Queries, keys, and values are linear layers applied to the hidden vector. They are matrix maps, three of them."
+    },
+    {
+      "from": "embed",
+      "to": "proj",
+      "why": "The vector being projected is the token's representation. Q, K, and V are not computed from the token id directly."
+    },
+    {
+      "from": "embed",
+      "to": "mask",
+      "why": "The mask is indexed by positions in the sequence of embedded tokens. It says which of those positions a given position may use."
+    },
+    {
+      "from": "proj",
+      "to": "qk",
+      "why": "The attention score dots a query with a key. Those vectors have to have been projected before the dot is the transformer's score."
+    },
+    {
+      "from": "position",
+      "to": "qk",
+      "why": "Which query dots which key depends on where the tokens sit. Position is what makes 'the previous token' a definite key rather than an unordered partner."
+    },
+    {
+      "from": "descent",
+      "to": "ffn",
+      "why": "The two feed-forward matrices are trained weights. The block is a pair of layers updated by the same gradient steps as the rest of the network."
+    },
+    {
+      "from": "proj",
+      "to": "ffn",
+      "why": "The feed-forward network sits on the stream of projected representations and does not itself mix positions. It assumes the vector at a position already exists as a learned transform of the embedding."
+    },
+    {
+      "from": "mask",
+      "to": "causal",
+      "why": "Causal attention is attention with the future scores removed. The mask is the object that sets those scores to negative infinity before softmax."
+    },
+    {
+      "from": "position",
+      "to": "causal",
+      "why": "The mask is defined on positions: index i may use indexes up through i. Without positions, 'future' is not a set of keys you can block."
+    },
+    {
+      "from": "logits",
+      "to": "xent",
+      "why": "The loss reads the probability of the true next token from the softmax of the logits. The logits are the scores that probability comes from."
+    },
+    {
+      "from": "descent",
+      "to": "xent",
+      "why": "Next-token cross-entropy is the loss that descent minimizes in pretraining. Naming the loss without the update would not say how the weights move."
+    },
+    {
+      "from": "qk",
+      "to": "attention",
+      "why": "The mix weights are the softmax of the scaled query-key scores. Attention applies those weights; it does not invent a second scoring rule."
+    },
+    {
+      "from": "causal",
+      "to": "attention",
+      "why": "In a language model the weights are the masked ones. The mix at position i includes values only where the causal mask left a nonzero weight."
+    },
+    {
+      "from": "xent",
+      "to": "ntp",
+      "why": "Pretraining's objective is the next-token cross-entropy, averaged over the corpus. The training run is descent on that loss."
+    },
+    {
+      "from": "ffn",
+      "to": "ntp",
+      "why": "The feed-forward matrices are among the weights the next-token loss updates. A stack without them is not the model whose loss Brown and colleagues optimize."
+    },
+    {
+      "from": "ffn",
+      "to": "residual",
+      "why": "The feed-forward sublayer is added back onto its input. The residual is how that sublayer's output re-enters the stream."
+    },
+    {
+      "from": "qk",
+      "to": "residual",
+      "why": "The attention sublayer, whose weights came from the query-key scores, is also a residual branch. The block adds that mix onto the incoming vector rather than replacing it."
+    },
+    {
+      "from": "attention",
+      "to": "stack",
+      "why": "Each block's first sublayer is the causal attention mix. The stack is that sublayer alternating with the feed-forward sublayer, with residuals."
+    },
+    {
+      "from": "residual",
+      "to": "stack",
+      "why": "The block is defined with a residual around each sublayer. Stacking the paper's block means stacking those additions and the layer normalization around them."
+    },
+    {
+      "from": "ntp",
+      "to": "sample",
+      "why": "Sampling draws from the distribution pretraining produced. Without the next-token model there is no distribution at the end of the prefix to draw from."
+    },
+    {
+      "from": "ntp",
+      "to": "sft",
+      "why": "Demonstration tuning starts from the pretrained next-token model and keeps the same loss on a new, smaller set of targets. It is continued training, not a new network."
+    },
+    {
+      "from": "sample",
+      "to": "instruct",
+      "why": "Feedback methods rank or reward replies the model has generated. Ouyang and colleagues collect model samples and have people rank them. No samples, no rankings."
+    },
+    {
+      "from": "sft",
+      "to": "instruct",
+      "why": "The InstructGPT policy is initialized from the demonstration-tuned model. The ranking stage and the later update sit on top of that supervised stage, they do not replace pretraining from scratch."
+    },
+    {
+      "from": "stack",
+      "to": "instruct",
+      "why": "What gets updated by demonstrations and by feedback is the stack of decoder blocks. The instruction-following model is that stack with new weights, not a separate reader bolted on beside it."
+    }
+  ]
+}
+/*DATA-END*/
+;
+
+/*MAP-THEME-START*/
+const THEME={
+  "name": "Signal violet",
+  "rationale": "A pale ground with a violet depth ramp, like a signal gaining strength across layers, and a cool ink for the text.",
+  "webfont": "https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap",
+  "fontDisplay": "'IBM Plex Serif', 'Iowan Old Style', Georgia, serif",
+  "fontBody": "'IBM Plex Sans', 'Segoe UI', Helvetica, Arial, sans-serif",
+  "vars": {
+    "ink": "#1A1424",
+    "muted": "#655C72",
+    "line": "#E0D6EA",
+    "bg": "#F7F4F8",
+    "panel": "#FDFBFE",
+    "accent": "#5B2D91",
+    "ink-2": "#332848",
+    "dep-bg": "#F0E8F6",
+    "edge": "#6A4A98",
+    "edge-related": "#A15C14",
+    "hover-bg": "#F3E9F8",
+    "match": "#2E6B4F",
+    "btn-hover-border": "#C49A3A",
+    "overlay-bg": "rgba(247,244,248,0.88)",
+    "overlay-bg-2": "rgba(247,244,248,0.66)"
+  },
+  "anchors": [
+    "#E4D4F0",
+    "#CDB4E4",
+    "#B08AD4",
+    "#8A62BE",
+    "#68449E",
+    "#4A3280"
+  ]
+};
+// FALLBACK — neutral slate, for offline or failed-design-dispatch builds ONLY (a delivered map
+// never ships it). Same values as the :root CSS defaults, so deleting THEME is also safe:
+// const THEME={name:"Neutral slate",rationale:"Neutral default.",webfont:"",fontDisplay:"-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif",fontBody:"-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif",vars:{},anchors:["#1e3a8a","#2563eb","#0d9488","#16a34a","#ca8a04","#eab308"]};
+/*MAP-THEME-END*/
+
+// ---------- theme applier (engine — edit THEME above, never this) ----------
+const appliedVars=[];
+function applyTheme(t){
+  const r=document.documentElement.style;
+  appliedVars.splice(0).forEach(k=>r.removeProperty("--"+k));
+  if(!t)return;
+  if(t.webfont&&!document.querySelector('link[href="'+t.webfont+'"]')){const l=document.createElement("link");l.rel="stylesheet";l.href=t.webfont;document.head.appendChild(l);}
+  const set=(k,v)=>{if(v){r.setProperty("--"+k,v);appliedVars.push(k);}};
+  Object.keys(t.vars||{}).forEach(k=>set(k,t.vars[k]));
+  set("font-display",t.fontDisplay);set("font-body",t.fontBody);
+}
+const THEME_DEFAULT={name:"Neutral slate",rationale:"Neutral default.",webfont:"",fontDisplay:"-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif",fontBody:"-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif",vars:{},anchors:["#1e3a8a","#2563eb","#0d9488","#16a34a","#ca8a04","#eab308"]};
+applyTheme(typeof THEME!=="undefined"?THEME:null);
+
+/*MAP-METADATA-START*/
+const THEMES=[
+ {name:"Pieces",color:"#3A2E6E"},
+ {name:"Operations",color:"#244E78"},
+ {name:"Maps and losses",color:"#6E3A62"},
+ {name:"Signals",color:"#8A4E18"},
+ {name:"Scores",color:"#1F6A5C"},
+ {name:"Train the stack",color:"#6A3A3A"},
+ {name:"Sample and adapt",color:"#3E3A70"}
+];
+const THEME_BLURBS=[
+ "Vectors, raw scores, text as an ordered sequence, and the idea of a small change.",
+ "Dot products, matrix multiplication, tokens, distributions, and gradients.",
+ "A neural layer, softmax, token embeddings, and a loss that can be shrunk.",
+ "Gradient descent, position vectors, vocabulary logits, query-key-value projections, and the future-token mask.",
+ "Attention scores, the feed-forward layer, causal attention, and next-token cross-entropy.",
+ "The attention mix, pretraining, and residual links.",
+ "The stacked decoder, sampling with temperature, demonstration tuning, and feedback training."
+];
+const GOAL_STATEMENT="enough of the machinery to explain how a decoder-only language model turns text into the next token, and how feedback training changes what it will say";
+const GOAL_SOURCES_NOTE="The block structure follows Vaswani and colleagues: scaled dot-product attention, causal masking in the decoder, residuals, layer normalization, and the position-wise feed-forward network. Subword tokens follow Sennrich, Haddow, and Birch. Vector geometry for discrete items follows Mikolov and colleagues. The optimizer follows Kingma and Ba, which is the Adam update Vaswani and colleagues used. Layer normalization follows Ba, Kiros, and Hinton. Decoder-only next-token training follows Radford and colleagues and Brown and colleagues. Decoding, including why greedy choice degenerates, follows Holtzman and colleagues. Instruction stages follow Ouyang and colleagues. Direct preference optimization follows Rafailov and colleagues. Out of scope: distributed training systems, scaling-law fits, and multimodal encoders.";
+const SUGGESTED_PATH=[
+ {h:"Pieces",t:"Vectors, raw scores, ordered text, and rates of change."},
+ {h:"Operations",t:"Dot products, matrix maps, byte-pair tokens, distributions, and gradients."},
+ {h:"Maps and losses",t:"A layer, softmax, embeddings, and next-token cross-entropy as a number."},
+ {h:"Signals",t:"Adam-style descent, positions, logits, QKV projections, and the causal mask."},
+ {h:"Scores",t:"Scaled attention scores, the feed-forward block, masked attention, and the training loss."},
+ {h:"Train the stack",t:"The value mix, pretraining on next-token loss, and residual links."},
+ {h:"Sample and adapt",t:"Stack the blocks, sample with temperature, tune on demonstrations, then train from feedback."}
+];
+const BUILD=1;
+/*MAP-METADATA-END*/
+
+// ---------- topological levels ----------
+const LEVEL={};DATA.nodes.forEach(n=>LEVEL[n.id]=0);
+let changed=true,levelGuard=0;
+while(changed&&levelGuard++<=DATA.nodes.length+1){
+  changed=false;
+  for(const e of DATA.edges){
+    if(LEVEL[e.to]<LEVEL[e.from]+1){LEVEL[e.to]=LEVEL[e.from]+1;changed=true;}
+  }
+}
+const MAXL=Math.max(...Object.values(LEVEL));
+const NLEVELS=MAXL+1;
+if(changed)console.error("WARNING: cycle detected in edges — prerequisite graph is not a DAG; level layout is truncated. Run the validator.");
+// Layout uses the computed longest-path levels as-is. Do not invent skip-level
+// edges here — the validator requires every DATA edge to be adjacent (k → k+1).
+DATA.edges.forEach(e=>{
+  const span=LEVEL[e.to]-LEVEL[e.from];
+  if(span!==1)console.error("WARNING: non-adjacent edge",e.from,"->",e.to,"span",span,"— drop, bridge, or demote to see-also; do not redraw it as a long diagonal.");
+});
+
+// depth color scale: early → late
+const ANCHORS=(typeof THEME!=="undefined"&&THEME.anchors&&THEME.anchors.length>=2)?THEME.anchors:["#1e3a8a","#2563eb","#0d9488","#16a34a","#ca8a04","#eab308"]; // depth ramp — set in MAP-THEME
+function hex2rgb(h){return [1,3,5].map(i=>parseInt(h.slice(i,i+2),16));}
+function rgb2hex(r){return "#"+r.map(v=>v.toString(16).padStart(2,"0")).join("");}
+function levelColor(l){
+  const t=MAXL?l/MAXL:0,seg=t*(ANCHORS.length-1);
+  const i=Math.min(Math.floor(seg),ANCHORS.length-2),f=seg-i;
+  const a=hex2rgb(ANCHORS[i]),b=hex2rgb(ANCHORS[i+1]);
+  return rgb2hex(a.map((v,k)=>Math.round(v+(b[k]-v)*f)));
+}
+const LCOL=Array.from({length:NLEVELS},(_,l)=>levelColor(l));
+const LUM=h=>{const a=hex2rgb(h).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*a[0]+.7152*a[1]+.0722*a[2]};
+
+// ---------- helpers ----------
+const $=s=>document.querySelector(s);
+const SVGNS="http://www.w3.org/2000/svg";
+function svgEl(tag,attrs){const el=document.createElementNS(SVGNS,tag);for(const k in attrs)el.setAttribute(k,attrs[k]);return el;}
+function nodeById(id){return DATA.nodes.find(n=>n.id===id);}
+function nodeLabel(id){return nodeById(id).label;}
+function learnerStateOf(n){
+  return (n&&(n.learner==="known"||n.learner==="frontier"||n.learner==="later"))?n.learner:"";
+}
+function learnerNote(){
+  return (typeof LEARNER_NOTE==="string"&&LEARNER_NOTE.trim())?LEARNER_NOTE.trim():"";
+}
+function learnerEntry(){
+  return (typeof LEARNER_ENTRY==="string")?LEARNER_ENTRY:"";
+}
+function hasLearnerData(){
+  return DATA.nodes.some(n=>learnerStateOf(n))||!!learnerNote()||!!learnerEntry();
+}
+function learnerEntryId(){
+  const named=learnerEntry();
+  if(named&&DATA.nodes.some(n=>n.id===named))return named;
+  const f=DATA.nodes.find(n=>n.learner==="frontier");
+  return f?f.id:"";
+}
+function wrapLabel(t){
+  const max=17,words=t.split(" "),lines=[];let cur="";
+  for(const w of words){const cand=cur?cur+" "+w:w;if(cand.length<=max||!cur){cur=cand;}else{lines.push(cur);cur=w;}}
+  if(cur)lines.push(cur);
+  return lines.slice(0,3);
+}
+function mq(q){return typeof matchMedia==="function"&&matchMedia(q).matches;}
+function isNarrow(){return mq("(max-width:900px)");}
+function isCoarse(){return mq("(pointer: coarse)");}
+function usesTouchCopy(){return isNarrow()||isCoarse();}
+function hintCopy(){
+  return usesTouchCopy()
+    ? "A → B means “learn A before B”. Tap any arrow to see <b>why</b> it is a prerequisite."
+    : "A → B means “learn A before B”. Hover or click any arrow to see <b>why</b> it is a prerequisite.";
+}
+
+// ---------- layout: columns = topological levels ----------
+const NODE_W=200,NODE_H=52,GAP_Y=16,GAP_X=74,TOP=64,LEFT=56,MAX_PER_COL=8;
+const cols=[];
+for(let l=0;l<NLEVELS;l++){
+  const ids=DATA.nodes.filter(n=>LEVEL[n.id]===l).map(n=>n.id);
+  for(let i=0;i<ids.length;i+=MAX_PER_COL)cols.push({level:l,ids:ids.slice(i,i+MAX_PER_COL),cont:i>0});
+}
+let cx=LEFT;cols.forEach(c=>{c.x=cx;cx+=NODE_W+GAP_X;});
+const pos={};
+function assignY(){cols.forEach(c=>c.ids.forEach((id,i)=>{pos[id]={x:c.x,y:TOP+i*(NODE_H+GAP_Y)};}));}
+assignY();
+function barycenterPass(dir){
+  const seq=dir>0?cols:[...cols].reverse();
+  seq.forEach((c,ci)=>{
+    const skip=dir>0?ci===0:ci===cols.length-1;
+    if(skip)return;
+    const scored=c.ids.map((id,idx)=>{
+      let sum=0,cnt=0;
+      for(const e of DATA.edges){
+        let other=null;
+        if(e.from===id)other=e.to;else if(e.to===id)other=e.from;else continue;
+        const p2=pos[other];if(!p2)continue;
+        sum+=p2.y+NODE_H/2;cnt++;
+      }
+      return{id,idx,score:cnt?sum/cnt:pos[id].y+NODE_H/2};
+    });
+    scored.sort((a,b)=>a.score-b.score||a.idx-b.idx);
+    c.ids=scored.map(s=>s.id);
+  });
+  assignY();
+}
+for(let i=0;i<6;i++)barycenterPass(i%2===0?1:-1);
+// The entry flag is drawn 16px above its node. If the entry is not the first
+// card in its column, that flag lands on the card above. Open a gap so it doesn't.
+if(hasLearnerData()){
+  const entry=learnerEntryId();
+  const col=cols.find(c=>c.ids.includes(entry));
+  if(col){
+    const idx=col.ids.indexOf(entry);
+    if(idx>0){for(let i=idx;i<col.ids.length;i++)pos[col.ids[i]].y+=20;}
+  }
+}
+let maxX=0,maxY=0;
+cols.forEach(c=>{maxX=Math.max(maxX,c.x+NODE_W);});
+Object.values(pos).forEach(p=>{maxY=Math.max(maxY,p.y+NODE_H);});
+
+// ---------- render ----------
+const svg=$("#graph");
+const gRoot=svgEl("g");svg.appendChild(gRoot);
+const gBg=svgEl("g"),gEdges=svgEl("g"),gNodes=svgEl("g");
+gRoot.appendChild(gBg);gRoot.appendChild(gEdges);gRoot.appendChild(gNodes);
+const edgeEls=[],nodeEls={},colEls=[];
+
+cols.forEach(c=>{
+  const color=LCOL[c.level];
+  const lift=hasLearnerData()&&c.ids.includes(learnerEntryId())?22:0;
+  let minY=Infinity,maxCy=-Infinity;
+  c.ids.forEach(id=>{minY=Math.min(minY,pos[id].y);maxCy=Math.max(maxCy,pos[id].y+NODE_H);});
+  const r=svgEl("rect",{x:c.x-16,y:minY-34-lift,width:NODE_W+32,height:maxCy-minY+50+lift,rx:14,fill:color,"class":"colbg"});
+  gBg.appendChild(r);colEls.push(r);
+  const t=svgEl("text",{x:c.x+NODE_W/2,y:minY-(lift?36:14),"text-anchor":"middle","class":"collabel","data-level":c.level,fill:color});
+  t.textContent="Level "+c.level+(c.cont?" (cont.)":"")+" · "+c.ids.length;
+  gBg.appendChild(t);
+});
+
+DATA.edges.forEach((e,i)=>{
+  const a=pos[e.from],b=pos[e.to];
+  const x1=a.x+NODE_W,y1=a.y+NODE_H/2,x2=b.x,y2=b.y+NODE_H/2;
+  const dx=Math.max(46,(x2-x1)*0.5);
+  const g=svgEl("g",{"class":"edge","data-i":i});
+  const line=svgEl("path",{d:`M ${x1} ${y1} C ${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2-7} ${y2}`,"class":"line"});
+  const arrow=svgEl("polygon",{points:`${x2},${y2} ${x2-8},${y2-4} ${x2-8},${y2+4}`});
+  const hit=svgEl("path",{d:`M ${x1} ${y1} C ${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2} ${y2}`,"class":"hit"});
+  g.appendChild(line);g.appendChild(arrow);g.appendChild(hit);
+  gEdges.appendChild(g);edgeEls.push(g);
+  g.addEventListener("mouseenter",ev=>onEdgeEnter(i,ev));
+  g.addEventListener("mousemove",ev=>onEdgeMove(ev));
+  g.addEventListener("mouseleave",()=>onEdgeLeave(i));
+});
+
+DATA.nodes.forEach(n=>{
+  const p=pos[n.id],color=LCOL[LEVEL[n.id]];
+  const ls=learnerStateOf(n);
+  const isEntry=hasLearnerData()&&n.id===learnerEntryId();
+  const here=isEntry||ls==="frontier";
+  const g=svgEl("g",{"class":"node"+(ls?" learner-"+ls:"")+(isEntry?" learner-here":""),"data-id":n.id,transform:`translate(${p.x},${p.y})`});
+  if(here){
+    g.appendChild(svgEl("rect",{x:-5,y:-5,width:NODE_W+10,height:NODE_H+10,rx:13,"class":"here-ring"}));
+  }
+  const rect=svgEl("rect",{x:0,y:0,width:NODE_W,height:NODE_H,rx:10,"class":"main",fill:color,"fill-opacity":0.12,stroke:color});
+  g.appendChild(rect);
+  const lines=wrapLabel(n.label),midY=NODE_H/2;
+  const txt=svgEl("text",{"text-anchor":"middle",x:NODE_W/2});
+  lines.forEach((ln,i)=>{
+    const ts=svgEl("tspan",{x:NODE_W/2,y:midY+(i-(lines.length-1)/2)*16+4});
+    ts.textContent=ln;txt.appendChild(ts);
+  });
+  g.appendChild(txt);
+  if(isEntry){
+    const flag=svgEl("text",{x:NODE_W/2,y:-16,"text-anchor":"middle","class":"here-flag"});
+    flag.textContent="Start here";
+    g.appendChild(flag);
+  }
+  gNodes.appendChild(g);nodeEls[n.id]=g;
+});
+
+// ---------- view transform ----------
+const state={sel:null};
+let view={x:0,y:0,k:1};
+let viewTouched=false;
+function applyView(){gRoot.setAttribute("transform",`translate(${view.x},${view.y}) scale(${view.k})`);}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function zoomAt(px,py,f){
+  const k2=clamp(view.k*f,0.18,3.2),r=k2/view.k;
+  view.x=px-(px-view.x)*r;view.y=py-(py-view.y)*r;view.k=k2;applyView();
+}
+svg.addEventListener("wheel",e=>{
+  e.preventDefault();viewTouched=true;
+  const rect=svg.getBoundingClientRect();
+  zoomAt(e.clientX-rect.left,e.clientY-rect.top,Math.exp(-e.deltaY*0.0016));
+},{passive:false});
+
+const pointers=new Map();
+let panning=false,panStart=null,dragMoved=false,pinch0=null;
+function pointerXY(e){return {cx:e.clientX,cy:e.clientY};}
+function pinchState(){
+  const pts=[...pointers.values()];
+  if(pts.length<2)return null;
+  const rect=svg.getBoundingClientRect();
+  return {
+    dist:Math.hypot(pts[0].cx-pts[1].cx,pts[0].cy-pts[1].cy),
+    midX:(pts[0].cx+pts[1].cx)/2-rect.left,
+    midY:(pts[0].cy+pts[1].cy)/2-rect.top
+  };
+}
+function applyPinch(){
+  const now=pinchState();
+  if(!now||!pinch0)return;
+  const k2=clamp(pinch0.k*(now.dist/Math.max(8,pinch0.dist)),0.18,3.2);
+  const r=k2/pinch0.k;
+  view.k=k2;
+  view.x=now.midX-(pinch0.midX-pinch0.vx)*r;
+  view.y=now.midY-(pinch0.midY-pinch0.vy)*r;
+  applyView();
+}
+svg.addEventListener("pointerdown",e=>{
+  pointers.set(e.pointerId,pointerXY(e));
+  if(pointers.size>=2){
+    const p=pinchState();
+    pinch0=p?{...p,vx:view.x,vy:view.y,k:view.k}:null;
+    panning=false;dragMoved=true;viewTouched=true;
+    svg.classList.add("panning");
+    return;
+  }
+  panning=true;dragMoved=false;panStart={x:e.clientX,y:e.clientY,vx:view.x,vy:view.y};
+  svg.classList.add("panning");
+});
+window.addEventListener("pointermove",e=>{
+  if(pointers.has(e.pointerId))pointers.set(e.pointerId,pointerXY(e));
+  if(pinch0&&pointers.size>=2){applyPinch();return;}
+  if(!panning)return;
+  const dx=e.clientX-panStart.x,dy=e.clientY-panStart.y;
+  if(Math.abs(dx)+Math.abs(dy)>(usesTouchCopy()?14:4)){dragMoved=true;viewTouched=true;}
+  if(!dragMoved)return;
+  view.x=panStart.vx+dx;view.y=panStart.vy+dy;applyView();
+});
+function endPan(e){
+  if(e&&e.pointerId!=null)pointers.delete(e.pointerId);
+  if(pointers.size<2)pinch0=null;
+  if(pointers.size===1){
+    const leftover=[...pointers.values()][0];
+    panning=true;panStart={x:leftover.cx,y:leftover.cy,vx:view.x,vy:view.y};
+  }
+  if(pointers.size===0){panning=false;svg.classList.remove("panning");}
+  setTimeout(()=>{if(pointers.size===0)dragMoved=false;},0);
+}
+// selection/activation on pointerup: setPointerCapture-free, so the event target is the real element
+svg.addEventListener("pointerup",e=>{
+  if(dragMoved||pinch0){endPan(e);return;}
+  const t=e.target;
+  const ng=t.closest?t.closest("g.node"):null;
+  const eg=t.closest?t.closest("g.edge"):null;
+  if(ng)select(ng.dataset.id);
+  else if(eg)onEdgeActivate(+eg.dataset.i,e);
+  else{clearSel();unpinTT();}
+  endPan(e);
+});
+svg.addEventListener("pointercancel",endPan);
+window.addEventListener("pointerup",endPan);
+window.addEventListener("pointercancel",endPan);
+window.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){closeChrome();clearSel();unpinTT();}
+});
+window.addEventListener("resize",()=>{if(isNarrow()&&!viewTouched)fit();});
+
+function fit(){
+  const rect=svg.getBoundingClientRect();
+  if(isNarrow()){
+    // Readable first paint: keep node labels at engine size and start at the
+    // entry columns. Pinch/drag still reach the rest of the graph.
+    view.k=1;
+    const entry=learnerEntryId();
+    if(entry&&pos[entry]){
+      view.x=16-pos[entry].x+8;
+      view.y=Math.max(20,rect.height/2-(pos[entry].y+NODE_H/2));
+    }else{
+      view.x=16;
+      view.y=Math.max(20,(rect.height-(maxY+TOP))/2);
+    }
+    applyView();
+    return;
+  }
+  const s=Math.min(rect.width/(maxX+LEFT),rect.height/(maxY+TOP))*0.96;
+  view.k=clamp(s,0.18,1.4);
+  view.x=(rect.width-(maxX+LEFT)*view.k)/2;view.y=(rect.height-(maxY+TOP)*view.k)/2;
+  applyView();
+  const entry=learnerEntryId();
+  if(entry&&pos[entry]){
+    view.k=clamp(Math.max(view.k,0.92),0.18,1.4);
+    centerOn(entry);
+  }
+}
+function closeHeaderChrome(){
+  const hdr=document.querySelector("header");
+  hdr.classList.remove("search-open","menu-open");
+  $("#btn-search-toggle").setAttribute("aria-expanded","false");
+  $("#btn-more").setAttribute("aria-expanded","false");
+}
+function closeChrome(){
+  closeHeaderChrome();
+  guidePinned=false;
+  legend.classList.remove("is-open");
+  $("#btn-legend").setAttribute("aria-expanded","false");
+  $("#btn-guide").setAttribute("aria-expanded","false");
+  if(isNarrow())setPanelOpen(false);
+  unpinTT();
+  syncScrim();
+}
+function anyOverlay(){
+  return panel.classList.contains("is-open")&&isNarrow()
+    ||legend.classList.contains("is-open")
+    ||(tt.style.display==="block"&&(isNarrow()||isCoarse()))
+    ||document.querySelector("header").classList.contains("menu-open");
+}
+function syncScrim(){
+  const on=anyOverlay();
+  $("#scrim").classList.toggle("is-on",on);
+  $("#scrim").hidden=!on;
+}
+function setPanelOpen(open){
+  panel.classList.toggle("is-open",!!open);
+  $("#btn-guide").setAttribute("aria-expanded",open&&!state.sel?"true":"false");
+  syncScrim();
+}
+let guidePinned=false;
+function syncFitLabel(){$("#btn-fit").textContent=isNarrow()?"Reset view":"Fit";}
+syncFitLabel();
+window.addEventListener("resize",syncFitLabel);
+$("#btn-fit").addEventListener("click",()=>{closeHeaderChrome();fit();syncScrim();});
+$("#btn-reset").addEventListener("click",()=>{guidePinned=false;clearSel();fit();closeChrome();});
+$("#btn-search-toggle").addEventListener("click",()=>{
+  const hdr=document.querySelector("header");
+  const open=!hdr.classList.contains("search-open");
+  hdr.classList.toggle("search-open",open);
+  hdr.classList.remove("menu-open");
+  $("#btn-search-toggle").setAttribute("aria-expanded",open);
+  $("#btn-more").setAttribute("aria-expanded","false");
+  if(open){searchInput.focus();searchInput.select();}
+  else{results.style.display="none";searchInput.blur();}
+});
+$("#btn-more").addEventListener("click",()=>{
+  const hdr=document.querySelector("header");
+  const open=!hdr.classList.contains("menu-open");
+  hdr.classList.toggle("menu-open",open);
+  hdr.classList.remove("search-open");
+  $("#btn-more").setAttribute("aria-expanded",open);
+  $("#btn-search-toggle").setAttribute("aria-expanded","false");
+  syncScrim();
+});
+$("#btn-legend").addEventListener("click",()=>{
+  const open=!legend.classList.contains("is-open");
+  closeHeaderChrome();
+  guidePinned=false;
+  if(isNarrow())setPanelOpen(false);
+  unpinTT();
+  legend.classList.toggle("is-open",open);
+  $("#btn-legend").setAttribute("aria-expanded",open);
+  syncScrim();
+});
+$("#btn-guide").addEventListener("click",()=>{
+  closeHeaderChrome();
+  legend.classList.remove("is-open");
+  $("#btn-legend").setAttribute("aria-expanded","false");
+  unpinTT();
+  guidePinned=true;
+  state.sel=null;
+  svg.classList.remove("dimmed");
+  Object.values(nodeEls).forEach(g=>{g.classList.remove("related");g.classList.remove("sel");g.classList.remove("match");});
+  edgeEls.forEach(g=>{g.classList.remove("related");g.classList.remove("direct");});
+  renderDefaultPanel();
+  setPanelOpen(true);
+});
+$("#scrim").addEventListener("click",()=>{
+  closeHeaderChrome();
+  legend.classList.remove("is-open");
+  $("#btn-legend").setAttribute("aria-expanded","false");
+  if(isNarrow()){guidePinned=false;setPanelOpen(false);}
+  unpinTT();
+  syncScrim();
+});
+
+// ---------- focus / selection ----------
+function applyFocus(related,keepEdges){
+  svg.classList.add("dimmed");
+  for(const id in nodeEls){nodeEls[id].classList.toggle("related",related.has(id));}
+  colEls.forEach(r=>r.classList.add("related"));
+  svg.querySelectorAll(".collabel").forEach(t=>t.classList.add("related"));
+  edgeEls.forEach((g,i)=>{
+    const rel=keepEdges.has(i);
+    g.classList.toggle("related",rel);
+    const e=DATA.edges[i];
+    g.classList.toggle("direct",rel&&(e.from===state.sel||e.to===state.sel));
+  });
+}
+function clearSel(){
+  state.sel=null;
+  svg.classList.remove("dimmed");
+  Object.values(nodeEls).forEach(g=>{g.classList.remove("related");g.classList.remove("sel");g.classList.remove("match");});
+  edgeEls.forEach(g=>{g.classList.remove("related");g.classList.remove("direct");});
+  renderDefaultPanel();
+  if(isNarrow())setPanelOpen(!!guidePinned);
+}
+function select(id){
+  state.sel=id;guidePinned=false;unpinTT();closeHeaderChrome();
+  if(isNarrow())legend.classList.remove("is-open");
+  const anc=new Set([id]),keepEdges=new Set(),stack=[id];
+  while(stack.length){
+    const cur=stack.pop();
+    DATA.edges.forEach((e,i)=>{
+      if(e.to===cur&&!anc.has(e.from)){anc.add(e.from);keepEdges.add(i);stack.push(e.from);}
+    });
+  }
+  const related=new Set(anc);
+  DATA.edges.forEach(e=>{if(e.from===id)related.add(e.to);});
+  DATA.edges.forEach((e,i)=>{if(e.from===id)keepEdges.add(i);});
+  Object.values(nodeEls).forEach(g=>g.classList.remove("sel"));
+  nodeEls[id].classList.add("sel");
+  applyFocus(related,keepEdges);
+  renderNodePanel(id,anc.size-1);
+  if(isNarrow())setPanelOpen(true);
+}
+function focusTheme(ti){
+  state.sel=null;unpinTT();
+  const related=new Set(DATA.nodes.filter(n=>n.phase===ti).map(n=>n.id));
+  const keepEdges=new Set();
+  DATA.edges.forEach((e,i)=>{if(related.has(e.from)||related.has(e.to))keepEdges.add(i);});
+  svg.classList.add("dimmed");
+  for(const id in nodeEls)nodeEls[id].classList.toggle("related",related.has(id));
+  colEls.forEach(r=>r.classList.add("related"));
+  edgeEls.forEach((g,i)=>g.classList.toggle("related",keepEdges.has(i)));
+  renderThemePanel(ti);
+}
+function focusLevel(l){
+  state.sel=null;unpinTT();
+  const related=new Set(DATA.nodes.filter(n=>LEVEL[n.id]===l).map(n=>n.id));
+  const keepEdges=new Set();
+  DATA.edges.forEach((e,i)=>{if(related.has(e.from)||related.has(e.to))keepEdges.add(i);});
+  svg.classList.add("dimmed");
+  for(const id in nodeEls)nodeEls[id].classList.toggle("related",related.has(id));
+  colEls.forEach(r=>r.classList.add("related"));
+  edgeEls.forEach((g,i)=>g.classList.toggle("related",keepEdges.has(i)));
+  renderLevelPanel(l);
+}
+
+// ---------- tooltip ----------
+const tt=$("#tt");let pinnedEdge=null;
+function showTT(html,px,py){
+  if(usesTouchCopy()){
+    tt.innerHTML=`<div class="sheet-handle"></div><div class="sheet-head narrow-only"><strong>Why this is a prerequisite</strong><button type="button" class="sheet-close" id="btn-why-close">Close</button></div>${html}`;
+    tt.style.display="block";tt.style.left="0";tt.style.top="auto";
+    const close=$("#btn-why-close");if(close)close.addEventListener("click",unpinTT);
+    syncScrim();
+    return;
+  }
+  tt.innerHTML=html;tt.style.display="block";
+  const wrap=$("#canvaswrap").getBoundingClientRect();
+  let x=px-wrap.left+14,y=py-wrap.top+14;
+  const tw=tt.offsetWidth,th=tt.offsetHeight;
+  if(x+tw>wrap.width-10)x=px-wrap.left-tw-14;
+  if(y+th>wrap.height-10)y=py-wrap.top-th-14;
+  tt.style.left=Math.max(4,x)+"px";tt.style.top=Math.max(4,y)+"px";
+}
+function hideTT(){if(pinnedEdge===null)tt.style.display="none";}
+function unpinTT(){pinnedEdge=null;tt.style.display="none";edgeEls.forEach(g=>g.classList.remove("hov"));if(typeof syncScrim==="function")syncScrim();}
+function edgeHTML(i){
+  const e=DATA.edges[i];
+  return `<div class="who">${nodeLabel(e.from)} <span class="arrow">→</span> ${nodeLabel(e.to)}</div><div>${e.why}</div>`;
+}
+function onEdgeEnter(i,ev){if(dragMoved||usesTouchCopy())return;edgeEls[i].classList.add("hov");if(pinnedEdge===null)showTT(edgeHTML(i),ev.clientX,ev.clientY);}
+function onEdgeMove(ev){if(pinnedEdge!==null||usesTouchCopy())return;showTT(tt.innerHTML,ev.clientX,ev.clientY);}
+function onEdgeLeave(i){if(usesTouchCopy())return;edgeEls[i].classList.remove("hov");if(pinnedEdge!==i)hideTT();}
+function onEdgeActivate(i,ev){
+  if(pinnedEdge===i){unpinTT();syncScrim();return;}
+  pinnedEdge=i;edgeEls.forEach(g=>g.classList.remove("hov"));edgeEls[i].classList.add("hov");
+  if(isNarrow()){legend.classList.remove("is-open");setPanelOpen(false);}
+  showTT(edgeHTML(i),ev.clientX,ev.clientY);
+}
+
+// ---------- panel ----------
+const panel=$("#panel");
+function themeChip(ti){return `<span class="chip" style="background:${THEMES[ti].color}">${THEMES[ti].name}</span>`;}
+function levelChip(l){const c=LCOL[l];return `<span class="chip" style="background:${c}${LUM(c)>0.28?";color:var(--ink)":""}">Level ${l}</span>`;}
+function depBlock(dir,e){
+  const other=dir==="req"?e.from:e.to;
+  return `<div class="dep"><b data-goto="${other}">${dir==="req"?"← ":"→ "}${nodeLabel(other)}</b><p>${e.why}</p></div>`;
+}
+function gotoHandler(){
+  panel.querySelectorAll("[data-goto]").forEach(b=>{
+    if(b.dataset.goto==="__back")return;
+    b.addEventListener("click",()=>{select(b.dataset.goto);centerOn(b.dataset.goto);});
+  });
+}
+function bindBack(){
+  panel.querySelectorAll("[data-goto='__back']").forEach(el=>{
+    el.addEventListener("click",()=>{guidePinned=false;clearSel();});
+  });
+}
+function sheetChrome(title){
+  return `<div class="sheet-handle"></div><div class="sheet-head narrow-only"><strong>${title}</strong><button type="button" class="sheet-close" data-goto="__back">Close</button></div>`;
+}
+function renderNodePanel(id,ancCount){
+  const n=nodeById(id);
+  const reqs=DATA.edges.filter(e=>e.to===id).sort((a,b)=>LEVEL[a.from]-LEVEL[b.from]);
+  const unl=DATA.edges.filter(e=>e.from===id).sort((a,b)=>LEVEL[a.to]-LEVEL[b.to]);
+  let h=`${sheetChrome(n.label)}<span class="backlink" data-goto="__back">← overview</span><br>
+  ${levelChip(LEVEL[id])} ${themeChip(n.phase)}
+  ${n.id===learnerEntryId()?`<p class="here-summary" style="margin-top:10px">Where you're starting.</p>`:learnerStateOf(n)==="known"?`<p style="color:var(--muted);font-size:14.5px">In your comfortable set — still here if you want to review.</p>`:""}
+  <h2>${n.label}</h2><p>${n.desc}</p>
+  <h3>Rough outline — study in this order</h3>
+  <ol class="outline">${n.outline.map(o=>`<li>${o}</li>`).join("")}</ol>
+  <h3>Key ideas</h3><ul>${n.ideas.map(i=>`<li>${i}</li>`).join("")}</ul>
+  <h3>Mastery check — prove you know this</h3>
+  ${n.questions.map((q,i)=>`<div class="dep"><b>Q${i+1}. ${q.q}</b><details><summary>Show answer</summary><p>${q.a}</p></details></div>`).join("")}
+  <h3>Study sources</h3><ul>${n.sources.map(s=>`<li>${s.u?`<a href="${s.u}" target="_blank" rel="noopener">${s.t}</a>`:s.t}</li>`).join("")}</ul>`;
+  h+=`<h3>Requires — why these are prerequisites (${reqs.length})</h3>`;
+  h+=reqs.length?reqs.map(e=>depBlock("req",e)).join(""):"<p style='color:var(--muted)'>Nothing — this is an entry point.</p>";
+  h+=`<h3>Unlocks (${unl.length})</h3>`;
+  h+=unl.length?unl.map(e=>depBlock("unl",e)).join(""):"<p style='color:var(--muted)'>Nothing directly — this is a terminal destination.</p>";
+  h+=`<p style="margin-top:14px;font-size:14px;color:var(--muted)">Graph focus: this node (highlighted), its ${ancCount} transitive prerequisite${ancCount===1?"":"s"}, and its direct downstream targets.</p>`;
+  panel.innerHTML=h;
+  bindBack();
+  gotoHandler();
+}
+function renderThemePanel(ti){
+  const ids=DATA.nodes.filter(n=>n.phase===ti).map(n=>n.id);
+  panel.innerHTML=`${sheetChrome(THEMES[ti].name)}<span class="backlink" data-goto="__back">← overview</span><br>${themeChip(ti)}
+  <h2>${THEMES[ti].name}</h2>
+  <p>${THEME_BLURBS[ti]||""}</p>
+  <h3>Concepts in this theme (${ids.length})</h3>
+  ${ids.map(i=>`<div class="dep"><b data-goto="${i}">${nodeLabel(i)}</b> <span style="font-size:14px;color:var(--muted)">Level ${LEVEL[i]}</span><p>${nodeById(i).desc}</p></div>`).join("")}`;
+  bindBack();
+  gotoHandler();
+  if(isNarrow())setPanelOpen(true);
+}
+function renderLevelPanel(l){
+  const ids=DATA.nodes.filter(n=>LEVEL[n.id]===l).map(n=>n.id);
+  panel.innerHTML=`${sheetChrome("Level "+l)}<span class="backlink" data-goto="__back">← overview</span><br>${levelChip(l)}
+  <h2>Level ${l}</h2>
+  <p>Everything on this level can be studied in parallel: nothing here depends on anything else at the same level, and every prerequisite sits strictly to the left.</p>
+  <h3>Concepts at this level (${ids.length})</h3>
+  ${ids.map(i=>`<div class="dep"><b data-goto="${i}">${nodeLabel(i)}</b> <span style="font-size:14px;color:var(--muted)">${THEMES[nodeById(i).phase].name}</span><p>${nodeById(i).desc}</p></div>`).join("")}`;
+  bindBack();
+  gotoHandler();
+  if(isNarrow())setPanelOpen(true);
+}
+function renderDefaultPanel(){
+  const nodeVerb=usesTouchCopy()?"Tap":"Click";
+  const arrowLine=usesTouchCopy()
+    ?"Tap any <b>arrow</b> for its rationale (tap again to dismiss). Drag to pan, pinch to zoom, search to jump."
+    :"Hover or click any <b>arrow</b> for its rationale (click again to pin). Drag to pan, scroll to zoom, search to jump.";
+  const colorLine=usesTouchCopy()
+    ?"the tint deepens from the entry level at the left to the frontier at the right — the theme's depth ramp, also drawn in the Levels sheet (tap a band to focus that level)."
+    :"the tint deepens from the entry level at the left to the frontier at the right — the theme's depth ramp, also drawn as the legend bar bottom-left (click a band to focus that level).";
+  const startHTML=hasLearnerData()?(function(){
+    const entry=learnerEntryId();
+    const note=learnerNote()||"Where you're starting is marked on the map. Quieter nodes are ones you already reported as comfortable — they're still here if you want to review.";
+    const jump=entry?`<p><b class="here-jump" data-goto="${entry}">Start here: ${nodeLabel(entry)}</b></p>`:"";
+    return `<div class="here-summary" id="learner-start"><h3>Your starting point</h3><p>${note}</p>${jump}</div>`;
+  })():"";
+  panel.innerHTML=`${sheetChrome("How to read this map")}
+  <h2 style="margin-top:0">Concept dependency map</h2>
+  <p>This map lays out the ${DATA.nodes.length} concepts between ${hasLearnerData()?"where you're starting":"zero background"} and the end goal: <b>${GOAL_STATEMENT}</b></p>
+  ${startHTML}
+  <h3>How to read it</h3>
+  <ul>
+    <li><b>Columns are topological levels.</b> An arrow A → B means learn A before B, so B always sits to the right of A. Everything in one column can be learned in parallel once the columns to its left are done.</li>
+    <li><b>Color encodes depth:</b> ${colorLine}</li>
+    <li>${nodeVerb} any <b>node</b> for its description, a <b>rough study outline</b> (ordered steps), key ideas, sources, and — for every arrow touching it — <b>why</b> that prerequisite holds.</li>
+    <li>${nodeVerb === "Tap" ? "Tapping" : "Clicking"} a node also lights up its entire prerequisite chain: what you'd need to study, in the graph's own order.</li>
+    <li>${arrowLine}</li>
+  </ul>
+  <h3>A suggested path through the graph</h3>
+  <ul>
+    ${SUGGESTED_PATH.map(s=>`<li><b>${s.h}:</b> ${s.t}</li>`).join("")}
+  </ul>
+  <h3>Themes</h3>
+  <div>${THEMES.map((p,i)=>`<span class="chipbtn" data-phase="${i}" style="margin:2px"><span class="dot" style="background:${p.color}"></span>${p.name}</span>`).join("")}</div>
+  <p style="font-size:14px;color:var(--muted)">${nodeVerb} a theme to highlight its nodes across the graph.</p>
+  <h3>Sources</h3>
+  <p style="font-size:14.5px">${GOAL_SOURCES_NOTE}</p>`;
+  bindBack();
+  gotoHandler();
+  panel.querySelectorAll("[data-phase]").forEach(b=>{
+    b.addEventListener("click",()=>focusTheme(+b.dataset.phase));
+  });
+}
+
+// ---------- search ----------
+const searchInput=$("#search"),results=$("#results");
+searchInput.addEventListener("input",()=>{
+  const q=searchInput.value.trim().toLowerCase();
+  if(!q){results.style.display="none";return;}
+  const matches=DATA.nodes.filter(n=>
+    n.label.toLowerCase().includes(q)||n.desc.toLowerCase().includes(q)||n.ideas.some(i=>i.toLowerCase().includes(q))||n.outline.some(o=>o.toLowerCase().includes(q))
+  ).slice(0,8);
+  results.innerHTML=matches.map(n=>`<div data-id="${n.id}">${n.label}<span class="rphase">${THEMES[n.phase].name}</span></div>`).join("")||"<div><i>No matches</i></div>";
+  results.style.display="block";
+  results.querySelectorAll("[data-id]").forEach(r=>{
+    r.addEventListener("click",()=>{
+      Object.values(nodeEls).forEach(g=>g.classList.remove("match"));
+      nodeEls[r.dataset.id].classList.add("match");
+      select(r.dataset.id);centerOn(r.dataset.id);
+      results.style.display="none";searchInput.value="";
+    });
+  });
+});
+document.addEventListener("click",e=>{if(!e.target.closest(".searchwrap"))results.style.display="none";});
+function centerOn(id){
+  const p=pos[id],rect=svg.getBoundingClientRect();
+  const cxg=p.x+NODE_W/2,cyg=p.y+NODE_H/2;
+  view.x=rect.width/2-cxg*view.k;view.y=rect.height/2-cyg*view.k;applyView();
+}
+
+// ---------- legend & init ----------
+const legend=$("#legend");
+(function buildLegend(){
+  const stops=LCOL.map((c,i)=>`${c} ${Math.round(100*i/(NLEVELS-1))}%`).join(", ");
+  const bandVerb=usesTouchCopy()?"Tap":"Click";
+  legend.innerHTML=`<div class="sheet-handle"></div>
+  <div class="sheet-head narrow-only"><strong>Topological levels</strong><button type="button" class="sheet-close" id="btn-legend-close">Close</button></div>
+  <div class="bar" style="background:linear-gradient(90deg, ${stops})"></div>
+  <div class="barlabels"><span>0</span><span>topological level →</span><span>${MAXL}</span></div>
+  <div class="cap">Every column is a dependency level: all its prerequisites sit strictly to the left, so a level can be studied in parallel. ${bandVerb} a band below to focus it.</div>
+  <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:5px">${LCOL.map((c,i)=>`<span class="chipbtn lvlchip" data-level="${i}" style="border-color:${c};font-size:14px;padding:1px 6px">${i}</span>`).join("")}</div>`;
+  legend.querySelectorAll(".lvlchip").forEach(b=>b.addEventListener("click",()=>{
+    if(isNarrow()){legend.classList.remove("is-open");$("#btn-legend").setAttribute("aria-expanded","false");}
+    focusLevel(+b.dataset.level);
+  }));
+  const close=$("#btn-legend-close");if(close)close.addEventListener("click",()=>{legend.classList.remove("is-open");$("#btn-legend").setAttribute("aria-expanded","false");syncScrim();});
+})();
+$("#stats").textContent=`${DATA.nodes.length} concepts · ${DATA.edges.length} prerequisite links · ${NLEVELS} topological levels · build ${BUILD}`;
+$("#hint").innerHTML=hintCopy();
+renderDefaultPanel();
+if(!isNarrow())panel.classList.add("is-open");
+fit();
+
+// ---------- theme toggle (engine): Themed ↔ Default, re-skins palette, fonts, and the depth ramp live ----------
+const ANCHORS_THEMED=ANCHORS.slice();
+let themedOn=true;
+function recolorGraph(){
+  LCOL.length=0;LCOL.push(...Array.from({length:NLEVELS},(_,l)=>levelColor(l)));
+  cols.forEach((c,i)=>colEls[i].setAttribute("fill",LCOL[c.level]));
+  svg.querySelectorAll(".collabel").forEach(t=>t.setAttribute("fill",LCOL[+t.dataset.level]));
+  for(const id in nodeEls){const c=LCOL[LEVEL[id]],rc=nodeEls[id].querySelector("rect.main");rc.setAttribute("fill",c);rc.setAttribute("stroke",c);}
+  const stops=LCOL.map((c,i)=>`${c} ${Math.round(100*i/(NLEVELS-1))}%`).join(", ");
+  const bar=legend.querySelector(".bar");if(bar)bar.style.background=`linear-gradient(90deg, ${stops})`;
+  legend.querySelectorAll(".lvlchip").forEach(b=>b.style.borderColor=LCOL[+b.dataset.level]);
+}
+function setTheme(on){
+  themedOn=on;
+  const t=on?THEME:THEME_DEFAULT;
+  applyTheme(t);
+  const ramp=on?ANCHORS_THEMED:THEME_DEFAULT.anchors;
+  if(ramp&&ramp.length>=2){ANCHORS.length=0;ANCHORS.push(...ramp);}
+  recolorGraph();
+  $("#btn-theme").textContent=on?"Themed":"Default";
+}
+$("#btn-theme").addEventListener("click",()=>setTheme(!themedOn));
+// deep link: open with #node-id to start with that concept selected
+(function(){
+  const id=location.hash&&location.hash.slice(1);
+  if(id&&nodeEls[id]){select(id);centerOn(id);}
+})();
+</script>
+</body>
+</html>
