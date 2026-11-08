@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+    <channel>
+      <title>How LLMs work</title>
+      <link>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work</link>
+      <description>Last 10 notes on How LLMs work</description>
+      <generator>Quartz -- quartz.jzhao.xyz</generator>
+      <item>
+    <title>How LLMs work</title>
+    <link>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/</link>
+    <guid>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/</guid>
+    <description><![CDATA[ These notes are for the Learn Anything AI and software group. ]]></description>
+    <pubDate>Sun, 08 Nov 2026 00:04:24 GMT</pubDate>
+  </item><item>
+    <title>Index</title>
+    <link>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/Index</link>
+    <guid>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/Index</guid>
+    <description><![CDATA[ How LLMs work These notes are for the Learn Anything AI and software group. ]]></description>
+    <pubDate>Sun, 08 Nov 2026 00:04:17 GMT</pubDate>
+  </item><item>
+    <title>Prerequisite map</title>
+    <link>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/Prerequisite-map</link>
+    <guid>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/Prerequisite-map</guid>
+    <description><![CDATA[ Prerequisite map How LLMs work prerequisite map. ]]></description>
+    <pubDate>Sat, 07 Nov 2026 23:34:16 GMT</pubDate>
+  </item><item>
+    <title>Maps and losses</title>
+    <link>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/MOCs/Maps-and-losses</link>
+    <guid>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/MOCs/Maps-and-losses</guid>
+    <description><![CDATA[ Maps and losses Sources Softmax Regression Word Embedding (word2vec) Subword Embedding How do Transformers work? Softmax function Efficient Estimation of Word Representations in Vector Space Language Models are Unsupervised Multitask Learners Adam: A Method for Stochastic Optimization Language Model... ]]></description>
+    <pubDate>Sat, 07 Nov 2026 23:29:48 GMT</pubDate>
+  </item><item>
+    <title>Operations</title>
+    <link>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/MOCs/Operations</link>
+    <guid>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/MOCs/Operations</guid>
+    <description><![CDATA[ Operations Sources Gradient Descent Softmax Regression Subword Embedding Byte-Pair Encoding tokenization Softmax function Byte-pair encoding Adam: A Method for Stochastic Optimization Neural Machine Translation of Rare Words with Subword Units The Curious Case of Neural Text Degeneration Notes Open ... ]]></description>
+    <pubDate>Sat, 07 Nov 2026 23:29:48 GMT</pubDate>
+  </item><item>
+    <title>Pieces</title>
+    <link>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/MOCs/Pieces</link>
+    <guid>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/MOCs/Pieces</guid>
+    <description><![CDATA[ Pieces Sources Word Embedding (word2vec) Natural Language Processing and Large Language Models Large language model Efficient Estimation of Word Representations in Vector Space Language Models are Unsupervised Multitask Learners Adam: A Method for Stochastic Optimization Notes Open questions . ]]></description>
+    <pubDate>Sat, 07 Nov 2026 23:29:48 GMT</pubDate>
+  </item><item>
+    <title>Sample and adapt</title>
+    <link>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/MOCs/Sample-and-adapt</link>
+    <guid>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/MOCs/Sample-and-adapt</guid>
+    <description><![CDATA[ Sample and adapt Sources The Transformer Architecture Large-Scale Pretraining with Transformers Natural Language Processing and Large Language Models How do Transformers work? Transformer Architectures Large language model Reinforcement learning from human feedback nanoGPT Attention Is All You Need ... ]]></description>
+    <pubDate>Sat, 07 Nov 2026 23:29:48 GMT</pubDate>
+  </item><item>
+    <title>Scores</title>
+    <link>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/MOCs/Scores</link>
+    <guid>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/MOCs/Scores</guid>
+    <description><![CDATA[ Scores Sources Queries, Keys, and Values Attention Scoring Functions Multi-Head Attention Self-Attention and Positional Encoding The Transformer Architecture Transformer Architectures Attention Is All You Need Language Models are Unsupervised Multitask Learners Language Models are Few-Shot Learners ... ]]></description>
+    <pubDate>Sat, 07 Nov 2026 23:29:48 GMT</pubDate>
+  </item><item>
+    <title>Signals</title>
+    <link>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/MOCs/Signals</link>
+    <guid>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/MOCs/Signals</guid>
+    <description><![CDATA[ Signals Sources Queries, Keys, and Values Self-Attention and Positional Encoding Gradient Descent Adam Attention Is All You Need Language Models are Unsupervised Multitask Learners Adam: A Method for Stochastic Optimization Notes Open questions . ]]></description>
+    <pubDate>Sat, 07 Nov 2026 23:29:48 GMT</pubDate>
+  </item><item>
+    <title>Train the stack</title>
+    <link>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/MOCs/Train-the-stack</link>
+    <guid>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/MOCs/Train-the-stack</guid>
+    <description><![CDATA[ Train the stack Sources Attention Scoring Functions Multi-Head Attention The Transformer Architecture Large-Scale Pretraining with Transformers How do Transformers work? Transformer Architectures Large language model nanoGPT Attention Is All You Need Language Models are Unsupervised Multitask Learne... ]]></description>
+    <pubDate>Sat, 07 Nov 2026 23:29:48 GMT</pubDate>
+  </item>
+    </channel>
+  </rss>
