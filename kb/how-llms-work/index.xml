@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+    <channel>
+      <title>How LLMs work</title>
+      <link>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work</link>
+      <description>Last 10 notes on How LLMs work</description>
+      <generator>Quartz -- quartz.jzhao.xyz</generator>
+      <item>
+    <title>How LLMs work</title>
+    <link>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/Index</link>
+    <guid>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/Index</guid>
+    <description><![CDATA[ These notes are for the Learn Anything AI and software group. ]]></description>
+    <pubDate>Sun, 08 Nov 2026 12:52:06 GMT</pubDate>
+  </item><item>
+    <title>Subword Embedding</title>
+    <link>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/raw/Subword-Embedding</link>
+    <guid>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/raw/Subword-Embedding</guid>
+    <description><![CDATA[ Subword Embedding What this is: Textbook chapter by Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola, in Dive into Deep Learning. ]]></description>
+    <pubDate>Sun, 08 Nov 2026 01:13:08 GMT</pubDate>
+  </item><item>
+    <title>The Curious Case of Neural Text Degeneration</title>
+    <link>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/raw/The-Curious-Case-of-Neural-Text-Degeneration</link>
+    <guid>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/raw/The-Curious-Case-of-Neural-Text-Degeneration</guid>
+    <description><![CDATA[ The Curious Case of Neural Text Degeneration What this is: Paper by Ari Holtzman, Jan Buys, Li Du, Maxwell Forbes, and Yejin Choi. ]]></description>
+    <pubDate>Sun, 08 Nov 2026 01:13:08 GMT</pubDate>
+  </item><item>
+    <title>The Illustrated Transformer</title>
+    <link>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/raw/The-Illustrated-Transformer</link>
+    <guid>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/raw/The-Illustrated-Transformer</guid>
+    <description><![CDATA[ The Illustrated Transformer What this is: Visual explainer by Jay Alammar. The page was fetched 2026-11-07. ]]></description>
+    <pubDate>Sun, 08 Nov 2026 01:13:08 GMT</pubDate>
+  </item><item>
+    <title>The Transformer Architecture</title>
+    <link>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/raw/The-Transformer-Architecture</link>
+    <guid>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/raw/The-Transformer-Architecture</guid>
+    <description><![CDATA[ The Transformer Architecture What this is: Textbook chapter by Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. ]]></description>
+    <pubDate>Sun, 08 Nov 2026 01:13:08 GMT</pubDate>
+  </item><item>
+    <title>Training language models to follow instructions with human feedback</title>
+    <link>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/raw/Training-language-models-to-follow-instructions-with-human-feedback</link>
+    <guid>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/raw/Training-language-models-to-follow-instructions-with-human-feedback</guid>
+    <description><![CDATA[ Training language models to follow instructions with human feedback What this is: Paper by Long Ouyang, Jeff Wu, Xu Jiang, Diogo Almeida, Carroll L. ]]></description>
+    <pubDate>Sun, 08 Nov 2026 01:13:08 GMT</pubDate>
+  </item><item>
+    <title>Transformer Architectures</title>
+    <link>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/raw/Transformer-Architectures</link>
+    <guid>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/raw/Transformer-Architectures</guid>
+    <description><![CDATA[ Transformer Architectures What this is: Course chapter from the Hugging Face course, Apache License 2.0. Chapter source fetched 2026-11-07. ]]></description>
+    <pubDate>Sun, 08 Nov 2026 01:13:08 GMT</pubDate>
+  </item><item>
+    <title>Word Embedding (word2vec)</title>
+    <link>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/raw/Word-Embedding-(word2vec)</link>
+    <guid>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/raw/Word-Embedding-(word2vec)</guid>
+    <description><![CDATA[ Word Embedding (word2vec) What this is: Textbook chapter by Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola, in Dive into Deep Learning. ]]></description>
+    <pubDate>Sun, 08 Nov 2026 01:13:08 GMT</pubDate>
+  </item><item>
+    <title>nanoGPT</title>
+    <link>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/raw/nanoGPT</link>
+    <guid>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/raw/nanoGPT</guid>
+    <description><![CDATA[ nanoGPT What this is: Repository README by Andrej Karpathy, copyright 2022, MIT License. Fetched 2026-11-07. ]]></description>
+    <pubDate>Sun, 08 Nov 2026 01:13:08 GMT</pubDate>
+  </item><item>
+    <title>Large language model</title>
+    <link>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/raw/Large-language-model</link>
+    <guid>https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/raw/Large-language-model</guid>
+    <description><![CDATA[ Large language model What this is: Wikipedia article “Large language model”, revision 2026-11-06T00:28:28Z (oldid 1383985501). ]]></description>
+    <pubDate>Sun, 08 Nov 2026 01:13:08 GMT</pubDate>
+  </item>
+    </channel>
+  </rss>
