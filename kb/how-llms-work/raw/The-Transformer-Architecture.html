@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>The Transformer Architecture</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="How LLMs work"/><meta property="og:title" content="The Transformer Architecture"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="The Transformer Architecture"/><meta name="twitter:description" content="The Transformer Architecture What this is: Textbook chapter by Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J."/><meta property="og:description" content="The Transformer Architecture What this is: Textbook chapter by Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J."/><meta property="og:image:alt" content="The Transformer Architecture What this is: Textbook chapter by Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J."/><meta property="og:image" content="https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/static/og-image.png"/><meta property="og:image:url" content="https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/static/og-image.png"/><meta name="twitter:image" content="https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="learn-anything.nonlinearlabs.ai/kb/how-llms-work"/><meta property="og:url" content="https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/raw/The-Transformer-Architecture"/><meta property="twitter:url" content="https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/raw/The-Transformer-Architecture"/><link rel="icon" href="../static/icon.png"/><meta name="description" content="The Transformer Architecture What this is: Textbook chapter by Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J."/><meta name="generator" content="Quartz"/><link href="../index.css" rel="stylesheet" type="text/css" spa-preserve/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  padding: 2rem;
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL1VzZXJzL2VyaWNtamwvLmNhY2hlL2hvdy1sbG1zLXdvcmstcXVhcnR6L3Y0LjUuMi9xdWFydHovY29tcG9uZW50cy9zdHlsZXMiLCJzb3VyY2VzIjpbIm1lcm1haWQuaW5saW5lLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUdGO0VBQ0U7OztBQUtGO0VBQ0U7RUFDQTs7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTs7QUFHRjtFQUNFO0VBQ0E7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7O0FBSUY7RUFDRTtFQUNBO0VBQ0EiLCJzb3VyY2VzQ29udGVudCI6WyIuZXhwYW5kLWJ1dHRvbiB7XG4gIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgZGlzcGxheTogZmxleDtcbiAgZmxvYXQ6IHJpZ2h0O1xuICBwYWRkaW5nOiAwLjRyZW07XG4gIG1hcmdpbjogMC4zcmVtO1xuICByaWdodDogMDsgLy8gTk9URTogcmlnaHQgd2lsbCBiZSBzZXQgaW4gbWVybWFpZC5pbmxpbmUudHNcbiAgY29sb3I6IHZhcigtLWdyYXkpO1xuICBib3JkZXItY29sb3I6IHZhcigtLWRhcmspO1xuICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gIGJvcmRlcjogMXB4IHNvbGlkO1xuICBib3JkZXItcmFkaXVzOiA1cHg7XG4gIG9wYWNpdHk6IDA7XG4gIHRyYW5zaXRpb246IDAuMnM7XG5cbiAgJiA+IHN2ZyB7XG4gICAgZmlsbDogdmFyKC0tbGlnaHQpO1xuICAgIGZpbHRlcjogY29udHJhc3QoMC4zKTtcbiAgfVxuXG4gICY6aG92ZXIge1xuICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICBib3JkZXItY29sb3I6IHZhcigtLXNlY29uZGFyeSk7XG4gIH1cblxuICAmOmZvY3VzIHtcbiAgICBvdXRsaW5lOiAwO1xuICB9XG59XG5cbnByZSB7XG4gICY6aG92ZXIgPiAuZXhwYW5kLWJ1dHRvbiB7XG4gICAgb3BhY2l0eTogMTtcbiAgICB0cmFuc2l0aW9uOiAwLjJzO1xuICB9XG59XG5cbiNtZXJtYWlkLWNvbnRhaW5lciB7XG4gIHBvc2l0aW9uOiBmaXhlZDtcbiAgY29udGFpbjogbGF5b3V0O1xuICB6LWluZGV4OiA5OTk7XG4gIGxlZnQ6IDA7XG4gIHRvcDogMDtcbiAgd2lkdGg6IDEwMHZ3O1xuICBoZWlnaHQ6IDEwMHZoO1xuICBvdmVyZmxvdzogaGlkZGVuO1xuICBkaXNwbGF5OiBub25lO1xuICBiYWNrZHJvcC1maWx0ZXI6IGJsdXIoNHB4KTtcbiAgYmFja2dyb3VuZDogcmdiYSgwLCAwLCAwLCAwLjUpO1xuXG4gICYuYWN0aXZlIHtcbiAgICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XG4gIH1cblxuICAmID4gI21lcm1haWQtc3BhY2Uge1xuICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICAgIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgICBwb3NpdGlvbjogZml4ZWQ7XG4gICAgdG9wOiA1MCU7XG4gICAgbGVmdDogNTAlO1xuICAgIHRyYW5zZm9ybTogdHJhbnNsYXRlKC01MCUsIC01MCUpO1xuICAgIGhlaWdodDogODB2aDtcbiAgICB3aWR0aDogODB2dztcbiAgICBvdmVyZmxvdzogaGlkZGVuO1xuXG4gICAgJiA+IC5tZXJtYWlkLWNvbnRlbnQge1xuICAgICAgcGFkZGluZzogMnJlbTtcbiAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICAgIHRyYW5zZm9ybS1vcmlnaW46IDAgMDtcbiAgICAgIHRyYW5zaXRpb246IHRyYW5zZm9ybSAwLjFzIGVhc2U7XG4gICAgICBvdmVyZmxvdzogdmlzaWJsZTtcbiAgICAgIG1pbi1oZWlnaHQ6IDIwMHB4O1xuICAgICAgbWluLXdpZHRoOiAyMDBweDtcblxuICAgICAgcHJlIHtcbiAgICAgICAgbWFyZ2luOiAwO1xuICAgICAgICBib3JkZXI6IG5vbmU7XG4gICAgICB9XG5cbiAgICAgIHN2ZyB7XG4gICAgICAgIG1heC13aWR0aDogbm9uZTtcbiAgICAgICAgaGVpZ2h0OiBhdXRvO1xuICAgICAgfVxuICAgIH1cblxuICAgICYgPiAubWVybWFpZC1jb250cm9scyB7XG4gICAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgICBib3R0b206IDIwcHg7XG4gICAgICByaWdodDogMjBweDtcbiAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICBnYXA6IDhweDtcbiAgICAgIHBhZGRpbmc6IDhweDtcbiAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICBib3JkZXItcmFkaXVzOiA2cHg7XG4gICAgICBib3gtc2hhZG93OiAwIDJweCA0cHggcmdiYSgwLCAwLCAwLCAwLjEpO1xuICAgICAgei1pbmRleDogMjtcblxuICAgICAgLm1lcm1haWQtY29udHJvbC1idXR0b24ge1xuICAgICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgICAgICAgd2lkdGg6IDMycHg7XG4gICAgICAgIGhlaWdodDogMzJweDtcbiAgICAgICAgcGFkZGluZzogMDtcbiAgICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgICBjb2xvcjogdmFyKC0tZGFyayk7XG4gICAgICAgIGJvcmRlci1yYWRpdXM6IDRweDtcbiAgICAgICAgY3Vyc29yOiBwb2ludGVyO1xuICAgICAgICBmb250LXNpemU6IDE2cHg7XG4gICAgICAgIGZvbnQtZmFtaWx5OiB2YXIoLS1ib2R5Rm9udCk7XG4gICAgICAgIHRyYW5zaXRpb246IGFsbCAwLjJzIGVhc2U7XG5cbiAgICAgICAgJjpob3ZlciB7XG4gICAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgfVxuXG4gICAgICAgICY6YWN0aXZlIHtcbiAgICAgICAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMXB4KTtcbiAgICAgICAgfVxuXG4gICAgICAgIC8vIFN0eWxlIHRoZSByZXNldCBidXR0b24gZGlmZmVyZW50bHlcbiAgICAgICAgJjpudGgtY2hpbGQoMikge1xuICAgICAgICAgIHdpZHRoOiBhdXRvO1xuICAgICAgICAgIHBhZGRpbmc6IDAgMTJweDtcbiAgICAgICAgICBmb250LXNpemU6IDE0cHg7XG4gICAgICAgIH1cbiAgICAgIH1cbiAgICB9XG4gIH1cbn1cbiJdfQ== */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" spa-preserve/><script src="../prescript.js" type="application/javascript" spa-preserve></script><script type="application/javascript" spa-preserve>const fetchData = fetch("../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/index.xml"/></head><body data-slug="raw/The-Transformer-Architecture"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="..">How LLMs work</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-39"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-39" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../raw/">raw</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>The Transformer Architecture</a></div></nav><h1 class="article-title">The Transformer Architecture</h1><p show-comma="true" class="content-meta"><time datetime="2026-11-08T01:13:08.512Z">Nov 07, 2026</time><span>17 min read</span></p></div></div><article class="popover-hint"><h1 id="the-transformer-architecture">The Transformer Architecture<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#the-transformer-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<ul>
+<li>What this is: Textbook chapter by Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola, in Dive into Deep Learning. Chapter source fetched 2026-11-07.</li>
+<li>Topics it supports: <a href="../MOCs/Scores" class="internal" data-slug="MOCs/Scores">Scores</a>, <a href="../MOCs/Train-the-stack" class="internal alias" data-slug="MOCs/Train-the-stack">Train the stack</a>, <a href="../MOCs/Sample-and-adapt" class="internal alias" data-slug="MOCs/Sample-and-adapt">Sample and adapt</a></li>
+<li>Why you kept it: You asked for sources that cover the How LLMs work map for the AI-software group.</li>
+<li>Link: <a href="https://d2l.ai/chapter_attention-mechanisms-and-transformers/transformer.html" class="external">https://d2l.ai/chapter_attention-mechanisms-and-transformers/transformer.html<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+</ul>
+<hr/>
+<p>This chapter is by Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola, from Dive into Deep Learning. It is licensed under Creative Commons Attribution-ShareAlike 4.0 International (<a href="https://creativecommons.org/licenses/by-sa/4.0/" class="external">https://creativecommons.org/licenses/by-sa/4.0/<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>). The text below is the chapter source file <code>chapter_attention-mechanisms-and-transformers/transformer.md</code> from <a href="https://github.com/d2l-ai/d2l-en" class="external">https://github.com/d2l-ai/d2l-en<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>, fetched 2026-11-07. No changes were made to the chapter text. This file is shared under the same license.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>%load_ext d2lbook.tab</span></span>
+<span data-line><span>tab.interact_select('mxnet', 'pytorch', 'tensorflow', 'jax')</span></span></code></pre></figure>
+<h1 id="the-transformer-architecture-1">The Transformer Architecture<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#the-transformer-architecture-1" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>:label:<code>sec_transformer</code></p>
+<p>We have compared CNNs, RNNs, and self-attention in
+:numref:<code>subsec_cnn-rnn-self-attention</code>.
+Notably, self-attention
+enjoys both parallel computation and
+the shortest maximum path length.
+Therefore,
+it is appealing to design deep architectures
+by using self-attention.
+Unlike earlier self-attention models
+that still rely on RNNs for input representations :cite:<code>Cheng.Dong.Lapata.2016,Lin.Feng.Santos.ea.2017,Paulus.Xiong.Socher.2017</code>,
+the Transformer model
+is solely based on attention mechanisms
+without any convolutional or recurrent layer :cite:<code>Vaswani.Shazeer.Parmar.ea.2017</code>.
+Though originally proposed
+for sequence-to-sequence learning on text data,
+Transformers have been
+pervasive in a wide range of
+modern deep learning applications,
+such as in areas to do with language, vision, speech, and reinforcement learning.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab pytorch</span></span>
+<span data-line><span>from d2l import torch as d2l</span></span>
+<span data-line><span>import math</span></span>
+<span data-line><span>import pandas as pd</span></span>
+<span data-line><span>import torch</span></span>
+<span data-line><span>from torch import nn</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab jax</span></span>
+<span data-line><span>from d2l import jax as d2l</span></span>
+<span data-line><span>from flax import linen as nn</span></span>
+<span data-line><span>from jax import numpy as jnp</span></span>
+<span data-line><span>import jax</span></span>
+<span data-line><span>import math</span></span>
+<span data-line><span>import pandas as pd</span></span></code></pre></figure>
+<h2 id="model">Model<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#model" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>As an instance of the encoder—decoder
+architecture,
+the overall architecture of
+the Transformer
+is presented in :numref:<code>fig_transformer</code>.
+As we can see,
+the Transformer is composed of an encoder and a decoder.
+In contrast to
+Bahdanau attention
+for sequence-to-sequence learning
+in :numref:<code>fig_s2s_attention_details</code>,
+the input (source) and output (target)
+sequence embeddings
+are added with positional encoding
+before being fed into
+the encoder and the decoder
+that stack modules based on self-attention.</p>
+<p><img src=".././img/transformer.svg" alt="The Transformer architecture."/>
+:width:<code>320px</code>
+:label:<code>fig_transformer</code></p>
+<p>Now we provide an overview of the
+Transformer architecture in :numref:<code>fig_transformer</code>.
+At a high level,
+the Transformer encoder is a stack of multiple identical layers,
+where each layer
+has two sublayers (either is denoted as <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord textrm">sublayer</span></span></span></span></span>).
+The first
+is a multi-head self-attention pooling
+and the second is a positionwise feed-forward network.
+Specifically,
+in the encoder self-attention,
+queries, keys, and values are all from the
+outputs of the previous encoder layer.
+Inspired by the ResNet design of :numref:<code>sec_resnet</code>,
+a residual connection is employed
+around both sublayers.
+In the Transformer,
+for any input <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mord mathbf">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8491em;"></span><span class="mord"><span class="mord mathbb">R</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">d</span></span></span></span></span></span></span></span></span></span></span> at any position of the sequence,
+we require that <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord textrm">sublayer</span></span><span class="mopen">(</span><span class="mord mathbf">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8491em;"></span><span class="mord"><span class="mord mathbb">R</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">d</span></span></span></span></span></span></span></span></span></span></span> so that
+the residual connection <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathbf">x</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord textrm">sublayer</span></span><span class="mopen">(</span><span class="mord mathbf">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8491em;"></span><span class="mord"><span class="mord mathbb">R</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">d</span></span></span></span></span></span></span></span></span></span></span> is feasible.
+This addition from the residual connection is immediately
+followed by layer normalization :cite:<code>Ba.Kiros.Hinton.2016</code>.
+As a result, the Transformer encoder outputs a <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span>-dimensional vector representation
+for each position of the input sequence.</p>
+<p>The Transformer decoder is also a stack of multiple identical layers
+with residual connections and layer normalizations.
+As well as the two sublayers described in
+the encoder, the decoder inserts
+a third sublayer, known as
+the encoder—decoder attention,
+between these two.
+In the encoder—decoder attention,
+queries are from the
+outputs of the decoder’s self-attention sublayer,
+and the keys and values are
+from the Transformer encoder outputs.
+In the decoder self-attention,
+queries, keys, and values are all from the
+outputs of the previous decoder layer.
+However, each position in the decoder is
+allowed only to attend to all positions in the decoder
+up to that position.
+This <em>masked</em> attention
+preserves the autoregressive property,
+ensuring that the prediction only depends
+on those output tokens that have been generated.</p>
+<p>We have already described and implemented
+multi-head attention based on scaled dot products
+in :numref:<code>sec_multihead-attention</code>
+and positional encoding in :numref:<code>subsec_positional-encoding</code>.
+In the following, we will implement
+the rest of the Transformer model.</p>
+<h2 id="positionwise-feed-forward-networks">[<strong>Positionwise Feed-Forward Networks</strong>]<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#positionwise-feed-forward-networks" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>:label:<code>subsec_positionwise-ffn</code></p>
+<p>The positionwise feed-forward network transforms
+the representation at all the sequence positions
+using the same MLP.
+This is why we call it <em>positionwise</em>.
+In the implementation below,
+the input <code>X</code> with shape
+(batch size, number of time steps or sequence length in tokens,
+number of hidden units or feature dimension)
+will be transformed by a two-layer MLP into
+an output tensor of shape
+(batch size, number of time steps, <code>ffn_num_outputs</code>).</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab pytorch</span></span>
+<span data-line><span>class PositionWiseFFN(nn.Module):  #@save</span></span>
+<span data-line><span>    &quot;&quot;&quot;The positionwise feed-forward network.&quot;&quot;&quot;</span></span>
+<span data-line><span>    def __init__(self, ffn_num_hiddens, ffn_num_outputs):</span></span>
+<span data-line><span>        super().__init__()</span></span>
+<span data-line><span>        self.dense1 = nn.LazyLinear(ffn_num_hiddens)</span></span>
+<span data-line><span>        self.relu = nn.ReLU()</span></span>
+<span data-line><span>        self.dense2 = nn.LazyLinear(ffn_num_outputs)</span></span>
+<span data-line> </span>
+<span data-line><span>    def forward(self, X):</span></span>
+<span data-line><span>        return self.dense2(self.relu(self.dense1(X)))</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab jax</span></span>
+<span data-line><span>class PositionWiseFFN(nn.Module):  #@save</span></span>
+<span data-line><span>    &quot;&quot;&quot;The positionwise feed-forward network.&quot;&quot;&quot;</span></span>
+<span data-line><span>    ffn_num_hiddens: int</span></span>
+<span data-line><span>    ffn_num_outputs: int</span></span>
+<span data-line> </span>
+<span data-line><span>    def setup(self):</span></span>
+<span data-line><span>        self.dense1 = nn.Dense(self.ffn_num_hiddens)</span></span>
+<span data-line><span>        self.dense2 = nn.Dense(self.ffn_num_outputs)</span></span>
+<span data-line> </span>
+<span data-line><span>    def __call__(self, X):</span></span>
+<span data-line><span>        return self.dense2(nn.relu(self.dense1(X)))</span></span></code></pre></figure>
+<p>The following example
+shows that [<strong>the innermost dimension
+of a tensor changes</strong>] to
+the number of outputs in
+the positionwise feed-forward network.
+Since the same MLP transforms
+at all the positions,
+when the inputs at all these positions are the same,
+their outputs are also identical.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab pytorch</span></span>
+<span data-line><span>ffn = PositionWiseFFN(4, 8)</span></span>
+<span data-line><span>ffn.eval()</span></span>
+<span data-line><span>ffn(d2l.ones((2, 3, 4)))[0]</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab jax</span></span>
+<span data-line><span>ffn = PositionWiseFFN(4, 8)</span></span>
+<span data-line><span>ffn.init_with_output(d2l.get_key(), jnp.ones((2, 3, 4)))[0][0]</span></span></code></pre></figure>
+<h2 id="residual-connection-and-layer-normalization">Residual Connection and Layer Normalization<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#residual-connection-and-layer-normalization" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Now let’s focus on the “add &amp; norm” component in :numref:<code>fig_transformer</code>.
+As we described at the beginning of this section,
+this is a residual connection immediately
+followed by layer normalization.
+Both are key to effective deep architectures.</p>
+<p>In :numref:<code>sec_batch_norm</code>,
+we explained how batch normalization
+recenters and rescales across the examples within
+a minibatch.
+As discussed in :numref:<code>subsec_layer-normalization-in-bn</code>,
+layer normalization is the same as batch normalization
+except that the former
+normalizes across the feature dimension,
+thus enjoying benefits of scale independence and batch size independence.
+Despite its pervasive applications
+in computer vision,
+batch normalization
+is usually empirically
+less effective than layer normalization
+in natural language processing
+tasks, where the inputs are often
+variable-length sequences.</p>
+<p>The following code snippet
+[<strong>compares the normalization across different dimensions
+by layer normalization and batch normalization</strong>].</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab pytorch</span></span>
+<span data-line><span>ln = nn.LayerNorm(2)</span></span>
+<span data-line><span>bn = nn.LazyBatchNorm1d()</span></span>
+<span data-line><span>X = d2l.tensor([[1, 2], [2, 3]], dtype=torch.float32)</span></span>
+<span data-line><span># Compute mean and variance from X in the training mode</span></span>
+<span data-line><span>print('layer norm:', ln(X), '\nbatch norm:', bn(X))</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab jax</span></span>
+<span data-line><span>ln = nn.LayerNorm()</span></span>
+<span data-line><span>bn = nn.BatchNorm()</span></span>
+<span data-line><span>X = d2l.tensor([[1, 2], [2, 3]], dtype=d2l.float32)</span></span>
+<span data-line><span># Compute mean and variance from X in the training mode</span></span>
+<span data-line><span>print('layer norm:', ln.init_with_output(d2l.get_key(), X)[0],</span></span>
+<span data-line><span>      '\nbatch norm:', bn.init_with_output(d2l.get_key(), X,</span></span>
+<span data-line><span>                                           use_running_average=False)[0])</span></span></code></pre></figure>
+<p>Now we can implement the <code>AddNorm</code> class
+[<strong>using a residual connection followed by layer normalization</strong>].
+Dropout is also applied for regularization.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab pytorch</span></span>
+<span data-line><span>class AddNorm(nn.Module):  #@save</span></span>
+<span data-line><span>    &quot;&quot;&quot;The residual connection followed by layer normalization.&quot;&quot;&quot;</span></span>
+<span data-line><span>    def __init__(self, norm_shape, dropout):</span></span>
+<span data-line><span>        super().__init__()</span></span>
+<span data-line><span>        self.dropout = nn.Dropout(dropout)</span></span>
+<span data-line><span>        self.ln = nn.LayerNorm(norm_shape)</span></span>
+<span data-line> </span>
+<span data-line><span>    def forward(self, X, Y):</span></span>
+<span data-line><span>        return self.ln(self.dropout(Y) + X)</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab jax</span></span>
+<span data-line><span>class AddNorm(nn.Module):  #@save</span></span>
+<span data-line><span>    &quot;&quot;&quot;The residual connection followed by layer normalization.&quot;&quot;&quot;</span></span>
+<span data-line><span>    dropout: int</span></span>
+<span data-line> </span>
+<span data-line><span>    @nn.compact</span></span>
+<span data-line><span>    def __call__(self, X, Y, training=False):</span></span>
+<span data-line><span>        return nn.LayerNorm()(</span></span>
+<span data-line><span>            nn.Dropout(self.dropout)(Y, deterministic=not training) + X)</span></span></code></pre></figure>
+<p>The residual connection requires that
+the two inputs are of the same shape
+so that [<strong>the output tensor also has the same shape after the addition operation</strong>].</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab pytorch</span></span>
+<span data-line><span>add_norm = AddNorm(4, 0.5)</span></span>
+<span data-line><span>shape = (2, 3, 4)</span></span>
+<span data-line><span>d2l.check_shape(add_norm(d2l.ones(shape), d2l.ones(shape)), shape)</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab jax</span></span>
+<span data-line><span>add_norm = AddNorm(0.5)</span></span>
+<span data-line><span>shape = (2, 3, 4)</span></span>
+<span data-line><span>output, _ = add_norm.init_with_output(d2l.get_key(), d2l.ones(shape),</span></span>
+<span data-line><span>                                      d2l.ones(shape))</span></span>
+<span data-line><span>d2l.check_shape(output, shape)</span></span></code></pre></figure>
+<h2 id="encoder">Encoder<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#encoder" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>:label:<code>subsec_transformer-encoder</code></p>
+<p>With all the essential components to assemble
+the Transformer encoder,
+let’s start by
+implementing [<strong>a single layer within the encoder</strong>].
+The following <code>TransformerEncoderBlock</code> class
+contains two sublayers: multi-head self-attention and positionwise feed-forward networks,
+where a residual connection followed by layer normalization is employed
+around both sublayers.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab pytorch</span></span>
+<span data-line><span>class TransformerEncoderBlock(nn.Module):  #@save</span></span>
+<span data-line><span>    &quot;&quot;&quot;The Transformer encoder block.&quot;&quot;&quot;</span></span>
+<span data-line><span>    def __init__(self, num_hiddens, ffn_num_hiddens, num_heads, dropout,</span></span>
+<span data-line><span>                 use_bias=False):</span></span>
+<span data-line><span>        super().__init__()</span></span>
+<span data-line><span>        self.attention = d2l.MultiHeadAttention(num_hiddens, num_heads,</span></span>
+<span data-line><span>                                                dropout, use_bias)</span></span>
+<span data-line><span>        self.addnorm1 = AddNorm(num_hiddens, dropout)</span></span>
+<span data-line><span>        self.ffn = PositionWiseFFN(ffn_num_hiddens, num_hiddens)</span></span>
+<span data-line><span>        self.addnorm2 = AddNorm(num_hiddens, dropout)</span></span>
+<span data-line> </span>
+<span data-line><span>    def forward(self, X, valid_lens):</span></span>
+<span data-line><span>        Y = self.addnorm1(X, self.attention(X, X, X, valid_lens))</span></span>
+<span data-line><span>        return self.addnorm2(Y, self.ffn(Y))</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab jax</span></span>
+<span data-line><span>class TransformerEncoderBlock(nn.Module):  #@save</span></span>
+<span data-line><span>    &quot;&quot;&quot;The Transformer encoder block.&quot;&quot;&quot;</span></span>
+<span data-line><span>    num_hiddens: int</span></span>
+<span data-line><span>    ffn_num_hiddens: int</span></span>
+<span data-line><span>    num_heads: int</span></span>
+<span data-line><span>    dropout: float</span></span>
+<span data-line><span>    use_bias: bool = False</span></span>
+<span data-line> </span>
+<span data-line><span>    def setup(self):</span></span>
+<span data-line><span>        self.attention = d2l.MultiHeadAttention(self.num_hiddens, self.num_heads,</span></span>
+<span data-line><span>                                                self.dropout, self.use_bias)</span></span>
+<span data-line><span>        self.addnorm1 = AddNorm(self.dropout)</span></span>
+<span data-line><span>        self.ffn = PositionWiseFFN(self.ffn_num_hiddens, self.num_hiddens)</span></span>
+<span data-line><span>        self.addnorm2 = AddNorm(self.dropout)</span></span>
+<span data-line> </span>
+<span data-line><span>    def __call__(self, X, valid_lens, training=False):</span></span>
+<span data-line><span>        output, attention_weights = self.attention(X, X, X, valid_lens,</span></span>
+<span data-line><span>                                                   training=training)</span></span>
+<span data-line><span>        Y = self.addnorm1(X, output, training=training)</span></span>
+<span data-line><span>        return self.addnorm2(Y, self.ffn(Y), training=training), attention_weights</span></span></code></pre></figure>
+<p>As we can see,
+[<strong>no layer in the Transformer encoder
+changes the shape of its input.</strong>]</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab pytorch</span></span>
+<span data-line><span>X = d2l.ones((2, 100, 24))</span></span>
+<span data-line><span>valid_lens = d2l.tensor([3, 2])</span></span>
+<span data-line><span>encoder_blk = TransformerEncoderBlock(24, 48, 8, 0.5)</span></span>
+<span data-line><span>encoder_blk.eval()</span></span>
+<span data-line><span>d2l.check_shape(encoder_blk(X, valid_lens), X.shape)</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab jax</span></span>
+<span data-line><span>X = jnp.ones((2, 100, 24))</span></span>
+<span data-line><span>valid_lens = jnp.array([3, 2])</span></span>
+<span data-line><span>encoder_blk = TransformerEncoderBlock(24, 48, 8, 0.5)</span></span>
+<span data-line><span>(output, _), _ = encoder_blk.init_with_output(d2l.get_key(), X, valid_lens,</span></span>
+<span data-line><span>                                              training=False)</span></span>
+<span data-line><span>d2l.check_shape(output, X.shape)</span></span></code></pre></figure>
+<p>In the following [<strong>Transformer encoder</strong>] implementation,
+we stack <code>num_blks</code> instances of the above <code>TransformerEncoderBlock</code> classes.
+Since we use the fixed positional encoding
+whose values are always between <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">−</span><span class="mord">1</span></span></span></span> and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span>,
+we multiply values of the learnable input embeddings
+by the square root of the embedding dimension
+to rescale before summing up the input embedding and the positional encoding.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab pytorch</span></span>
+<span data-line><span>class TransformerEncoder(d2l.Encoder):  #@save</span></span>
+<span data-line><span>    &quot;&quot;&quot;The Transformer encoder.&quot;&quot;&quot;</span></span>
+<span data-line><span>    def __init__(self, vocab_size, num_hiddens, ffn_num_hiddens,</span></span>
+<span data-line><span>                 num_heads, num_blks, dropout, use_bias=False):</span></span>
+<span data-line><span>        super().__init__()</span></span>
+<span data-line><span>        self.num_hiddens = num_hiddens</span></span>
+<span data-line><span>        self.embedding = nn.Embedding(vocab_size, num_hiddens)</span></span>
+<span data-line><span>        self.pos_encoding = d2l.PositionalEncoding(num_hiddens, dropout)</span></span>
+<span data-line><span>        self.blks = nn.Sequential()</span></span>
+<span data-line><span>        for i in range(num_blks):</span></span>
+<span data-line><span>            self.blks.add_module(&quot;block&quot;+str(i), TransformerEncoderBlock(</span></span>
+<span data-line><span>                num_hiddens, ffn_num_hiddens, num_heads, dropout, use_bias))</span></span>
+<span data-line> </span>
+<span data-line><span>    def forward(self, X, valid_lens):</span></span>
+<span data-line><span>        # Since positional encoding values are between -1 and 1, the embedding</span></span>
+<span data-line><span>        # values are multiplied by the square root of the embedding dimension</span></span>
+<span data-line><span>        # to rescale before they are summed up</span></span>
+<span data-line><span>        X = self.pos_encoding(self.embedding(X) * math.sqrt(self.num_hiddens))</span></span>
+<span data-line><span>        self.attention_weights = [None] * len(self.blks)</span></span>
+<span data-line><span>        for i, blk in enumerate(self.blks):</span></span>
+<span data-line><span>            X = blk(X, valid_lens)</span></span>
+<span data-line><span>            self.attention_weights[</span></span>
+<span data-line><span>                i] = blk.attention.attention.attention_weights</span></span>
+<span data-line><span>        return X</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab jax</span></span>
+<span data-line><span>class TransformerEncoder(d2l.Encoder):  #@save</span></span>
+<span data-line><span>    &quot;&quot;&quot;The Transformer encoder.&quot;&quot;&quot;</span></span>
+<span data-line><span>    vocab_size: int</span></span>
+<span data-line><span>    num_hiddens:int</span></span>
+<span data-line><span>    ffn_num_hiddens: int</span></span>
+<span data-line><span>    num_heads: int</span></span>
+<span data-line><span>    num_blks: int</span></span>
+<span data-line><span>    dropout: float</span></span>
+<span data-line><span>    use_bias: bool = False</span></span>
+<span data-line> </span>
+<span data-line><span>    def setup(self):</span></span>
+<span data-line><span>        self.embedding = nn.Embed(self.vocab_size, self.num_hiddens)</span></span>
+<span data-line><span>        self.pos_encoding = d2l.PositionalEncoding(self.num_hiddens, self.dropout)</span></span>
+<span data-line><span>        self.blks = [TransformerEncoderBlock(self.num_hiddens,</span></span>
+<span data-line><span>                                             self.ffn_num_hiddens,</span></span>
+<span data-line><span>                                             self.num_heads,</span></span>
+<span data-line><span>                                             self.dropout, self.use_bias)</span></span>
+<span data-line><span>                     for _ in range(self.num_blks)]</span></span>
+<span data-line> </span>
+<span data-line><span>    def __call__(self, X, valid_lens, training=False):</span></span>
+<span data-line><span>        # Since positional encoding values are between -1 and 1, the embedding</span></span>
+<span data-line><span>        # values are multiplied by the square root of the embedding dimension</span></span>
+<span data-line><span>        # to rescale before they are summed up</span></span>
+<span data-line><span>        X = self.embedding(X) * math.sqrt(self.num_hiddens)</span></span>
+<span data-line><span>        X = self.pos_encoding(X, training=training)</span></span>
+<span data-line><span>        attention_weights = [None] * len(self.blks)</span></span>
+<span data-line><span>        for i, blk in enumerate(self.blks):</span></span>
+<span data-line><span>            X, attention_w = blk(X, valid_lens, training=training)</span></span>
+<span data-line><span>            attention_weights[i] = attention_w</span></span>
+<span data-line><span>        # Flax sow API is used to capture intermediate variables</span></span>
+<span data-line><span>        self.sow('intermediates', 'enc_attention_weights', attention_weights)</span></span>
+<span data-line><span>        return X</span></span></code></pre></figure>
+<p>Below we specify hyperparameters to [<strong>create a two-layer Transformer encoder</strong>].
+The shape of the Transformer encoder output
+is (batch size, number of time steps, <code>num_hiddens</code>).</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab pytorch</span></span>
+<span data-line><span>encoder = TransformerEncoder(200, 24, 48, 8, 2, 0.5)</span></span>
+<span data-line><span>d2l.check_shape(encoder(d2l.ones((2, 100), dtype=torch.long), valid_lens),</span></span>
+<span data-line><span>                (2, 100, 24))</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab jax</span></span>
+<span data-line><span>encoder = TransformerEncoder(200, 24, 48, 8, 2, 0.5)</span></span>
+<span data-line><span>d2l.check_shape(encoder.init_with_output(d2l.get_key(),</span></span>
+<span data-line><span>                                         jnp.ones((2, 100), dtype=jnp.int32),</span></span>
+<span data-line><span>                                         valid_lens)[0],</span></span>
+<span data-line><span>                (2, 100, 24))</span></span></code></pre></figure>
+<h2 id="decoder">Decoder<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#decoder" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>As shown in :numref:<code>fig_transformer</code>,
+[<strong>the Transformer decoder
+is composed of multiple identical layers</strong>].
+Each layer is implemented in the following
+<code>TransformerDecoderBlock</code> class,
+which contains three sublayers:
+decoder self-attention,
+encoder—decoder attention,
+and positionwise feed-forward networks.
+These sublayers employ
+a residual connection around them
+followed by layer normalization.</p>
+<p>As we described earlier in this section,
+in the masked multi-head decoder self-attention
+(the first sublayer),
+queries, keys, and values
+all come from the outputs of the previous decoder layer.
+When training sequence-to-sequence models,
+tokens at all the positions (time steps)
+of the output sequence
+are known.
+However,
+during prediction
+the output sequence is generated token by token;
+thus,
+at any decoder time step
+only the generated tokens
+can be used in the decoder self-attention.
+To preserve autoregression in the decoder,
+its masked self-attention
+specifies  <code>dec_valid_lens</code> so that
+any query
+only attends to
+all positions in the decoder
+up to the query position.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab pytorch</span></span>
+<span data-line><span>class TransformerDecoderBlock(nn.Module):</span></span>
+<span data-line><span>    # The i-th block in the Transformer decoder</span></span>
+<span data-line><span>    def __init__(self, num_hiddens, ffn_num_hiddens, num_heads, dropout, i):</span></span>
+<span data-line><span>        super().__init__()</span></span>
+<span data-line><span>        self.i = i</span></span>
+<span data-line><span>        self.attention1 = d2l.MultiHeadAttention(num_hiddens, num_heads,</span></span>
+<span data-line><span>                                                 dropout)</span></span>
+<span data-line><span>        self.addnorm1 = AddNorm(num_hiddens, dropout)</span></span>
+<span data-line><span>        self.attention2 = d2l.MultiHeadAttention(num_hiddens, num_heads,</span></span>
+<span data-line><span>                                                 dropout)</span></span>
+<span data-line><span>        self.addnorm2 = AddNorm(num_hiddens, dropout)</span></span>
+<span data-line><span>        self.ffn = PositionWiseFFN(ffn_num_hiddens, num_hiddens)</span></span>
+<span data-line><span>        self.addnorm3 = AddNorm(num_hiddens, dropout)</span></span>
+<span data-line> </span>
+<span data-line><span>    def forward(self, X, state):</span></span>
+<span data-line><span>        enc_outputs, enc_valid_lens = state[0], state[1]</span></span>
+<span data-line><span>        # During training, all the tokens of any output sequence are processed</span></span>
+<span data-line><span>        # at the same time, so state[2][self.i] is None as initialized. When</span></span>
+<span data-line><span>        # decoding any output sequence token by token during prediction,</span></span>
+<span data-line><span>        # state[2][self.i] contains representations of the decoded output at</span></span>
+<span data-line><span>        # the i-th block up to the current time step</span></span>
+<span data-line><span>        if state[2][self.i] is None:</span></span>
+<span data-line><span>            key_values = X</span></span>
+<span data-line><span>        else:</span></span>
+<span data-line><span>            key_values = torch.cat((state[2][self.i], X), dim=1)</span></span>
+<span data-line><span>        state[2][self.i] = key_values</span></span>
+<span data-line><span>        if self.training:</span></span>
+<span data-line><span>            batch_size, num_steps, _ = X.shape</span></span>
+<span data-line><span>            # Shape of dec_valid_lens: (batch_size, num_steps), where every</span></span>
+<span data-line><span>            # row is [1, 2, ..., num_steps]</span></span>
+<span data-line><span>            dec_valid_lens = torch.arange(</span></span>
+<span data-line><span>                1, num_steps + 1, device=X.device).repeat(batch_size, 1)</span></span>
+<span data-line><span>        else:</span></span>
+<span data-line><span>            dec_valid_lens = None</span></span>
+<span data-line><span>        # Self-attention</span></span>
+<span data-line><span>        X2 = self.attention1(X, key_values, key_values, dec_valid_lens)</span></span>
+<span data-line><span>        Y = self.addnorm1(X, X2)</span></span>
+<span data-line><span>        # Encoder-decoder attention. Shape of enc_outputs:</span></span>
+<span data-line><span>        # (batch_size, num_steps, num_hiddens)</span></span>
+<span data-line><span>        Y2 = self.attention2(Y, enc_outputs, enc_outputs, enc_valid_lens)</span></span>
+<span data-line><span>        Z = self.addnorm2(Y, Y2)</span></span>
+<span data-line><span>        return self.addnorm3(Z, self.ffn(Z)), state</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab jax</span></span>
+<span data-line><span>class TransformerDecoderBlock(nn.Module):</span></span>
+<span data-line><span>    # The i-th block in the Transformer decoder</span></span>
+<span data-line><span>    num_hiddens: int</span></span>
+<span data-line><span>    ffn_num_hiddens: int</span></span>
+<span data-line><span>    num_heads: int</span></span>
+<span data-line><span>    dropout: float</span></span>
+<span data-line><span>    i: int</span></span>
+<span data-line> </span>
+<span data-line><span>    def setup(self):</span></span>
+<span data-line><span>        self.attention1 = d2l.MultiHeadAttention(self.num_hiddens,</span></span>
+<span data-line><span>                                                 self.num_heads,</span></span>
+<span data-line><span>                                                 self.dropout)</span></span>
+<span data-line><span>        self.addnorm1 = AddNorm(self.dropout)</span></span>
+<span data-line><span>        self.attention2 = d2l.MultiHeadAttention(self.num_hiddens,</span></span>
+<span data-line><span>                                                 self.num_heads,</span></span>
+<span data-line><span>                                                 self.dropout)</span></span>
+<span data-line><span>        self.addnorm2 = AddNorm(self.dropout)</span></span>
+<span data-line><span>        self.ffn = PositionWiseFFN(self.ffn_num_hiddens, self.num_hiddens)</span></span>
+<span data-line><span>        self.addnorm3 = AddNorm(self.dropout)</span></span>
+<span data-line> </span>
+<span data-line><span>    def __call__(self, X, state, training=False):</span></span>
+<span data-line><span>        enc_outputs, enc_valid_lens = state[0], state[1]</span></span>
+<span data-line><span>        # During training, all the tokens of any output sequence are processed</span></span>
+<span data-line><span>        # at the same time, so state[2][self.i] is None as initialized. When</span></span>
+<span data-line><span>        # decoding any output sequence token by token during prediction,</span></span>
+<span data-line><span>        # state[2][self.i] contains representations of the decoded output at</span></span>
+<span data-line><span>        # the i-th block up to the current time step</span></span>
+<span data-line><span>        if state[2][self.i] is None:</span></span>
+<span data-line><span>            key_values = X</span></span>
+<span data-line><span>        else:</span></span>
+<span data-line><span>            key_values = jnp.concatenate((state[2][self.i], X), axis=1)</span></span>
+<span data-line><span>        state[2][self.i] = key_values</span></span>
+<span data-line><span>        if training:</span></span>
+<span data-line><span>            batch_size, num_steps, _ = X.shape</span></span>
+<span data-line><span>            # Shape of dec_valid_lens: (batch_size, num_steps), where every</span></span>
+<span data-line><span>            # row is [1, 2, ..., num_steps]</span></span>
+<span data-line><span>            dec_valid_lens = jnp.tile(jnp.arange(1, num_steps + 1),</span></span>
+<span data-line><span>                                      (batch_size, 1))</span></span>
+<span data-line><span>        else:</span></span>
+<span data-line><span>            dec_valid_lens = None</span></span>
+<span data-line><span>        # Self-attention</span></span>
+<span data-line><span>        X2, attention_w1 = self.attention1(X, key_values, key_values,</span></span>
+<span data-line><span>                                           dec_valid_lens, training=training)</span></span>
+<span data-line><span>        Y = self.addnorm1(X, X2, training=training)</span></span>
+<span data-line><span>        # Encoder-decoder attention. Shape of enc_outputs:</span></span>
+<span data-line><span>        # (batch_size, num_steps, num_hiddens)</span></span>
+<span data-line><span>        Y2, attention_w2 = self.attention2(Y, enc_outputs, enc_outputs,</span></span>
+<span data-line><span>                                           enc_valid_lens, training=training)</span></span>
+<span data-line><span>        Z = self.addnorm2(Y, Y2, training=training)</span></span>
+<span data-line><span>        return self.addnorm3(Z, self.ffn(Z), training=training), state, attention_w1, attention_w2</span></span></code></pre></figure>
+<p>To facilitate scaled dot product operations
+in the encoder—decoder attention
+and addition operations in the residual connections,
+[<strong>the feature dimension (<code>num_hiddens</code>) of the decoder is
+the same as that of the encoder.</strong>]</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab pytorch</span></span>
+<span data-line><span>decoder_blk = TransformerDecoderBlock(24, 48, 8, 0.5, 0)</span></span>
+<span data-line><span>X = d2l.ones((2, 100, 24))</span></span>
+<span data-line><span>state = [encoder_blk(X, valid_lens), valid_lens, [None]]</span></span>
+<span data-line><span>d2l.check_shape(decoder_blk(X, state)[0], X.shape)</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab jax</span></span>
+<span data-line><span>decoder_blk = TransformerDecoderBlock(24, 48, 8, 0.5, 0)</span></span>
+<span data-line><span>X = d2l.ones((2, 100, 24))</span></span>
+<span data-line><span>state = [encoder_blk.init_with_output(d2l.get_key(), X, valid_lens)[0][0],</span></span>
+<span data-line><span>         valid_lens, [None]]</span></span>
+<span data-line><span>d2l.check_shape(decoder_blk.init_with_output(d2l.get_key(), X, state)[0][0],</span></span>
+<span data-line><span>                X.shape)</span></span></code></pre></figure>
+<p>Now we [<strong>construct the entire Transformer decoder</strong>]
+composed of <code>num_blks</code> instances of <code>TransformerDecoderBlock</code>.
+In the end,
+a fully connected layer computes the prediction
+for all the <code>vocab_size</code> possible output tokens.
+Both of the decoder self-attention weights
+and the encoder—decoder attention weights
+are stored for later visualization.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab pytorch</span></span>
+<span data-line><span>class TransformerDecoder(d2l.AttentionDecoder):</span></span>
+<span data-line><span>    def __init__(self, vocab_size, num_hiddens, ffn_num_hiddens, num_heads,</span></span>
+<span data-line><span>                 num_blks, dropout):</span></span>
+<span data-line><span>        super().__init__()</span></span>
+<span data-line><span>        self.num_hiddens = num_hiddens</span></span>
+<span data-line><span>        self.num_blks = num_blks</span></span>
+<span data-line><span>        self.embedding = nn.Embedding(vocab_size, num_hiddens)</span></span>
+<span data-line><span>        self.pos_encoding = d2l.PositionalEncoding(num_hiddens, dropout)</span></span>
+<span data-line><span>        self.blks = nn.Sequential()</span></span>
+<span data-line><span>        for i in range(num_blks):</span></span>
+<span data-line><span>            self.blks.add_module(&quot;block&quot;+str(i), TransformerDecoderBlock(</span></span>
+<span data-line><span>                num_hiddens, ffn_num_hiddens, num_heads, dropout, i))</span></span>
+<span data-line><span>        self.dense = nn.LazyLinear(vocab_size)</span></span>
+<span data-line> </span>
+<span data-line><span>    def init_state(self, enc_outputs, enc_valid_lens):</span></span>
+<span data-line><span>        return [enc_outputs, enc_valid_lens, [None] * self.num_blks]</span></span>
+<span data-line> </span>
+<span data-line><span>    def forward(self, X, state):</span></span>
+<span data-line><span>        X = self.pos_encoding(self.embedding(X) * math.sqrt(self.num_hiddens))</span></span>
+<span data-line><span>        self._attention_weights = [[None] * len(self.blks) for _ in range (2)]</span></span>
+<span data-line><span>        for i, blk in enumerate(self.blks):</span></span>
+<span data-line><span>            X, state = blk(X, state)</span></span>
+<span data-line><span>            # Decoder self-attention weights</span></span>
+<span data-line><span>            self._attention_weights[0][</span></span>
+<span data-line><span>                i] = blk.attention1.attention.attention_weights</span></span>
+<span data-line><span>            # Encoder-decoder attention weights</span></span>
+<span data-line><span>            self._attention_weights[1][</span></span>
+<span data-line><span>                i] = blk.attention2.attention.attention_weights</span></span>
+<span data-line><span>        return self.dense(X), state</span></span>
+<span data-line> </span>
+<span data-line><span>    @property</span></span>
+<span data-line><span>    def attention_weights(self):</span></span>
+<span data-line><span>        return self._attention_weights</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab jax</span></span>
+<span data-line><span>class TransformerDecoder(nn.Module):</span></span>
+<span data-line><span>    vocab_size: int</span></span>
+<span data-line><span>    num_hiddens: int</span></span>
+<span data-line><span>    ffn_num_hiddens: int</span></span>
+<span data-line><span>    num_heads: int</span></span>
+<span data-line><span>    num_blks: int</span></span>
+<span data-line><span>    dropout: float</span></span>
+<span data-line> </span>
+<span data-line><span>    def setup(self):</span></span>
+<span data-line><span>        self.embedding = nn.Embed(self.vocab_size, self.num_hiddens)</span></span>
+<span data-line><span>        self.pos_encoding = d2l.PositionalEncoding(self.num_hiddens,</span></span>
+<span data-line><span>                                                   self.dropout)</span></span>
+<span data-line><span>        self.blks = [TransformerDecoderBlock(self.num_hiddens,</span></span>
+<span data-line><span>                                             self.ffn_num_hiddens,</span></span>
+<span data-line><span>                                             self.num_heads, self.dropout, i)</span></span>
+<span data-line><span>                     for i in range(self.num_blks)]</span></span>
+<span data-line><span>        self.dense = nn.Dense(self.vocab_size)</span></span>
+<span data-line> </span>
+<span data-line><span>    def init_state(self, enc_outputs, enc_valid_lens):</span></span>
+<span data-line><span>        return [enc_outputs, enc_valid_lens, [None] * self.num_blks]</span></span>
+<span data-line> </span>
+<span data-line><span>    def __call__(self, X, state, training=False):</span></span>
+<span data-line><span>        X = self.embedding(X) * jnp.sqrt(jnp.float32(self.num_hiddens))</span></span>
+<span data-line><span>        X = self.pos_encoding(X, training=training)</span></span>
+<span data-line><span>        attention_weights = [[None] * len(self.blks) for _ in range(2)]</span></span>
+<span data-line><span>        for i, blk in enumerate(self.blks):</span></span>
+<span data-line><span>            X, state, attention_w1, attention_w2 = blk(X, state,</span></span>
+<span data-line><span>                                                       training=training)</span></span>
+<span data-line><span>            # Decoder self-attention weights</span></span>
+<span data-line><span>            attention_weights[0][i] = attention_w1</span></span>
+<span data-line><span>            # Encoder-decoder attention weights</span></span>
+<span data-line><span>            attention_weights[1][i] = attention_w2</span></span>
+<span data-line><span>        # Flax sow API is used to capture intermediate variables</span></span>
+<span data-line><span>        self.sow('intermediates', 'dec_attention_weights', attention_weights)</span></span>
+<span data-line><span>        return self.dense(X), state</span></span></code></pre></figure>
+<h2 id="training">[<strong>Training</strong>]<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#training" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Let’s instantiate an encoder—decoder model
+by following the Transformer architecture.
+Here we specify that
+both the Transformer encoder and the Transformer decoder
+have two layers using 4-head attention.
+As in :numref:<code>sec_seq2seq_training</code>,
+we train the Transformer model
+for sequence-to-sequence learning on the English—French machine translation dataset.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab all</span></span>
+<span data-line><span>engs = ['go .', 'i lost .', 'he\'s calm .', 'i\'m home .']</span></span>
+<span data-line><span>fras = ['va !', 'j\'ai perdu .', 'il est calme .', 'je suis chez moi .']</span></span>
+<span data-line><span>if tab.selected('pytorch', 'mxnet', 'tensorflow'):</span></span>
+<span data-line><span>    preds, _ = model.predict_step(</span></span>
+<span data-line><span>        data.build(engs, fras), d2l.try_gpu(), data.num_steps)</span></span>
+<span data-line><span>if tab.selected('jax'):</span></span>
+<span data-line><span>    preds, _ = model.predict_step(</span></span>
+<span data-line><span>        trainer.state.params, data.build(engs, fras), data.num_steps)</span></span>
+<span data-line><span>for en, fr, p in zip(engs, fras, preds):</span></span>
+<span data-line><span>    translation = []</span></span>
+<span data-line><span>    for token in data.tgt_vocab.to_tokens(p):</span></span>
+<span data-line><span>        if token == '&lt;eos>':</span></span>
+<span data-line><span>            break</span></span>
+<span data-line><span>        translation.append(token)</span></span>
+<span data-line><span>    print(f'{en} => {translation}, bleu,'</span></span>
+<span data-line><span>          f'{d2l.bleu(&quot; &quot;.join(translation), fr, k=2):.3f}')</span></span></code></pre></figure>
+<p>Let’s [<strong>visualize the Transformer attention weights</strong>] when translating the final English sentence into French.
+The shape of the encoder self-attention weights
+is (number of encoder layers, number of attention heads, <code>num_steps</code> or number of queries, <code>num_steps</code> or number of key-value pairs).</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab jax</span></span>
+<span data-line><span>_, (dec_attention_weights, enc_attention_weights) = model.predict_step(</span></span>
+<span data-line><span>    trainer.state.params, data.build([engs[-1]], [fras[-1]]),</span></span>
+<span data-line><span>    data.num_steps, True)</span></span>
+<span data-line><span>enc_attention_weights = d2l.concat(enc_attention_weights, 0)</span></span>
+<span data-line><span>shape = (num_blks, num_heads, -1, data.num_steps)</span></span>
+<span data-line><span>enc_attention_weights = d2l.reshape(enc_attention_weights, shape)</span></span>
+<span data-line><span>d2l.check_shape(enc_attention_weights,</span></span>
+<span data-line><span>                (num_blks, num_heads, data.num_steps, data.num_steps))</span></span></code></pre></figure>
+<p>In the encoder self-attention,
+both queries and keys come from the same input sequence.
+Since padding tokens do not carry meaning,
+with specified valid length of the input sequence
+no query attends to positions of padding tokens.
+In the following,
+two layers of multi-head attention weights
+are presented row by row.
+Each head independently attends
+based on a separate representation subspace of queries, keys, and values.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab pytorch</span></span>
+<span data-line><span>d2l.show_heatmaps(</span></span>
+<span data-line><span>    enc_attention_weights.cpu(), xlabel='Key positions',</span></span>
+<span data-line><span>    ylabel='Query positions', titles=['Head %d' % i for i in range(1, 5)],</span></span>
+<span data-line><span>    figsize=(7, 3.5))</span></span></code></pre></figure>
+<p>[<strong>To visualize the decoder self-attention weights and the encoder—decoder attention weights,
+we need more data manipulations.</strong>]
+For example,
+we fill the masked attention weights with zero.
+Note that
+the decoder self-attention weights
+and the encoder—decoder attention weights
+both have the same queries:
+the beginning-of-sequence token followed by
+the output tokens and possibly
+end-of-sequence tokens.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab pytorch</span></span>
+<span data-line><span>dec_attention_weights_2d = [head[0].tolist()</span></span>
+<span data-line><span>                            for step in dec_attention_weights</span></span>
+<span data-line><span>                            for attn in step for blk in attn for head in blk]</span></span>
+<span data-line><span>dec_attention_weights_filled = d2l.tensor(</span></span>
+<span data-line><span>    pd.DataFrame(dec_attention_weights_2d).fillna(0.0).values)</span></span>
+<span data-line><span>shape = (-1, 2, num_blks, num_heads, data.num_steps)</span></span>
+<span data-line><span>dec_attention_weights = d2l.reshape(dec_attention_weights_filled, shape)</span></span>
+<span data-line><span>dec_self_attention_weights, dec_inter_attention_weights = \</span></span>
+<span data-line><span>    dec_attention_weights.permute(1, 2, 3, 0, 4)</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab jax</span></span>
+<span data-line><span>dec_attention_weights_2d = [head[0].tolist() for step in dec_attention_weights</span></span>
+<span data-line><span>                            for attn in step</span></span>
+<span data-line><span>                            for blk in attn for head in blk]</span></span>
+<span data-line><span>dec_attention_weights_filled = d2l.tensor(</span></span>
+<span data-line><span>    pd.DataFrame(dec_attention_weights_2d).fillna(0.0).values)</span></span>
+<span data-line><span>dec_attention_weights = dec_attention_weights_filled.reshape(</span></span>
+<span data-line><span>    (-1, 2, num_blks, num_heads, data.num_steps))</span></span>
+<span data-line><span>dec_self_attention_weights, dec_inter_attention_weights = \</span></span>
+<span data-line><span>    dec_attention_weights.transpose(1, 2, 3, 0, 4)</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>tab all</span></span>
+<span data-line><span>d2l.show_heatmaps(</span></span>
+<span data-line><span>    dec_self_attention_weights[:, :, :, :],</span></span>
+<span data-line><span>    xlabel='Key positions', ylabel='Query positions',</span></span>
+<span data-line><span>    titles=['Head %d' % i for i in range(1, 5)], figsize=(7, 3.5))</span></span></code></pre></figure>
+<p>Similar to the case in the encoder self-attention,
+via the specified valid length of the input sequence,
+[<strong>no query from the output sequence
+attends to those padding tokens from the input sequence.</strong>]</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="{.python" data-theme="github-light github-dark"><code data-language="{.python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>%%tab all</span></span>
+<span data-line><span>d2l.show_heatmaps(</span></span>
+<span data-line><span>    dec_inter_attention_weights, xlabel='Key positions',</span></span>
+<span data-line><span>    ylabel='Query positions', titles=['Head %d' % i for i in range(1, 5)],</span></span>
+<span data-line><span>    figsize=(7, 3.5))</span></span></code></pre></figure>
+<p>Although the Transformer architecture
+was originally proposed for sequence-to-sequence learning,
+as we will discover later in the book,
+either the Transformer encoder
+or the Transformer decoder
+is often individually used
+for different deep learning tasks.</p>
+<h2 id="summary">Summary<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#summary" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>The Transformer is an instance of the encoder—decoder architecture,
+though either the encoder or the decoder can be used individually in practice.
+In the Transformer architecture, multi-head self-attention is used
+for representing the input sequence and the output sequence,
+though the decoder has to preserve the autoregressive property via a masked version.
+Both the residual connections and the layer normalization in the Transformer
+are important for training a very deep model.
+The positionwise feed-forward network in the Transformer model
+transforms the representation at all the sequence positions using the same MLP.</p>
+<h2 id="exercises">Exercises<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#exercises" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ol>
+<li>Train a deeper Transformer in the experiments. How does it affect the training speed and the translation performance?</li>
+<li>Is it a good idea to replace scaled dot product attention with additive attention in the Transformer? Why?</li>
+<li>For language modeling, should we use the Transformer encoder, decoder, or both? How would you design this method?</li>
+<li>What challenges can Transformers face if input sequences are very long? Why?</li>
+<li>How would you improve the computational and memory efficiency of Transformers? Hint: you may refer to the survey paper by :citet:<code>Tay.Dehghani.Bahri.ea.2020</code>.</li>
+</ol>
+<p>:begin_tab:<code>mxnet</code>
+<a href="https://discuss.d2l.ai/t/348" class="external">Discussions<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>
+:end_tab:</p>
+<p>:begin_tab:<code>pytorch</code>
+<a href="https://discuss.d2l.ai/t/1066" class="external">Discussions<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>
+:end_tab:</p>
+<p>:begin_tab:<code>tensorflow</code>
+<a href="https://discuss.d2l.ai/t/3871" class="external">Discussions<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>
+:end_tab:</p>
+<p>:begin_tab:<code>jax</code>
+<a href="https://discuss.d2l.ai/t/18031" class="external">Discussions<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>
+:end_tab:</p></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-20" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#the-transformer-architecture" data-for="the-transformer-architecture">The Transformer Architecture</a></li><li class="depth-0"><a href="#the-transformer-architecture-1" data-for="the-transformer-architecture-1">The Transformer Architecture</a></li><li class="depth-1"><a href="#model" data-for="model">Model</a></li><li class="depth-1"><a href="#positionwise-feed-forward-networks" data-for="positionwise-feed-forward-networks">[Positionwise Feed-Forward Networks]</a></li><li class="depth-1"><a href="#residual-connection-and-layer-normalization" data-for="residual-connection-and-layer-normalization">Residual Connection and Layer Normalization</a></li><li class="depth-1"><a href="#encoder" data-for="encoder">Encoder</a></li><li class="depth-1"><a href="#decoder" data-for="decoder">Decoder</a></li><li class="depth-1"><a href="#training" data-for="training">[Training]</a></li><li class="depth-1"><a href="#summary" data-for="summary">Summary</a></li><li class="depth-1"><a href="#exercises" data-for="exercises">Exercises</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../MOCs/Sample-and-adapt" class="internal">Sample and adapt</a></li><li><a href="../MOCs/Scores" class="internal">Scores</a></li><li><a href="../MOCs/Train-the-stack" class="internal">Train the stack</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://learn-anything.nonlinearlabs.ai/kb/how-llms-work/Prerequisite-map">Prerequisite map</a></li><li><a href="https://learn-anything.nonlinearlabs.ai/">Learn Anything</a></li></ul></footer></div></div></body><script type="application/javascript">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module">function f(i,e){if(!i)return;function r(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function t(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}i?.addEventListener("click",r),window.addCleanup(()=>i?.removeEventListener("click",r)),document.addEventListener("keydown",t),window.addCleanup(()=>document.removeEventListener("keydown",t))}function y(i){for(;i.firstChild;)i.removeChild(i.firstChild)}var h=class{constructor(e,r){this.container=e;this.content=r;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),r=this.onMouseMove.bind(this),t=this.onMouseUp.bind(this),o=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",r),document.addEventListener("mouseup",t),window.addEventListener("resize",o),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",r),()=>document.removeEventListener("mouseup",t),()=>window.removeEventListener("resize",o))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let r=this.createButton("+",()=>this.zoom(.1)),t=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(t),e.appendChild(o),e.appendChild(r),this.container.appendChild(e)}createButton(e,r){let t=document.createElement("button");return t.textContent=e,t.className="mermaid-control-button",t.addEventListener("click",r),window.addCleanup(()=>t.removeEventListener("click",r)),t}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}zoom(e){let r=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),t=this.content.getBoundingClientRect(),o=t.width/2,n=t.height/2,c=r-this.scale;this.currentPan.x-=o*c,this.currentPan.y-=n*c,this.scale=r,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){this.scale=1;let e=this.content.querySelector("svg");this.currentPan={x:e.getBoundingClientRect().width/2,y:e.getBoundingClientRect().height/2},this.updateTransform()}},C=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],E;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;E||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let r=E.default,t=new WeakMap;for(let n of e)t.set(n,n.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let a=t.get(s);a&&(s.innerHTML=a)}let n=C.reduce((s,a)=>(s[a]=window.getComputedStyle(document.documentElement).getPropertyValue(a),s),{}),c=document.documentElement.getAttribute("saved-theme")==="dark";r.initialize({startOnLoad:!1,securityLevel:"loose",theme:c?"dark":"base",themeVariables:{fontFamily:n["--codeFont"],primaryColor:n["--light"],primaryTextColor:n["--darkgray"],primaryBorderColor:n["--tertiary"],lineColor:n["--darkgray"],secondaryColor:n["--secondary"],tertiaryColor:n["--tertiary"],clusterBkg:n["--light"],edgeLabelBackground:n["--highlight"]}}),await r.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let n=0;n<e.length;n++){let v=function(){let g=l.querySelector("#mermaid-space"),m=l.querySelector(".mermaid-content");if(!m)return;y(m);let w=c.querySelector("svg").cloneNode(!0);m.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new h(g,m)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},c=e[n],s=c.parentElement,a=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(a),L=a.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),f(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript"></script><script src="../postscript.js" type="module"></script></html>
