@@ -1,0 +1,3206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bayes' rule → Explain a rare-event update · Prerequisite map</title>
+<style>
+  :root{
+    --ink:#1e293b; --muted:#64748b; --line:#e2e8f0; --bg:#f8fafc; --panel:#ffffff;
+    --accent:#2563eb;
+    /* engine defaults — the MAP-THEME block in the page's script overrides all of these at startup */
+    --ink-2:#334155; --dep-bg:#fbfdff; --edge:#bcc7d4; --edge-related:#7c8aa0;
+    --hover-bg:#eff6ff; --match:#f59e0b; --btn-hover-border:#94a3b8;
+    --overlay-bg:rgba(255,255,255,.92); --overlay-bg-2:rgba(255,255,255,.85);
+    --font-display:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --font-body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --safe-t:env(safe-area-inset-top,0px); --safe-r:env(safe-area-inset-right,0px);
+    --safe-b:env(safe-area-inset-bottom,0px); --safe-l:env(safe-area-inset-left,0px);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;height:100dvh;margin:0;overflow:hidden;overscroll-behavior:none;-webkit-text-size-adjust:100%}
+  body{font-family:var(--font-body);color:var(--ink);background:var(--bg);display:flex;flex-direction:column;max-width:100%}
+  header{display:flex;align-items:center;gap:14px;padding:10px 16px;padding-left:max(16px,var(--safe-l));padding-right:max(16px,var(--safe-r));padding-top:max(10px,var(--safe-t));background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap;position:relative;z-index:30}
+  .brand{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;min-width:0}
+  header h1{font-size:17px;margin:0;font-weight:650;font-family:var(--font-display)}
+  header .stats{font-size:14px;color:var(--muted)}
+  .spacer{flex:1}
+  .toolbar{display:flex;align-items:center;gap:8px}
+  .toolbar-actions{display:flex;align-items:center;gap:8px}
+  @media (min-width:901px){
+    .brand,.toolbar,.toolbar-actions{display:contents}
+  }
+  .searchwrap{position:relative}
+  #search{width:230px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;font-size:15px;outline:none;background:var(--panel);color:var(--ink)}
+  #search:focus{border-color:var(--accent)}
+  #results{position:absolute;top:36px;left:0;width:300px;max-height:260px;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px rgba(15,23,42,.12);display:none;z-index:50}
+  #results div{padding:7px 10px;font-size:15px;cursor:pointer}
+  #results div:hover{background:var(--hover-bg)}
+  #results .rphase{color:var(--muted);font-size:14px;margin-left:6px}
+  button{padding:6px 11px;border:1px solid var(--line);background:var(--panel);border-radius:8px;font-size:15px;cursor:pointer;color:var(--ink)}
+  button:hover{border-color:var(--btn-hover-border)}
+  .iconbtn{display:none;align-items:center;justify-content:center;width:44px;height:44px;padding:0;flex-shrink:0}
+  .iconbtn svg{display:block}
+  .narrow-only{display:none}
+  main{flex:1;display:flex;min-height:0;min-width:0}
+  #canvaswrap{flex:1;position:relative;overflow:hidden;min-width:0;min-height:0}
+  #graph{width:100%;height:100%;display:block;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+  #graph.panning{cursor:grabbing}
+  #legend{position:absolute;left:12px;bottom:12px;background:var(--overlay-bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:14px;max-width:340px;z-index:20}
+  #legend .bar{height:10px;border-radius:5px}
+  #legend .barlabels{display:flex;justify-content:space-between;margin-top:3px;color:var(--muted)}
+  #legend .cap{margin-top:4px;color:var(--muted);line-height:1.4}
+  .sheet-head{display:none;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+  .sheet-head strong{font-size:15px;font-family:var(--font-display)}
+  .sheet-handle{display:none;width:36px;height:4px;border-radius:999px;background:var(--line);margin:0 auto 10px}
+  .sheet-close{min-height:44px;padding:8px 12px}
+  #hint{position:absolute;left:12px;top:12px;font-size:14px;color:var(--muted);background:var(--overlay-bg-2);border:1px solid var(--line);border-radius:8px;padding:5px 9px;z-index:20}
+  #tt{position:absolute;display:none;max-width:330px;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgba(15,23,42,.18);padding:10px 12px;font-size:14.5px;z-index:40;pointer-events:none;line-height:1.45}
+  #tt .who{font-weight:650;font-size:14px;margin-bottom:4px}
+  #tt .who .arrow{color:var(--accent)}
+  #panel{width:400px;flex-shrink:0;background:var(--panel);border-left:1px solid var(--line);overflow-y:auto;padding:18px 20px 40px}
+  #panel h2{font-size:19px;margin:6px 0 6px;line-height:1.3;font-family:var(--font-display)}
+  #panel h3{font-size:14px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:18px 0 8px}
+  #panel p{font-size:15px;line-height:1.55;margin:6px 0}
+  #panel ul,#panel ol{margin:4px 0;padding-left:20px}
+  #panel li{font-size:15px;line-height:1.5;margin:3px 0}
+  #panel ol.outline li{margin:6px 0}
+  #panel ol.outline li::marker{color:var(--muted);font-weight:650;font-size:14px}
+  #panel details{margin-top:6px}
+  #panel summary{cursor:pointer;color:var(--accent);font-size:14px}
+  #panel details p{margin:6px 0 2px;font-size:14.5px;color:var(--ink-2)}
+  #panel .chip{display:inline-block;font-size:14px;font-weight:600;letter-spacing:.03em;padding:3px 9px;border-radius:999px;color:#fff}
+  .dep{border:1px solid var(--line);border-radius:10px;padding:9px 11px;margin:8px 0;background:var(--dep-bg)}
+  .dep b{font-size:15px;cursor:pointer;color:var(--accent)}
+  .dep b:hover{text-decoration:underline}
+  .dep p{margin:4px 0 2px;font-size:14.5px;color:var(--ink-2)}
+  #panel a{color:var(--accent);text-decoration:none;font-size:15px}
+  #panel a:hover{text-decoration:underline}
+  .backlink{font-size:14.5px;color:var(--accent);cursor:pointer}
+  .backlink:hover{text-decoration:underline}
+  #scrim{display:none}
+  .colbg{opacity:.05}
+  .collabel{font-size:14px;font-weight:650;filter:brightness(.62) saturate(1.15)}
+  .node rect.main{stroke-width:1.3;cursor:pointer}
+  .node text{font-size:14px;fill:var(--ink);pointer-events:none;font-weight:520}
+  .node{cursor:pointer}
+  .edge path.line{stroke:var(--edge);stroke-width:1.3;fill:none;transition:stroke-width .1s}
+  .edge polygon{fill:var(--edge)}
+  .edge path.hit{stroke:transparent;stroke-width:16;fill:none;pointer-events:stroke;cursor:pointer}
+  svg.dimmed .node:not(.related){opacity:.13}
+  svg.dimmed .edge:not(.related){opacity:.05}
+  svg.dimmed .colbg{opacity:.02}
+  svg.dimmed .collabel:not(.related){opacity:.2}
+  .edge.related path.line{stroke:var(--edge-related);stroke-width:1.7}
+  .edge.related polygon{fill:var(--edge-related)}
+  .edge.direct path.line{stroke:var(--accent);stroke-width:2.1}
+  .edge.direct polygon{fill:var(--accent)}
+  .edge.hov path.line{stroke:var(--accent);stroke-width:2.6}
+  .edge.hov polygon{fill:var(--accent)}
+  .node.related rect.main{stroke-width:2.2}
+  .node.sel rect.main{stroke-width:2.8}
+  .node.match rect.main{stroke:var(--match);stroke-width:2.6}
+  .node.learner-known rect.main{fill-opacity:0.08;stroke-opacity:0.5}
+  .node.learner-frontier rect.main{stroke-width:2.35}
+  .node .here-ring{fill:none;stroke:var(--accent);stroke-width:1.6;opacity:.88}
+  .node .here-flag{font-size:14px;font-weight:650;fill:var(--accent)}
+  .here-summary{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:10px 0 4px;background:var(--dep-bg)}
+  .here-summary h3{margin-top:0}
+  .here-jump{color:var(--accent);cursor:pointer}
+  .here-jump:hover{text-decoration:underline}
+  .chipbtn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:999px;padding:2px 9px;font-size:14px;font-weight:600;cursor:pointer;background:var(--panel)}
+  .chipbtn:hover{border-color:var(--btn-hover-border)}
+  .chipbtn .dot{width:8px;height:8px;border-radius:50%}
+  @media (pointer:coarse){
+    .edge path.hit{stroke-width:28}
+  }
+  @media (max-width:900px){
+    header{z-index:70;flex-wrap:nowrap;gap:8px;padding:8px 12px;padding-left:max(12px,var(--safe-l));padding-right:max(12px,var(--safe-r));padding-top:max(8px,var(--safe-t))}
+    .brand{flex:1}
+    header h1{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    header .stats,.spacer{display:none}
+    .iconbtn,.narrow-only{display:inline-flex}
+    .sheet-head.narrow-only{display:flex}
+    .toolbar{position:relative;flex-shrink:0}
+    .searchwrap{display:none;flex:1;min-width:0}
+    header.search-open .brand{display:none}
+    header.search-open .searchwrap{display:block}
+    header.search-open #btn-more{display:none}
+    #search{width:100%;min-height:44px;font-size:16px;padding:10px 12px}
+    #results{left:0;right:0;width:100%;top:calc(100% + 6px);max-height:min(50dvh,360px)}
+    #results div{min-height:44px;display:flex;align-items:center;padding:10px 12px}
+    .toolbar-actions{display:none;position:absolute;top:calc(100% + 6px);right:0;flex-direction:column;align-items:stretch;min-width:196px;padding:8px;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(15,23,42,.16);z-index:80}
+    header.menu-open .toolbar-actions{display:flex}
+    .toolbar-actions button{min-height:44px;width:100%;text-align:left;padding:10px 12px}
+    button,.iconbtn,.chipbtn,#panel .backlink,#panel summary{min-height:44px}
+    .chipbtn{padding:10px 14px}
+    #hint{display:none}
+    #legend{display:none;position:fixed;left:0;right:0;bottom:0;top:auto;max-width:none;max-height:min(52dvh,460px);overflow:auto;z-index:60;border-radius:16px 16px 0 0;border:1px solid var(--line);background:var(--panel);padding:12px 16px calc(16px + var(--safe-b));box-shadow:0 -8px 28px rgba(15,23,42,.16)}
+    #legend.is-open{display:block}
+    #legend .lvlchip{min-width:44px;min-height:44px;justify-content:center}
+    #tt{position:fixed;left:0;right:0;bottom:0;top:auto;max-width:none;max-height:min(42dvh,360px);overflow:auto;pointer-events:auto;border-radius:16px 16px 0 0;padding:12px 16px calc(16px + var(--safe-b));z-index:70}
+    #panel .backlink{display:inline-flex;align-items:center;min-height:44px;padding-right:8px}
+    #tt .sheet-handle,#legend .sheet-handle,#panel .sheet-handle{display:block}
+    button,.iconbtn{touch-action:manipulation}
+    #panel,#legend,#tt{-webkit-overflow-scrolling:touch}
+    #panel{position:fixed;left:0;right:0;bottom:0;width:100%;max-height:min(58dvh,520px);border-left:none;border-top:1px solid var(--line);border-radius:16px 16px 0 0;padding:14px 16px calc(18px + var(--safe-b));z-index:60;transform:translateY(110%);box-shadow:0 -8px 28px rgba(15,23,42,.16)}
+    #panel.is-open{transform:translateY(0)}
+    #scrim.is-on{display:block;position:fixed;inset:0;background:rgba(15,23,42,.28);z-index:45}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <h1>Bayes' rule → explain a rare-event update</h1>
+    <span class="stats" id="stats"></span>
+  </div>
+  <div class="spacer"></div>
+  <div class="toolbar">
+    <button type="button" id="btn-search-toggle" class="iconbtn narrow-only" aria-label="Search concepts" aria-expanded="false" title="Search">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.25" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.2 15.2 21 21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <div class="searchwrap">
+      <input id="search" type="search" placeholder="Search concepts…" autocomplete="off" enterkeyhint="search">
+      <div id="results"></div>
+    </div>
+    <div class="toolbar-actions" id="toolbar-actions">
+      <button type="button" id="btn-theme" title="Toggle themed / default skin">Themed</button>
+      <button type="button" id="btn-fit" title="Zoom to fit">Fit</button>
+      <button type="button" id="btn-reset" title="Clear selection">Reset</button>
+      <button type="button" id="btn-legend" class="narrow-only" aria-expanded="false">Levels</button>
+      <button type="button" id="btn-guide" class="narrow-only" aria-expanded="false">Guide</button>
+    </div>
+    <button type="button" id="btn-more" class="iconbtn narrow-only" aria-label="More controls" aria-expanded="false" aria-controls="toolbar-actions" title="More">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="6" r="1.7" fill="currentColor"/><circle cx="12" cy="12" r="1.7" fill="currentColor"/><circle cx="12" cy="18" r="1.7" fill="currentColor"/></svg>
+    </button>
+  </div>
+</header>
+<main>
+  <div id="canvaswrap">
+    <svg id="graph" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div id="hint">A → B means “learn A before B”. Hover or click any arrow to see <b>why</b> it is a prerequisite.</div>
+    <div id="legend"></div>
+    <div id="tt"></div>
+  </div>
+  <aside id="panel"></aside>
+</main>
+<div id="scrim" hidden></div>
+
+<script>
+/*DATA-START*/
+const DATA =
+{
+  "nodes": [
+    {
+      "id": "outcomes-and-events",
+      "phase": 0,
+      "label": "Outcomes and events",
+      "desc": "An outcome is one result of a random process. An event is a set of those outcomes, the thing you assign a probability to.",
+      "outline": [
+        "Name the random process and one outcome it can produce",
+        "Collect outcomes into an event, written as a set",
+        "See that data work usually starts from events, not single outcomes",
+        "Check two events for shared outcomes before you add their probabilities"
+      ],
+      "ideas": [
+        "A die roll's outcomes are the faces; the event 'even' is the set {2, 4, 6}",
+        "Disjoint events share no outcomes, so at most one of them happens",
+        "OpenIntro treats events as the sets you actually compute with"
+      ],
+      "questions": [
+        {
+          "q": "In a die roll, what is the difference between the outcome 2 and the event 'even'?",
+          "a": "The outcome 2 is a single result. The event 'even' is the set of outcomes {2, 4, 6}. Probability statements in this course attach to events."
+        },
+        {
+          "q": "What breaks if you treat two events as disjoint when they share an outcome?",
+          "a": "The addition rule for disjoint events no longer applies. OpenIntro's card example is the warning: events that share an outcome are not disjoint, and adding their probabilities double-counts the overlap."
+        },
+        {
+          "q": "A loan is recorded as rent, mortgage, or own. Why are those three events disjoint?",
+          "a": "Each loan sits in exactly one homeownership category, so the three events share no outcomes. That is why their probabilities may be added."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Diez, Çetinkaya-Rundel, and Barr, OpenIntro Statistics, 4th ed., Chapter 3 (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        },
+        {
+          "t": "Laplace, A Philosophical Essay on Probabilities (Truscott and Emory, 1902)",
+          "u": "https://www.gutenberg.org/ebooks/58881"
+        }
+      ]
+    },
+    {
+      "id": "sample-space",
+      "phase": 0,
+      "label": "The sample space",
+      "desc": "The sample space is the set of every outcome the process can produce. Conditioning later replaces it with the outcomes still possible.",
+      "outline": [
+        "List every outcome the process can produce",
+        "Require that the list covers the process and does not double-count",
+        "Mark an event as a subset of that list",
+        "Notice that new information can shrink the list, which is the start of conditioning"
+      ],
+      "ideas": [
+        "Laplace's first principle takes probability as favorable cases over all cases possible",
+        "Grinstead starts from a sample space with a distribution, then shrinks it once an event is known",
+        "If the list of cases is wrong, every later ratio is wrong"
+      ],
+      "questions": [
+        {
+          "q": "What does Laplace's first principle count in the denominator?",
+          "a": "All the cases possible. Probability is the ratio of favorable cases to that full count, which is the sample space under equal possibility."
+        },
+        {
+          "q": "In Grinstead's die example, the roll is known to be greater than 4. What is the new sample space?",
+          "a": "Only the outcomes still possible remain: 5 and 6. The original space {1, 2, 3, 4, 5, 6} has been replaced by the event that occurred."
+        },
+        {
+          "q": "What fails if two listed cases are not the equally possible cases Laplace requires?",
+          "a": "The ratio of counts is not yet a probability. Laplace's second principle says you first weight unequal cases, then add the weights of the favorable ones. d'Alembert's three-case count of two coin tosses is the mistake."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Laplace, A Philosophical Essay on Probabilities (Truscott and Emory, 1902)",
+          "u": "https://www.gutenberg.org/ebooks/58881"
+        },
+        {
+          "t": "Grinstead and Snell, Introduction to Probability, Chapter 4 (GNU FDL)",
+          "u": "https://math.dartmouth.edu/~doyle/docs/prob/prob.pdf"
+        }
+      ]
+    },
+    {
+      "id": "counting-cases",
+      "phase": 0,
+      "label": "Counting cases",
+      "desc": "When the cases are equally possible, probability is a count of favorable cases over a count of all cases. Most later Bayes arithmetic is still that count.",
+      "outline": [
+        "Count the equally possible cases",
+        "Count how many of them are favorable",
+        "Form the ratio, and refuse the ratio if the cases were not equally possible",
+        "Keep the counts when you can: a later test problem is easier in whole numbers than in percents"
+      ],
+      "ideas": [
+        "Laplace: probability is favorable cases over equally possible cases",
+        "Unequal cases must be reduced to equally possible ones before you count, as in his two-toss coin",
+        "A table of counts is the same ratio with the denominator left visible"
+      ],
+      "questions": [
+        {
+          "q": "Laplace throws a thin coin twice and wants heads at least once. Why is the probability 3/4 rather than 2/3?",
+          "a": "Four equally possible sequences exist: HH, HT, TH, TT, and three favor the event. d'Alembert's three-case list treats unequal cases as equal. Laplace's second principle restores the four equally possible cases and the ratio 3/4."
+        },
+        {
+          "q": "Two dice are thrown. Why is the chance of two aces 1/36?",
+          "a": "Each face of one die pairs with each face of the other, giving 36 equally possible cases, and one of them is two aces. Laplace's third principle records that product."
+        },
+        {
+          "q": "What breaks if you cancel the counts down to a percent before you finish a test problem?",
+          "a": "You hide the denominator you still need. Later nodes keep the counts because the positive calls are a count of true positives plus false alarms, and that comparison is the whole update."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Laplace, A Philosophical Essay on Probabilities (Truscott and Emory, 1902)",
+          "u": "https://www.gutenberg.org/ebooks/58881"
+        },
+        {
+          "t": "Diez, Çetinkaya-Rundel, and Barr, OpenIntro Statistics, 4th ed., Chapter 3 (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        }
+      ]
+    },
+    {
+      "id": "long-run-frequency",
+      "phase": 0,
+      "label": "Long-run frequency",
+      "desc": "One reading of probability is how often the event would happen in a long run of repeats. Screening numbers are that reading, counted in a population.",
+      "outline": [
+        "Read a percent as a count per hundred, or per thousand, repeats",
+        "Separate that long-run rate from a single person's situation",
+        "Use a population table when the repeats are people, not coin tosses",
+        "Keep this reading available when a problem gives prevalence and error rates"
+      ],
+      "ideas": [
+        "OpenIntro's loan table turns 10,000 borrowers into proportions by counting",
+        "A test's accuracy is a long-run rate across people, not one person's chance of disease",
+        "Hoffrage's physicians were given prevalence, sensitivity, and a false-positive rate: three long-run rates"
+      ],
+      "questions": [
+        {
+          "q": "OpenIntro reports 3,858 renters among 10,000 borrowers. What probability does that count state?",
+          "a": "The long-run proportion of this kind of loan that is a rental: 3858/10000. The probability is the count in the category over the count of loans."
+        },
+        {
+          "q": "A test is called 99% accurate. What is that number a count of?",
+          "a": "How often the test is right across people, a long-run rate. It is not the chance that this positive person has the condition. That second quantity still needs the base rate."
+        },
+        {
+          "q": "What fails if a long-run rate is read as one person's updated chance?",
+          "a": "The base-rate comparison never happens. Wikipedia's false-positive paradox and Hoffrage's hemoccult example both turn on that swap: the accuracy rate is not the positive predictive value."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Diez, Çetinkaya-Rundel, and Barr, OpenIntro Statistics, 4th ed., Chapter 3 (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        },
+        {
+          "t": "Hoffrage, Krauss, Martignon, and Gigerenzer, Natural frequencies improve Bayesian reasoning (2015)",
+          "u": "https://doi.org/10.3389/fpsyg.2015.01473"
+        },
+        {
+          "t": "Wikipedia contributors, Base rate fallacy (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Base_rate_fallacy"
+        }
+      ]
+    },
+    {
+      "id": "degree-of-belief",
+      "phase": 0,
+      "label": "Degree of belief",
+      "desc": "The other reading of probability is how strongly you believe a proposition, given what you know. Laplace ties the number to ignorance as well as to the case count.",
+      "outline": [
+        "State the proposition you are unsure about",
+        "List what you already know, because the degree of belief is relative to that",
+        "Allow two people with different knowledge to assign different degrees",
+        "Expect the number to move when a new fact arrives"
+      ],
+      "ideas": [
+        "Laplace: probability is relative in part to ignorance and in part to knowledge",
+        "Mandel: a prior is a personal probability given everything known before the new evidence",
+        "Two coherent people can differ before the evidence and still update by the same rule"
+      ],
+      "questions": [
+        {
+          "q": "What does Laplace say a probability is relative to?",
+          "a": "In part to our ignorance, and in part to our knowledge. It is not a property of the coin alone."
+        },
+        {
+          "q": "Mandel refuses to equate a prior with the printed base rate. What is the prior instead?",
+          "a": "One's personal probability of the hypothesis given all that is known before the new evidence. A published base rate is one candidate for that knowledge, not the definition."
+        },
+        {
+          "q": "What fails if a degree of belief is treated as a fact about the test kit?",
+          "a": "The printed accuracy and the belief about the person get swapped. The accuracy describes the test's long-run behavior. The degree of belief is about the hypothesis, and it is what the evidence is supposed to move."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Laplace, A Philosophical Essay on Probabilities (Truscott and Emory, 1902)",
+          "u": "https://www.gutenberg.org/ebooks/58881"
+        },
+        {
+          "t": "Mandel, The psychology of Bayesian reasoning (2014)",
+          "u": "https://doi.org/10.3389/fpsyg.2014.01144"
+        }
+      ]
+    },
+    {
+      "id": "probability-scale",
+      "phase": 1,
+      "label": "The probability scale",
+      "desc": "A probability sits between 0 and 1. Across a complete list of disjoint outcomes it adds to 1. Anything outside that is not a probability yet.",
+      "outline": [
+        "Put impossible at 0 and certain at 1",
+        "Add disjoint outcomes that exhaust the process and demand the total 1",
+        "Reject a table that goes over 1 or includes a negative",
+        "Remember that an un-normalized product is not on this scale yet"
+      ],
+      "ideas": [
+        "OpenIntro's addition of the six die faces recovers 1",
+        "A proposed grade distribution is invalid if the shares do not add to 1, or if a share is negative",
+        "The marginal in Bayes' rule is what puts the posterior back on this scale"
+      ],
+      "questions": [
+        {
+          "q": "Which of OpenIntro's proposed grade rows are not probability distributions, and why?",
+          "a": "A row fails when the shares do not add to 1, or when a share is negative. Row (a) adds to 1.2. Row (d) contains a negative share. A probability distribution stays inside 0 and 1 and sums to 1."
+        },
+        {
+          "q": "Why does adding P(1) through P(6) for a fair die have to return 1?",
+          "a": "Those six outcomes are disjoint and they exhaust the sample space. OpenIntro's addition rule then says their probabilities sum to 1."
+        },
+        {
+          "q": "You multiply prior times likelihood and get 0.2 and 0.4 for two hypotheses. What is wrong with reporting those as the probabilities?",
+          "a": "They sum to 0.6, not 1, so they are not on the probability scale. They still have to be divided by their total, the marginal evidence."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Diez, Çetinkaya-Rundel, and Barr, OpenIntro Statistics, 4th ed., Chapter 3 (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        },
+        {
+          "t": "Wikipedia contributors, Bayes' theorem (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Bayes%27_theorem"
+        }
+      ]
+    },
+    {
+      "id": "complement-rule",
+      "phase": 1,
+      "label": "The complement",
+      "desc": "The complement of an event is everything else in the sample space. Its probability is 1 minus the event's probability, and a two-way test needs it.",
+      "outline": [
+        "Name the event and then name what remains",
+        "Compute the remainder as 1 minus the event",
+        "Use the remainder as the second hypothesis in a yes-or-no test",
+        "Check a conditional against the complement when you test independence"
+      ],
+      "ideas": [
+        "If a disease has probability 0.01, the healthy case has probability 0.99",
+        "Mandel's mammography problem sets P(not H) = 1 − P(H) = 0.99",
+        "A false alarm lives on the complement: a positive result among people without the condition"
+      ],
+      "questions": [
+        {
+          "q": "A condition has probability 0.01. What probability does the complement carry, and why must you keep it?",
+          "a": "0.99. Bayes' rule adds the true positives to the false alarms, and the false alarms are counted in the complement. Dropping it deletes most of a rare-event problem."
+        },
+        {
+          "q": "In Mandel's statement of the mammography problem, what is P(not H)?",
+          "a": "1 minus the 1% base rate, so 0.99. The false-positive rate then applies to that complement."
+        },
+        {
+          "q": "What breaks if you treat 'not sick' as a leftover you can ignore?",
+          "a": "The false-alarm term disappears. A rare condition then looks as if every positive were a true one, which is the base-rate mistake."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Mandel, The psychology of Bayesian reasoning (2014)",
+          "u": "https://doi.org/10.3389/fpsyg.2014.01144"
+        },
+        {
+          "t": "Wikipedia contributors, Bayes' theorem (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Bayes%27_theorem"
+        },
+        {
+          "t": "Diez, Çetinkaya-Rundel, and Barr, OpenIntro Statistics, 4th ed., Chapter 3 (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        }
+      ]
+    },
+    {
+      "id": "addition-rule",
+      "phase": 1,
+      "label": "The addition rule",
+      "desc": "If events are disjoint, the probability that one of them happens is the sum of their probabilities. Overlap has to be subtracted, or you will double-count.",
+      "outline": [
+        "Decide whether the events share outcomes",
+        "If they share none, add",
+        "If they share some, add and then subtract the overlap",
+        "Use the sum again when several routes can produce the same evidence"
+      ],
+      "ideas": [
+        "OpenIntro: for disjoint outcomes, P(A1 or A2) = P(A1) + P(A2)",
+        "Events that share an outcome are not disjoint; adding them double-counts",
+        "The law of total probability is this addition applied to the disjoint ways an observation can arise"
+      ],
+      "questions": [
+        {
+          "q": "OpenIntro asks for the probability of rolling a 1, 4, or 5. What do you do, and what do you get?",
+          "a": "The three faces are disjoint, so add 1/6 + 1/6 + 1/6 = 1/2. The addition rule for disjoint outcomes is the whole calculation."
+        },
+        {
+          "q": "When is adding P(A) and P(B) the wrong move?",
+          "a": "When A and B share outcomes. OpenIntro's card picture shows the overlap counted twice unless it is subtracted."
+        },
+        {
+          "q": "Why does a later Bayes denominator look like a sum?",
+          "a": "The evidence can arrive through disjoint hypotheses. You add those routes. That sum is the addition rule applied to a partition."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Diez, Çetinkaya-Rundel, and Barr, OpenIntro Statistics, 4th ed., Chapter 3 (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        },
+        {
+          "t": "Grinstead and Snell, Introduction to Probability, Chapter 4 (GNU FDL)",
+          "u": "https://math.dartmouth.edu/~doyle/docs/prob/prob.pdf"
+        }
+      ]
+    },
+    {
+      "id": "equally-likely",
+      "phase": 1,
+      "label": "Equally likely cases",
+      "desc": "A raw count is a probability only when the cases are equally possible. Otherwise you weight the cases first, then add.",
+      "outline": [
+        "Ask whether each listed case really has the same weight",
+        "If yes, probability is the count ratio",
+        "If no, assign the unequal weights and add the favorable ones",
+        "Do not invent equal weights for a disease and its absence"
+      ],
+      "ideas": [
+        "Laplace's second principle: unequal possibilities must be appreciated before you add",
+        "His coin example shows a three-case list that is not equally possible",
+        "A 1-in-1000 disease is not an equally likely partner of 'healthy'"
+      ],
+      "questions": [
+        {
+          "q": "Why does Laplace reject d'Alembert's count of heads at least once in two tosses?",
+          "a": "The three-case list is not equally possible. Heads on the first toss covers two of the four equally possible sequences. The probability is 3/4, not 2/3."
+        },
+        {
+          "q": "A disease strikes 1 in 1,000 people. Why can't you treat 'has it' and 'does not' as two equally likely cases?",
+          "a": "They are not equally possible. Laplace's second principle says you use their unequal weights. Treating them as equal throws away the base rate."
+        },
+        {
+          "q": "What would a tree of a medical test get wrong if every branch were drawn with the same thickness?",
+          "a": "The picture would claim the cases are equally likely. The disease branch is thin. Equal thickness is the base-rate fallacy drawn as a diagram."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Laplace, A Philosophical Essay on Probabilities (Truscott and Emory, 1902)",
+          "u": "https://www.gutenberg.org/ebooks/58881"
+        },
+        {
+          "t": "Wikipedia contributors, Base rate fallacy (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Base_rate_fallacy"
+        }
+      ]
+    },
+    {
+      "id": "natural-frequencies",
+      "phase": 1,
+      "label": "Natural frequencies",
+      "desc": "A natural frequency is a count inside a fixed group: of 1,000 people, this many are sick, and of those, this many test positive. The nesting does the conditioning for you.",
+      "outline": [
+        "Pick a concrete group, often 1,000 or 10,000 people",
+        "Split it by the hypothesis, using the base rate",
+        "Split each of those groups by the test result",
+        "Read the answer as a count over a count, not as a new formula"
+      ],
+      "ideas": [
+        "Hoffrage: natural frequencies state the joint counts a sample would actually produce",
+        "Physicians given the hemoccult problem as probabilities rarely got near 5%; given counts, 16 of 24 did",
+        "Brase reviews the finding that this format, not a pep talk, is what moves accuracy"
+      ],
+      "questions": [
+        {
+          "q": "Hoffrage gives physicians a 0.3% prevalence, 50% sensitivity, and 3% false-positive rate. About what share of positive hemoccult tests are cancer, and what changed when the same facts were counts?",
+          "a": "About 5%, or 1 in 20 positives. With conditional probabilities, 1 of 24 physicians was close. With natural frequencies, 16 of 24 reached the Bayesian answer."
+        },
+        {
+          "q": "What is a natural frequency, as Hoffrage uses the term, beyond 'use whole numbers'?",
+          "a": "Joint counts obtained the way a sample is collected: the group is split by the hypothesis, then by the cue. The nesting, not just the integers, is the representation."
+        },
+        {
+          "q": "What fails if you convert those counts back into separate percents before you answer?",
+          "a": "You dissolve the nesting that made the comparison visible, and you are back in the format on which the physicians failed."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Hoffrage, Krauss, Martignon, and Gigerenzer, Natural frequencies improve Bayesian reasoning (2015)",
+          "u": "https://doi.org/10.3389/fpsyg.2015.01473"
+        },
+        {
+          "t": "Brase and Hill, Good fences make for good neighbors but bad science (2015)",
+          "u": "https://doi.org/10.3389/fpsyg.2015.00340"
+        },
+        {
+          "t": "Sanderson, Bayes' theorem (3Blue1Brown lesson, 2019)",
+          "u": "https://www.3blue1brown.com/lessons/bayes-theorem"
+        }
+      ]
+    },
+    {
+      "id": "conditional-probability",
+      "phase": 2,
+      "label": "Conditional probability",
+      "desc": "P(A|B) is the probability of A once B is known. OpenIntro computes it as the joint share of A and B, divided by the share of B.",
+      "outline": [
+        "Name the outcome you care about and the condition you know",
+        "Restrict attention to the cases where the condition holds",
+        "Divide the joint count by the condition's count",
+        "Refuse to swap the two sides of the bar"
+      ],
+      "ideas": [
+        "OpenIntro: P(A|B) = P(A and B) / P(B), with P(B) not zero",
+        "Grinstead rebuilds the distribution on the outcomes inside the known event, scaled so they sum to 1",
+        "The bar is not symmetric: P(positive|sick) is not P(sick|positive)"
+      ],
+      "questions": [
+        {
+          "q": "Write OpenIntro's definition of the conditional probability of A given B.",
+          "a": "P(A|B) = P(A and B) / P(B), provided P(B) is not zero. You restrict to B, then take A's share of that restricted set."
+        },
+        {
+          "q": "Grinstead rolls a die and learns the face is greater than 4. Why does P(face is 6 | face > 4) equal 1/2?",
+          "a": "The new sample space is {5, 6}, still equally likely. The event {6} is one of those two outcomes, so the conditional probability is 1/2, not the original 1/6."
+        },
+        {
+          "q": "What breaks if you read P(positive|disease) as P(disease|positive)?",
+          "a": "You commit the inverse fallacy. Mandel distinguishes the true-positive rate you were given from the posterior you were asked for. They are equal only in special cases."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Diez, Çetinkaya-Rundel, and Barr, OpenIntro Statistics, 4th ed., Chapter 3 (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        },
+        {
+          "t": "Grinstead and Snell, Introduction to Probability, Chapter 4 (GNU FDL)",
+          "u": "https://math.dartmouth.edu/~doyle/docs/prob/prob.pdf"
+        },
+        {
+          "t": "Wikipedia contributors, Conditional probability (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Conditional_probability"
+        }
+      ]
+    },
+    {
+      "id": "joint-probability",
+      "phase": 2,
+      "label": "Joint probability",
+      "desc": "The joint probability P(A and B) is the share of cases where both happen. In a count table it is one cell, and both conditionals are ratios of that cell.",
+      "outline": [
+        "Make the table: rows one variable, columns the other",
+        "Read a cell as the joint count",
+        "Read a margin as the cases where one variable is fixed, ignoring the other",
+        "Recover either conditional by dividing the cell by the right margin"
+      ],
+      "ideas": [
+        "OpenIntro's health-coverage table is a joint count of two variables",
+        "Mandel writes the posterior as the cell a over a+c, the two joints that share the evidence",
+        "Both directions of a conditional share the same joint"
+      ],
+      "questions": [
+        {
+          "q": "In a two-way table, which number is the joint, and which is the marginal?",
+          "a": "The joint is a single cell, the count where both descriptions hold. The marginal is a row or column total, the count where one description holds and the other is ignored."
+        },
+        {
+          "q": "Mandel sets P(H|D) = a / (a+c). What are a and c?",
+          "a": "a is the joint count of hypothesis and evidence. c is the joint count of the other hypothesis and the same evidence. The posterior is one's share of the evidence column."
+        },
+        {
+          "q": "Why can you not recover a conditional from a marginal alone?",
+          "a": "The marginal has already added the cells together. The conditional needs one cell divided by that margin. Without the joint, the split is gone."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Diez, Çetinkaya-Rundel, and Barr, OpenIntro Statistics, 4th ed., Chapter 3 (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        },
+        {
+          "t": "Mandel, The psychology of Bayesian reasoning (2014)",
+          "u": "https://doi.org/10.3389/fpsyg.2014.01144"
+        }
+      ]
+    },
+    {
+      "id": "probability-trees",
+      "phase": 2,
+      "label": "Probability trees",
+      "desc": "A tree multiplies along a path and adds across branches that end in the same observation. OpenIntro uses it to invert a conditional before writing Bayes' rule.",
+      "outline": [
+        "Order the story: hypothesis first, then the observation",
+        "Put the base rate on the first branches and the test behavior on the second",
+        "Multiply along a path to get a joint",
+        "Add the paths that end in the same observation; that sum is its marginal"
+      ],
+      "ideas": [
+        "OpenIntro: trees compute the inverted conditional, and Bayes' rule is that arithmetic written out",
+        "Grinstead also draws the tree in reverse to display the Bayes probabilities",
+        "Path width is the joint, so a rare disease stays a thin first branch"
+      ],
+      "questions": [
+        {
+          "q": "OpenIntro says a tree and Bayes' theorem compute the same inverted conditional. What does the tree do that the formula compresses?",
+          "a": "It multiplies along each path and adds the paths that share the observation. The formula's numerator is one path. Its denominator is the sum of those paths."
+        },
+        {
+          "q": "Grinstead assigns the same probability to a path in the forward tree and the reversed tree. Why?",
+          "a": "Both paths are the same outcome of the experiment. Reversing the drawing does not change the joint. The reversed second-level weights are the Bayes probabilities."
+        },
+        {
+          "q": "What does a tree hide if the first branches are drawn the same width?",
+          "a": "The base rate. Equal first branches say the hypotheses are equally likely, which is Laplace's equal-possibility assumption and is false for a rare condition."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Diez, Çetinkaya-Rundel, and Barr, OpenIntro Statistics, 4th ed., Chapter 3 (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        },
+        {
+          "t": "Grinstead and Snell, Introduction to Probability, Chapter 4 (GNU FDL)",
+          "u": "https://math.dartmouth.edu/~doyle/docs/prob/prob.pdf"
+        }
+      ]
+    },
+    {
+      "id": "overlap-vs-exclusive",
+      "phase": 2,
+      "label": "Overlap vs exclusive",
+      "desc": "Mutually exclusive events cannot happen together, so their joint is zero. Independent events do not inform each other, and they usually can happen together. The two relations are not the same.",
+      "outline": [
+        "Exclusive: no shared outcomes, so add the probabilities",
+        "Overlap: shared outcomes, so do not add raw",
+        "Independence: learning one event leaves the other's probability unchanged",
+        "Check a claim of independence against a claim of exclusion before you multiply"
+      ],
+      "ideas": [
+        "OpenIntro separates the addition rule for disjoint events from the later independence product",
+        "Disjoint events with positive probability are dependent: if one happens, the other cannot",
+        "A second test is useful because it is a new observation, not because it is exclusive of the first"
+      ],
+      "questions": [
+        {
+          "q": "Can two events with positive probability be both mutually exclusive and independent?",
+          "a": "No. If they are exclusive and one happens, the other has probability zero, which is not its original positive probability. OpenIntro's disjoint addition and the independence product describe different relations."
+        },
+        {
+          "q": "You added the chance of disease to the chance of a positive test. What did you assume?",
+          "a": "That the two events are disjoint. They are not: a person can have the disease and test positive. The right combination is a joint, built by the multiplication rule, not a sum of the two headlines."
+        },
+        {
+          "q": "Why is 'the tests can't both be wrong' a different claim from 'the tests are independent'?",
+          "a": "The first says the error events are exclusive. The second says one result does not change the probability of the other. Independence is what lets a second likelihood multiply. Exclusion would forbid the combination you are trying to count."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Diez, Çetinkaya-Rundel, and Barr, OpenIntro Statistics, 4th ed., Chapter 3 (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        },
+        {
+          "t": "Laplace, A Philosophical Essay on Probabilities (Truscott and Emory, 1902)",
+          "u": "https://www.gutenberg.org/ebooks/58881"
+        }
+      ]
+    },
+    {
+      "id": "conditioning-shrinks",
+      "phase": 2,
+      "label": "Shrinking the denominator",
+      "desc": "Conditioning throws out the cases that contradict what you know and rescales the rest. The denominator is the count of cases still in play.",
+      "outline": [
+        "Start from the full group",
+        "Cross out the cases ruled out by the evidence",
+        "The surviving count is the new denominator",
+        "The numerator is the surviving cases that also have the hypothesis"
+      ],
+      "ideas": [
+        "Grinstead sets the new weights proportional to the old ones inside E, with constant 1/P(E)",
+        "Sanderson's lesson: restrict to the people who fit the evidence, then take the proportion who fit the hypothesis",
+        "If you forget to shrink, you are still averaging over people the evidence has excluded"
+      ],
+      "questions": [
+        {
+          "q": "Grinstead learns that event E happened. What constant rescales the probabilities inside E, and why?",
+          "a": "The constant is 1/P(E). The old weights inside E keep their proportions, and dividing by P(E) makes them sum to 1 on the new sample space."
+        },
+        {
+          "q": "In the 3Blue1Brown farmer-and-librarian count, why is the denominator 24 rather than 210?",
+          "a": "210 is the whole imagined group. The evidence keeps only the people who fit the description: 20 farmers and 4 librarians. The conditional is 4/24."
+        },
+        {
+          "q": "What answer do you compute if you leave the ruled-out cases in the denominator?",
+          "a": "A probability on the original sample space, not the conditional. You have not used the evidence to shrink the group."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Grinstead and Snell, Introduction to Probability, Chapter 4 (GNU FDL)",
+          "u": "https://math.dartmouth.edu/~doyle/docs/prob/prob.pdf"
+        },
+        {
+          "t": "Sanderson, Bayes' theorem (3Blue1Brown lesson, 2019)",
+          "u": "https://www.3blue1brown.com/lessons/bayes-theorem"
+        }
+      ]
+    },
+    {
+      "id": "multiplication-rule",
+      "phase": 3,
+      "label": "The multiplication rule",
+      "desc": "The joint is a product: P(A and B) = P(A) P(B|A). OpenIntro calls this a rearrangement of the conditional definition. Laplace states it as his fourth principle.",
+      "outline": [
+        "Pick an order for the story",
+        "Write the probability of the first piece",
+        "Multiply by the probability of the second given the first",
+        "For independent pieces, the second factor equals the unconditional probability"
+      ],
+      "ideas": [
+        "OpenIntro: the general multiplication rule rearranges P(A|B) = P(A and B)/P(B)",
+        "Laplace's fourth principle: the compound is the first event times the second given the first",
+        "Laplace's third principle: independent events multiply as plain probabilities"
+      ],
+      "questions": [
+        {
+          "q": "How does OpenIntro get the general multiplication rule from the conditional definition?",
+          "a": "Start from P(A|B) = P(A and B)/P(B) and multiply both sides by P(B). The joint equals the condition times the conditional."
+        },
+        {
+          "q": "State Laplace's fourth principle in his own terms.",
+          "a": "When two events depend on each other, the probability of the compound is the probability of the first times the probability that, this having occurred, the second will occur."
+        },
+        {
+          "q": "What do you illegally do if you multiply two percents that are not a marginal and a conditional of the same story?",
+          "a": "You invent a joint the multiplication rule does not license. The 99% accuracy times itself is not a posterior. The factors have to be P(hypothesis) and P(evidence|hypothesis)."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Diez, Çetinkaya-Rundel, and Barr, OpenIntro Statistics, 4th ed., Chapter 3 (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        },
+        {
+          "t": "Laplace, A Philosophical Essay on Probabilities (Truscott and Emory, 1902)",
+          "u": "https://www.gutenberg.org/ebooks/58881"
+        }
+      ]
+    },
+    {
+      "id": "independence",
+      "phase": 3,
+      "label": "Independence",
+      "desc": "A and B are independent when learning B does not change P(A). Then the joint is the plain product P(A)P(B). A second test earns its keep only when its errors are independent of the first.",
+      "outline": [
+        "Compare P(A|B) with P(A)",
+        "If they agree, and the same holds for the complement, call them independent",
+        "Only then replace the conditional factor by the unconditional one",
+        "Do not call exclusive events independent"
+      ],
+      "ideas": [
+        "OpenIntro: independence means the conditional equals the unconditional probability",
+        "Laplace's third principle multiplies only when the events are independent",
+        "Dependent tests share an error; multiplying their likelihoods double-counts one piece of news"
+      ],
+      "questions": [
+        {
+          "q": "OpenIntro's test for independence of A and B is what equality?",
+          "a": "P(A|B) = P(A), with P(B) not zero. Learning B leaves A's probability where it was. The joint is then P(A)P(B)."
+        },
+        {
+          "q": "A second test fails for the same chemical reason as the first. Why can't you multiply the two likelihoods as if they were independent?",
+          "a": "Independence is the license for Laplace's plain product. If the second result is the first error repeating itself, you have one piece of evidence, not two. The posterior would look surer than the evidence is."
+        },
+        {
+          "q": "Why doesn't 'the disease and the healthy state are exclusive' let you skip the independence check on two tests?",
+          "a": "Exclusion is about the hypotheses, which cannot both be true. Independence is about the tests. The hypotheses being exclusive does not make the test errors independent."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Diez, Çetinkaya-Rundel, and Barr, OpenIntro Statistics, 4th ed., Chapter 3 (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        },
+        {
+          "t": "Laplace, A Philosophical Essay on Probabilities (Truscott and Emory, 1902)",
+          "u": "https://www.gutenberg.org/ebooks/58881"
+        }
+      ]
+    },
+    {
+      "id": "total-probability",
+      "phase": 3,
+      "label": "Total probability",
+      "desc": "If hypotheses partition the sample space, the probability of the evidence is the sum of the path products. That sum is the denominator of Bayes' rule.",
+      "outline": [
+        "Split the world into disjoint hypotheses that cover everyone",
+        "For each hypothesis, multiply its weight by the probability of the evidence given it",
+        "Add those products",
+        "Use the sum as P(evidence), not as a posterior"
+      ],
+      "ideas": [
+        "Grinstead: P(E) = sum P(H_k) P(E|H_k) when the H_k partition the sample space",
+        "OpenIntro's Bayes denominator is that same sum, called the marginal probability of B",
+        "One term of the sum is not the sum"
+      ],
+      "questions": [
+        {
+          "q": "Write Grinstead's expression for P(E) when H_1 through H_m partition the sample space.",
+          "a": "P(E) = P(H_1)P(E|H_1) + … + P(H_m)P(E|H_m). Each term is one route to the evidence, and the routes are disjoint and complete."
+        },
+        {
+          "q": "OpenIntro says the bottom of Bayes' theorem is long because of what step you also do in a tree?",
+          "a": "Adding every path that ends in B. The denominator is the marginal probability of B. On a tree you usually add those paths in a separate step, so the sum looks simpler than the formula."
+        },
+        {
+          "q": "What do you report if you stop after computing P(H)P(E|H) and never add the other routes?",
+          "a": "A joint, or an un-normalized weight, for one hypothesis. It is not P(E), and it is not the posterior. The other ways the evidence can arise are missing."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Grinstead and Snell, Introduction to Probability, Chapter 4 (GNU FDL)",
+          "u": "https://math.dartmouth.edu/~doyle/docs/prob/prob.pdf"
+        },
+        {
+          "t": "Diez, Çetinkaya-Rundel, and Barr, OpenIntro Statistics, 4th ed., Chapter 3 (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        }
+      ]
+    },
+    {
+      "id": "inverting-conditional",
+      "phase": 3,
+      "label": "Inverting a conditional",
+      "desc": "You are handed P(evidence|hypothesis) and you want P(hypothesis|evidence). Those are different conditionals of the same joint. Inversion is the job.",
+      "outline": [
+        "Write the conditional you were given, bar and all",
+        "Write the conditional you actually want",
+        "Check that they are not the same sentence",
+        "Plan to rebuild the wanted one from the joint and the marginal"
+      ],
+      "ideas": [
+        "OpenIntro section 3.2.8 is titled as inverting probabilities: you are given one conditional and you want the other",
+        "Wikipedia: Bayes' theorem inverts conditional probabilities so the probability of a cause can be found from its effect",
+        "The inverse fallacy is declaring the inversion unnecessary"
+      ],
+      "questions": [
+        {
+          "q": "OpenIntro states the input and the output of Bayes' theorem as which two conditionals?",
+          "a": "You are given P(statement about variable 1 | statement about variable 2) and you want the inverted conditional, P(statement about variable 2 | statement about variable 1)."
+        },
+        {
+          "q": "A leaflet says the test is very likely to be positive if you have the condition. Which conditional is that, and which one does a patient need?",
+          "a": "That is P(positive|condition), a likelihood. The patient needs P(condition|positive), the inverted conditional. Wikipedia's lead describes Bayes' theorem as the rule for that inversion."
+        },
+        {
+          "q": "What is the inverse fallacy, in Mandel's terms?",
+          "a": "Confusing the posterior P(H|D), which you were asked for, with the likelihood P(D|H), which you were given. In his mammography numbers the second is 0.80, and that is about where the physicians answered."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Diez, Çetinkaya-Rundel, and Barr, OpenIntro Statistics, 4th ed., Chapter 3 (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        },
+        {
+          "t": "Wikipedia contributors, Bayes' theorem (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Bayes%27_theorem"
+        },
+        {
+          "t": "Mandel, The psychology of Bayesian reasoning (2014)",
+          "u": "https://doi.org/10.3389/fpsyg.2014.01144"
+        }
+      ]
+    },
+    {
+      "id": "bayes-rule",
+      "phase": 4,
+      "label": "Bayes' rule",
+      "desc": "Bayes' rule is the inversion written as a fraction. The numerator is the joint of hypothesis and evidence. The denominator is the marginal of the evidence.",
+      "outline": [
+        "Identify the hypotheses and the evidence actually in hand",
+        "Form each joint as prior times likelihood",
+        "Add the joints to get the marginal of the evidence",
+        "Divide. The result is the posterior, and the posteriors sum to 1"
+      ],
+      "ideas": [
+        "Grinstead: P(H_i|E) = P(H_i)P(E|H_i) / sum_k P(H_k)P(E|H_k)",
+        "OpenIntro: the numerator is the probability of both A1 and B; the denominator is the marginal of B",
+        "Laplace's sixth principle is this passage from events back to causes, with unequal prior causes multiplied in"
+      ],
+      "questions": [
+        {
+          "q": "Write Grinstead's Bayes formula for hypothesis H_i given evidence E.",
+          "a": "P(H_i|E) = P(H_i)P(E|H_i) / [P(H_1)P(E|H_1) + … + P(H_m)P(E|H_m)]. The hypotheses partition the sample space."
+        },
+        {
+          "q": "What does OpenIntro say the numerator and the denominator each are?",
+          "a": "The numerator is the probability of getting both the hypothesis and the evidence. The denominator is the marginal probability of the evidence, the sum over all the ways to get it."
+        },
+        {
+          "q": "Laplace's sixth principle adds one extra factor when the causes are unequally probable. What is it?",
+          "a": "The possibility of the cause itself, multiplied by the probability of the event given that cause. The denominator is the sum of those products. Equal prior causes are the special case where that factor is the same for each cause."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Grinstead and Snell, Introduction to Probability, Chapter 4 (GNU FDL)",
+          "u": "https://math.dartmouth.edu/~doyle/docs/prob/prob.pdf"
+        },
+        {
+          "t": "Diez, Çetinkaya-Rundel, and Barr, OpenIntro Statistics, 4th ed., Chapter 3 (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        },
+        {
+          "t": "Laplace, A Philosophical Essay on Probabilities (Truscott and Emory, 1902)",
+          "u": "https://www.gutenberg.org/ebooks/58881"
+        }
+      ]
+    },
+    {
+      "id": "prior",
+      "phase": 4,
+      "label": "The prior",
+      "desc": "The prior is your probability for each hypothesis before this piece of evidence. In a screening story it is often the base rate. Mandel warns that a person's prior can be a different number.",
+      "outline": [
+        "Name the hypotheses before you look at the new result",
+        "Write the probability you assign to each from what you already know",
+        "In a population screening problem, start from the prevalence",
+        "When the person is not a random draw, ask whether the printed base rate is the right prior"
+      ],
+      "ideas": [
+        "Mandel: P(H) in these problems is often the base rate, but a prior is whatever you knew before this evidence",
+        "Laplace's sixth principle multiplies by the prior possibility of each cause when the causes are unequal",
+        "The prior is not the accuracy printed on the test"
+      ],
+      "questions": [
+        {
+          "q": "In Mandel's mammography problem, which given number is used as P(H), and what does he say a prior is in general?",
+          "a": "The 1% breast-cancer rate is used as P(H). In general the prior is one's personal probability of H given everything known before learning the new evidence, so a printed base rate is not the definition."
+        },
+        {
+          "q": "Why is the test's 80% figure not the prior?",
+          "a": "That 80% is P(positive|cancer), the behavior of the test when the hypothesis is already true. The prior is about the hypothesis before this result. Mandel labels them separately."
+        },
+        {
+          "q": "A patient has several features that raise her risk above her age group's base rate. What does Mandel say goes wrong if you still use the age-group rate as her prior?",
+          "a": "You underestimate the risk she faces. The ideal comparison group would match her features. Using a coarser base rate biases the revision."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Mandel, The psychology of Bayesian reasoning (2014)",
+          "u": "https://doi.org/10.3389/fpsyg.2014.01144"
+        },
+        {
+          "t": "Laplace, A Philosophical Essay on Probabilities (Truscott and Emory, 1902)",
+          "u": "https://www.gutenberg.org/ebooks/58881"
+        }
+      ]
+    },
+    {
+      "id": "likelihood",
+      "phase": 4,
+      "label": "The likelihood",
+      "desc": "The likelihood is the probability of the evidence given a hypothesis, P(evidence|hypothesis). It is the test's behavior on a known group, not the chance the hypothesis is true.",
+      "outline": [
+        "Fix the hypothesis first, as if you knew it",
+        "Ask how likely the evidence you saw would be in that world",
+        "Do that for every hypothesis, including the complement",
+        "Keep this number on the right side of the bar until you invert"
+      ],
+      "ideas": [
+        "The SEP treats P_H(E) as the likelihood of E on H",
+        "Sensitivity is the likelihood of a positive result given disease",
+        "A high likelihood is not a high posterior"
+      ],
+      "questions": [
+        {
+          "q": "The SEP writes a likelihood as which probability?",
+          "a": "P_H(E), the probability of the evidence E when the hypothesis H is assumed. It is not the probability of H."
+        },
+        {
+          "q": "A test comes back positive in 80% of people who have the condition. Name that quantity, and name the quantity it is not.",
+          "a": "It is the likelihood of a positive result given the condition. It is not the posterior probability of the condition given a positive result. Mandel uses 0.80 for the first and computes about 0.078 for the second."
+        },
+        {
+          "q": "What breaks if every hypothesis is given the same likelihood?",
+          "a": "The evidence does not distinguish them, so the posterior stays in the prior's proportions. A likelihood has to differ across hypotheses to move the belief."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Talbott, Bayes' Theorem, Stanford Encyclopedia of Philosophy",
+          "u": "https://plato.stanford.edu/entries/bayes-theorem/"
+        },
+        {
+          "t": "Mandel, The psychology of Bayesian reasoning (2014)",
+          "u": "https://doi.org/10.3389/fpsyg.2014.01144"
+        },
+        {
+          "t": "Wikipedia contributors, Sensitivity and specificity (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Sensitivity_and_specificity"
+        }
+      ]
+    },
+    {
+      "id": "marginal-evidence",
+      "phase": 4,
+      "label": "The marginal evidence",
+      "desc": "The marginal evidence P(evidence) is the probability of what you saw, averaging over the hypotheses. It is the bottom of the fraction. It is not a hypothesis's probability.",
+      "outline": [
+        "List every hypothesis that could have produced the evidence",
+        "Add prior times likelihood for each",
+        "Call that sum P(evidence)",
+        "Divide by it; do not throw it away as 'the same for everyone' until you are working in odds"
+      ],
+      "ideas": [
+        "OpenIntro: the denominator is the marginal probability of B, and it looks long because every route is added",
+        "Wikipedia's odds form divides two Bayes equations so P(B) cancels; that is a later trick, not a reason to ignore it in the probability form",
+        "Skipping it is why a pair of posteriors can fail to add to 1"
+      ],
+      "questions": [
+        {
+          "q": "OpenIntro says to prepare two lists before applying Bayes' theorem. What are they?",
+          "a": "First the marginal probabilities of each outcome of the hypothesis variable. Second the probability of the observed outcome conditioned on each of those hypotheses. The denominator is then the sum of the products."
+        },
+        {
+          "q": "Why does Wikipedia's odds form let the marginal evidence cancel?",
+          "a": "You write Bayes' theorem for the hypothesis and for its negation, then divide. P(evidence) is in both denominators, so the ratio of the posteriors does not need it. The probability form still has it."
+        },
+        {
+          "q": "You report posteriors 0.4 and 0.4. What did you skip?",
+          "a": "The division by the marginal. The two weights sum to 0.8, so they are not probabilities. Dividing each by 0.8 puts them on the scale."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Diez, Çetinkaya-Rundel, and Barr, OpenIntro Statistics, 4th ed., Chapter 3 (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        },
+        {
+          "t": "Wikipedia contributors, Bayes' theorem (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Bayes%27_theorem"
+        }
+      ]
+    },
+    {
+      "id": "posterior",
+      "phase": 4,
+      "label": "The posterior",
+      "desc": "The posterior is the probability of the hypothesis given the evidence, after the division. It is the inverted conditional, and across hypotheses it adds to 1.",
+      "outline": [
+        "Compute each un-normalized weight",
+        "Divide by the marginal evidence",
+        "Read the result as a belief about the hypothesis, not about the test",
+        "Check that the posteriors add to 1 before you act on one of them"
+      ],
+      "ideas": [
+        "Grinstead calls P(H_i|E) the posterior probability of the hypothesis",
+        "Mandel's mammography posterior is about 0.078, not 0.80",
+        "Hoffrage's hemoccult posterior is about 5 percent, or 1 positive in 20"
+      ],
+      "questions": [
+        {
+          "q": "Mandel plugs 1%, 80%, and 9.6% into Bayes' theorem. What posterior does the theorem give, and what did physicians tend to say?",
+          "a": "The posterior is about 0.078. Physicians tended to answer roughly an order of magnitude higher, around 0.70 to 0.80, near the likelihood."
+        },
+        {
+          "q": "Hoffrage's hemoccult numbers are prevalence 0.3%, sensitivity 50%, false-positive rate 3%. What is the posterior, in counts?",
+          "a": "About 5%, which is 1 cancer in 20 positive results. That count is the posterior of cancer given a positive test."
+        },
+        {
+          "q": "What fails if you quote a single posterior and never look at the others?",
+          "a": "You cannot see whether the division happened. The posteriors of a partition are one distribution. If they do not add to 1, the number you quoted is not a posterior."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Mandel, The psychology of Bayesian reasoning (2014)",
+          "u": "https://doi.org/10.3389/fpsyg.2014.01144"
+        },
+        {
+          "t": "Hoffrage, Krauss, Martignon, and Gigerenzer, Natural frequencies improve Bayesian reasoning (2015)",
+          "u": "https://doi.org/10.3389/fpsyg.2015.01473"
+        },
+        {
+          "t": "Grinstead and Snell, Introduction to Probability, Chapter 4 (GNU FDL)",
+          "u": "https://math.dartmouth.edu/~doyle/docs/prob/prob.pdf"
+        }
+      ]
+    },
+    {
+      "id": "odds-form",
+      "phase": 4,
+      "label": "Odds form",
+      "desc": "Odds are the probability an event is true divided by the probability it is false. In odds, Bayes' rule multiplies the prior odds by the likelihood ratio, and the marginal cancels.",
+      "outline": [
+        "Convert a prior probability into prior odds, p/(1-p)",
+        "Form the likelihood ratio, P(evidence|H) over P(evidence|not H)",
+        "Multiply",
+        "Convert posterior odds back to a probability if you need one"
+      ],
+      "ideas": [
+        "Wikipedia: posterior odds equal prior odds times the likelihood ratio",
+        "Its worked example: 1% prevalence and a 99% accurate test give posterior odds of 1 to 1, a probability of 1/2",
+        "The SEP treats the likelihood ratio as how far the evidence moves you"
+      ],
+      "questions": [
+        {
+          "q": "Wikipedia's disease example has prevalence 1% and a test that is correct 99% of the time. What are the posterior odds of infection after a positive result?",
+          "a": "Prior odds are 1/99. The likelihood ratio is 99/1. The product is 1/1, so the posterior probability is 1/2. The marginal cancelled when the two Bayes equations were divided."
+        },
+        {
+          "q": "Why can independent pieces of evidence be multiplied in the odds form?",
+          "a": "Each piece contributes a likelihood ratio, and the marginal cancels inside each ratio. Wikipedia's derivation drops P(evidence) by dividing the two Bayes equations. A further independent ratio multiplies the odds you just got."
+        },
+        {
+          "q": "What breaks if you multiply probabilities together and call the product 'odds'?",
+          "a": "Odds are a ratio of a probability to its complement, not a product of raw probabilities. Skipping the complement loses the comparison the odds form is for."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Wikipedia contributors, Bayes' theorem (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Bayes%27_theorem"
+        },
+        {
+          "t": "Talbott, Bayes' Theorem, Stanford Encyclopedia of Philosophy",
+          "u": "https://plato.stanford.edu/entries/bayes-theorem/"
+        }
+      ]
+    },
+    {
+      "id": "sensitivity",
+      "phase": 5,
+      "label": "Sensitivity",
+      "desc": "Sensitivity is the true-positive rate: among people who have the condition, the share the test calls positive. It is a likelihood, P(positive|condition).",
+      "outline": [
+        "Restrict to people who truly have the condition",
+        "Count how many of them test positive",
+        "That share is the sensitivity",
+        "Do not use it, alone, as the chance a positive person is sick"
+      ],
+      "ideas": [
+        "Wikipedia: sensitivity = true positives / (true positives + false negatives)",
+        "A negative result on a high-sensitivity test helps rule the condition out",
+        "A test that always says positive has sensitivity 1 and is useless for ruling in"
+      ],
+      "questions": [
+        {
+          "q": "Write the count definition of sensitivity from the sensitivity-and-specificity article.",
+          "a": "True positives divided by true positives plus false negatives. The denominator is everyone who has the condition."
+        },
+        {
+          "q": "Why can a negative result on a very sensitive test rule a condition out, while a positive result does not rule it in?",
+          "a": "High sensitivity means few false negatives, so a negative is rare among the sick. Sensitivity ignores false positives. Wikipedia's always-positive kit has sensitivity 1 and a false-positive rate of 1, so a positive says nothing."
+        },
+        {
+          "q": "Hoffrage's hemoccult sensitivity is 50%. What does that 50% claim, and what does it not claim?",
+          "a": "Among people with colon cancer, half test positive. It does not claim that half of positive tests are cancer. With a 0.3% prevalence that posterior is about 5%."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Wikipedia contributors, Sensitivity and specificity (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Sensitivity_and_specificity"
+        },
+        {
+          "t": "Hoffrage, Krauss, Martignon, and Gigerenzer, Natural frequencies improve Bayesian reasoning (2015)",
+          "u": "https://doi.org/10.3389/fpsyg.2015.01473"
+        }
+      ]
+    },
+    {
+      "id": "false-alarm-rate",
+      "phase": 5,
+      "label": "False-alarm rate",
+      "desc": "The false-alarm rate is the chance the test says positive when the condition is absent. It is the other likelihood, P(positive|healthy), and it fills the false-positive cell.",
+      "outline": [
+        "Restrict to people who do not have the condition",
+        "Count how many of them test positive",
+        "Keep this rate next to sensitivity; neither replaces the other",
+        "Compare it with the base rate before you trust a positive"
+      ],
+      "ideas": [
+        "Mandel's mammography problem uses a 9.6% false-positive rate on the 99% who are healthy",
+        "Wikipedia: when prevalence is below the false-positive rate, false positives outnumber true positives",
+        "Hoffrage's 3% false-positive rate, times a large healthy group, produces most of the positive hemoccult tests"
+      ],
+      "questions": [
+        {
+          "q": "Wikipedia states a simple comparison that tells you false positives will outnumber true positives. What is compared?",
+          "a": "The prevalence and the false-positive rate. When prevalence is lower than the false-positive rate, a low individual false-alarm risk still yields more false positives than true positives overall."
+        },
+        {
+          "q": "In Mandel's numbers, where does the 9.6% apply?",
+          "a": "It is P(positive|no cancer), the false-positive rate, applied to the 99% without cancer. It is not the posterior and not the sensitivity."
+        },
+        {
+          "q": "What cell of the count table disappears if you are told only the sensitivity?",
+          "a": "The false-positive cell, the healthy people who test positive. Without it you cannot build the evidence column, so you cannot compute a positive predictive value."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Wikipedia contributors, Base rate fallacy (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Base_rate_fallacy"
+        },
+        {
+          "t": "Mandel, The psychology of Bayesian reasoning (2014)",
+          "u": "https://doi.org/10.3389/fpsyg.2014.01144"
+        },
+        {
+          "t": "Hoffrage, Krauss, Martignon, and Gigerenzer, Natural frequencies improve Bayesian reasoning (2015)",
+          "u": "https://doi.org/10.3389/fpsyg.2015.01473"
+        }
+      ]
+    },
+    {
+      "id": "specificity",
+      "phase": 5,
+      "label": "Specificity",
+      "desc": "Specificity is the true-negative rate: among people without the condition, the share the test correctly calls negative. It is 1 minus the false-alarm rate when there is no third result.",
+      "outline": [
+        "Restrict to people without the condition",
+        "Count the true negatives",
+        "Divide by everyone without the condition",
+        "Convert to a false-alarm rate by taking the complement, when the test is yes-or-no"
+      ],
+      "ideas": [
+        "Wikipedia: specificity measures how well a test identifies true negatives",
+        "High specificity matters when a positive label is costly",
+        "OpenIntro's ELISA figure for people without HIV, 92.6% accurate, is a specificity"
+      ],
+      "questions": [
+        {
+          "q": "Using Wikipedia's positive/negative language, what does specificity count?",
+          "a": "Among people who do not have the condition, the share called negative. It is true negatives over true negatives plus false positives."
+        },
+        {
+          "q": "OpenIntro says the ELISA test is 92.6% accurate for people who do not carry HIV. Which rate is that?",
+          "a": "The specificity: among people without HIV, 92.6% are correctly called negative. The false-alarm rate is the remaining 7.4% of that healthy group."
+        },
+        {
+          "q": "A yes-or-no test has specificity 0.97. What is its false-alarm rate, and why is that the number Bayes' rule wants for a positive result?",
+          "a": "0.03. A positive from a healthy person is the complement of a true negative. The likelihood of a positive given health is the false-alarm rate, not the specificity."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Wikipedia contributors, Sensitivity and specificity (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Sensitivity_and_specificity"
+        },
+        {
+          "t": "Diez, Çetinkaya-Rundel, and Barr, OpenIntro Statistics, 4th ed., Chapter 3 (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        }
+      ]
+    },
+    {
+      "id": "base-rate",
+      "phase": 5,
+      "label": "The base rate",
+      "desc": "The base rate is how common the hypothesis is in the group you are drawing from, before this test. In a screening problem it is the prior.",
+      "outline": [
+        "Name the group the person is being treated as a draw from",
+        "Read the prevalence in that group",
+        "Put that weight on the first branch of the tree",
+        "If the person is not a plain draw, adjust before you update, as Mandel describes"
+      ],
+      "ideas": [
+        "Wikipedia's running example moves from a 40% infected group to a 2% group and the meaning of a positive flips",
+        "Hoffrage's 0.3% prevalence is what makes a 50% sensitive test yield mostly false alarms",
+        "Mandel: using the wrong base rate biases the posterior up or down"
+      ],
+      "questions": [
+        {
+          "q": "Wikipedia compares an infectious-disease test on a 40% infected group and a 2% infected group, with a 5% false-positive rate and no false negatives. What happens to the meaning of a positive?",
+          "a": "In the 40% group the positives are mostly true (400 true versus 30 false per 1,000). In the 2% group they are mostly false (20 true versus 49 false). The test did not change. The base rate did."
+        },
+        {
+          "q": "Why does Hoffrage's 0.3% prevalence dominate a 50% sensitivity?",
+          "a": "The sick group is a third of a percent of the population, so even catching half of them yields few true positives. Three percent of the large healthy group yields more false positives. The posterior is about 5%."
+        },
+        {
+          "q": "What goes wrong, on Mandel's account, when the only available base rate is for a broader group than the patient?",
+          "a": "If her other features raise her risk, the broad rate underestimates it. If they lower her risk, the broad rate overestimates it. The prior should match what is known about her, and the printed rate may be only a starting anchor."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Wikipedia contributors, Base rate fallacy (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Base_rate_fallacy"
+        },
+        {
+          "t": "Hoffrage, Krauss, Martignon, and Gigerenzer, Natural frequencies improve Bayesian reasoning (2015)",
+          "u": "https://doi.org/10.3389/fpsyg.2015.01473"
+        },
+        {
+          "t": "Mandel, The psychology of Bayesian reasoning (2014)",
+          "u": "https://doi.org/10.3389/fpsyg.2014.01144"
+        }
+      ]
+    },
+    {
+      "id": "ppv",
+      "phase": 5,
+      "label": "Positive predictive value",
+      "desc": "The positive predictive value is the posterior probability of the condition given a positive result. It is true positives divided by all positives.",
+      "outline": [
+        "Build the evidence column: true positives plus false positives",
+        "Divide the true positives by that column",
+        "Call the result the positive predictive value, not the sensitivity",
+        "Expect it to move when the base rate moves, even if the test stays fixed"
+      ],
+      "ideas": [
+        "Wikipedia's low-prevalence table has more false positives than true positives, so the positive predictive value is below one half",
+        "Hoffrage: 1 of 20 positive hemoccult results is cancer, a positive predictive value near 5%",
+        "Ioannidis applies the same ratio to research findings: the chance a claimed finding is true"
+      ],
+      "questions": [
+        {
+          "q": "In Wikipedia's 1,000-person group with 2% prevalence, 20 true positives and 49 false positives, what is the positive predictive value?",
+          "a": "20/(20+49) = 20/69, about 0.29. Fewer than a third of the positive calls are infected. That ratio is the posterior of infection given a positive test."
+        },
+        {
+          "q": "Why is the positive predictive value not the sensitivity?",
+          "a": "Sensitivity divides true positives by everyone who is sick. Positive predictive value divides true positives by everyone who tested positive. The denominators are different columns of the table."
+        },
+        {
+          "q": "Ioannidis uses this same ratio on published findings. What does a low positive predictive value mean there?",
+          "a": "A large share of claimed findings are false positives. How common true effects are, and how a field chooses what to test, move that share the way a base rate moves a medical positive predictive value."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Wikipedia contributors, Base rate fallacy (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Base_rate_fallacy"
+        },
+        {
+          "t": "Hoffrage, Krauss, Martignon, and Gigerenzer, Natural frequencies improve Bayesian reasoning (2015)",
+          "u": "https://doi.org/10.3389/fpsyg.2015.01473"
+        },
+        {
+          "t": "Ioannidis, Why most published research findings are false (PLoS Medicine, 2005)",
+          "u": "https://doi.org/10.1371/journal.pmed.0020124"
+        }
+      ]
+    },
+    {
+      "id": "npv",
+      "phase": 5,
+      "label": "Negative predictive value",
+      "desc": "The negative predictive value is the probability the condition is absent given a negative result. It is true negatives divided by all negatives.",
+      "outline": [
+        "Build the negative column: true negatives plus false negatives",
+        "Divide the true negatives by that column",
+        "Use it when the decision is whether a negative lets you stop",
+        "Notice a rare condition makes negatives easy and positives hard"
+      ],
+      "ideas": [
+        "The same partition that yields a positive predictive value yields this one from the other column",
+        "Wikipedia: a high-sensitivity test's negative is useful for ruling out, because false negatives are rare",
+        "A rare base rate pushes the negative predictive value toward 1 even when the test is mediocre"
+      ],
+      "questions": [
+        {
+          "q": "Which two cells form the denominator of the negative predictive value?",
+          "a": "True negatives and false negatives: everyone the test called negative. The numerator is the true negatives only."
+        },
+        {
+          "q": "Why can the negative predictive value stay high for a rare condition even when you would not trust a positive?",
+          "a": "Almost everyone is healthy, so a negative is usually a healthy person. The positive column is the one the small false-alarm rate can flood. The two columns do not get the same reassurance from the base rate."
+        },
+        {
+          "q": "Wikipedia says a negative on a high-sensitivity test helps rule the condition out. Which error is scarce in that case?",
+          "a": "False negatives. High sensitivity means few sick people are called negative, so a negative result is rarely a miss. That is what makes the negative column mostly true negatives."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Wikipedia contributors, Sensitivity and specificity (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Sensitivity_and_specificity"
+        },
+        {
+          "t": "Wikipedia contributors, Base rate fallacy (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Base_rate_fallacy"
+        }
+      ]
+    },
+    {
+      "id": "base-rate-fallacy",
+      "phase": 5,
+      "label": "Base-rate fallacy",
+      "desc": "The base-rate fallacy is ignoring how common the hypothesis was, or treating a long-run accuracy as if it were the posterior. Rare events then look diagnosed.",
+      "outline": [
+        "Notice when a problem gives a prevalence and an accuracy",
+        "Ask which of the two numbers the conclusion actually used",
+        "If the conclusion equals the accuracy, the base rate was not used",
+        "Recompute in counts before you accept the percent"
+      ],
+      "ideas": [
+        "Wikipedia names this the false-positive paradox when false positives outnumber true positives",
+        "It also calls the legal version the prosecutor's fallacy, following Thompson and Schumann",
+        "Mandel: neglecting the base rate in the mammography problem yields about 0.89, still not the physicians' 0.80, so a second error is often mixed in"
+      ],
+      "questions": [
+        {
+          "q": "Wikipedia's face-scanner is 99% accurate and sees 10,000 people a day, almost all innocent. Why is the alarm list mostly innocent?",
+          "a": "The false-positive rate applies to a huge innocent group, and the true criminals are rare. The high accuracy is outweighed by the number of tests. That is the false-positive paradox."
+        },
+        {
+          "q": "Mandel computes what the mammography posterior would be if the base rate were simply dropped. What does he get, and why is that not the whole story of the physicians' answers?",
+          "a": "0.80 / (0.80 + 0.096), about 0.89. The physicians clustered near 0.70–0.80, which sits on the likelihood itself. Base-rate neglect and the inverse fallacy are different errors, and the second fits those answers more closely."
+        },
+        {
+          "q": "What is the one-sentence repair?",
+          "a": "Put the base rate back in as the prior, count the false alarms in the healthy majority, and divide. The accuracy number is a likelihood, not the answer."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Wikipedia contributors, Base rate fallacy (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Base_rate_fallacy"
+        },
+        {
+          "t": "Mandel, The psychology of Bayesian reasoning (2014)",
+          "u": "https://doi.org/10.3389/fpsyg.2014.01144"
+        }
+      ]
+    },
+    {
+      "id": "inverse-fallacy",
+      "phase": 5,
+      "label": "The inverse fallacy",
+      "desc": "The inverse fallacy treats P(evidence|hypothesis) as if it were P(hypothesis|evidence). Ordinary grammar makes the swap feel harmless. The bar does not commute.",
+      "outline": [
+        "Underline the event before the bar and the event after it",
+        "Say each sentence in words with 'if' in the right place",
+        "If you were asked for the second and answered with the first, you inverted nothing",
+        "Then do the actual inversion, which needs the prior and the other likelihood"
+      ],
+      "ideas": [
+        "The confusion-of-the-inverse article is this swap of a conditional and its inverse",
+        "Mandel: in the mammography problem the inverse fallacy predicts the answer 0.80, matching the modal physician",
+        "OpenIntro's whole Bayes section exists because the two conditionals differ"
+      ],
+      "questions": [
+        {
+          "q": "State the inverse fallacy without symbols.",
+          "a": "You answer the chance of the hypothesis given the evidence with the chance of the evidence given the hypothesis. The two sentences use the same words in the other order, and they are not equal."
+        },
+        {
+          "q": "Why does Mandel say the inverse fallacy fits Eddy's physicians better than pure base-rate neglect?",
+          "a": "P(positive|cancer) is 0.80, and the physicians answered about 0.70–0.80. Dropping the base rate but still using both likelihoods gives about 0.89, which is further from what they said."
+        },
+        {
+          "q": "When would the swap be harmless?",
+          "a": "Only when the inverted conditional happens to equal the original one. Nothing in the grammar of the test leaflet guarantees that. You still have to compute it."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Wikipedia contributors, Confusion of the inverse (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Confusion_of_the_inverse"
+        },
+        {
+          "t": "Mandel, The psychology of Bayesian reasoning (2014)",
+          "u": "https://doi.org/10.3389/fpsyg.2014.01144"
+        },
+        {
+          "t": "Diez, Çetinkaya-Rundel, and Barr, OpenIntro Statistics, 4th ed., Chapter 3 (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        }
+      ]
+    },
+    {
+      "id": "likelihood-ratio",
+      "phase": 5,
+      "label": "The likelihood ratio",
+      "desc": "The likelihood ratio is P(evidence|hypothesis) divided by P(evidence|the alternative). It is how many times more expected the evidence is if the hypothesis is true. It multiplies the prior odds.",
+      "outline": [
+        "Write the likelihood under the hypothesis",
+        "Write the likelihood under the alternative",
+        "Divide the first by the second",
+        "Multiply the prior odds by that ratio to get posterior odds"
+      ],
+      "ideas": [
+        "The SEP defines the likelihood ratio of H against its alternative and reads it as the force of the evidence",
+        "Wikipedia's 99% accurate test has likelihood ratio 0.99/0.01 = 99",
+        "A ratio of 1 leaves the odds where they were"
+      ],
+      "questions": [
+        {
+          "q": "In Wikipedia's 99% accurate test, what is the likelihood ratio for a positive result, and what does multiplying it by prior odds of 1/99 produce?",
+          "a": "0.99/0.01 = 99. Times prior odds of 1/99, the posterior odds are 1/1. The evidence was strong and the prior was weak, and they met in the middle."
+        },
+        {
+          "q": "The SEP treats the likelihood ratio as a measure of what?",
+          "a": "The degree to which the evidence favors the hypothesis over the alternative. It is not itself a probability of the hypothesis."
+        },
+        {
+          "q": "A likelihood ratio of 1 arrives. What should the posterior odds do?",
+          "a": "Stay equal to the prior odds. The evidence was equally expected either way, so it does not move the belief. Multiplying by 1 is the whole update."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Wikipedia contributors, Bayes' theorem (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Bayes%27_theorem"
+        },
+        {
+          "t": "Talbott, Bayes' Theorem, Stanford Encyclopedia of Philosophy",
+          "u": "https://plato.stanford.edu/entries/bayes-theorem/"
+        }
+      ]
+    },
+    {
+      "id": "ignoring-the-marginal",
+      "phase": 5,
+      "label": "Skipping the marginal",
+      "desc": "The un-normalized weights prior times likelihood do not add to 1. Skipping the marginal leaves you with those weights and calling them probabilities.",
+      "outline": [
+        "Compute the weight of each hypothesis",
+        "Add the weights",
+        "If the total is not 1, you have not divided",
+        "Divide each weight by the total, then check the sum"
+      ],
+      "ideas": [
+        "OpenIntro identifies that total as the marginal probability of the evidence",
+        "Wikipedia's probability form keeps P(evidence) in the denominator; only the odds form cancels it",
+        "A pair of 'posteriors' that add to something else are still the numerator"
+      ],
+      "questions": [
+        {
+          "q": "Two hypotheses have un-normalized weights 0.02 and 0.03. What are the posteriors?",
+          "a": "The marginal evidence is 0.05. The posteriors are 0.02/0.05 = 0.4 and 0.03/0.05 = 0.6. They now add to 1."
+        },
+        {
+          "q": "Why is it legitimate to ignore the marginal in the odds form and not in the probability form?",
+          "a": "In the odds form you divide two copies of Bayes' theorem, so the marginal is in both denominators and cancels. A single probability still needs the division. Wikipedia shows the cancellation explicitly."
+        },
+        {
+          "q": "Someone says 'the bottom of the fraction is the same for every hypothesis, so I can compare the tops and stop.' When is that enough, and when does it fail a probability question?",
+          "a": "It is enough to rank the hypotheses, and it is what the odds ratio keeps. It fails when the question asks for a probability, because the tops are not on the 0-to-1 scale until they are divided by their sum."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Diez, Çetinkaya-Rundel, and Barr, OpenIntro Statistics, 4th ed., Chapter 3 (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        },
+        {
+          "t": "Wikipedia contributors, Bayes' theorem (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Bayes%27_theorem"
+        }
+      ]
+    },
+    {
+      "id": "counts-table",
+      "phase": 6,
+      "label": "A table of counts",
+      "desc": "Fill a 2×2 table from the base rate, the sensitivity, and the false-alarm rate, inside a concrete group. The positive predictive value is then one cell over the positive column.",
+      "outline": [
+        "Choose a group size that makes the base rate a whole number",
+        "Split into sick and healthy",
+        "Apply sensitivity to the sick and the false-alarm rate to the healthy",
+        "Read the answer off the column the evidence selected"
+      ],
+      "ideas": [
+        "Mandel: the four cells are the joints, and P(H|D) = a/(a+c)",
+        "Wikipedia works the 40% group and the 2% group entirely in counts per 1,000",
+        "Hoffrage's physicians succeeded once the problem was this table"
+      ],
+      "questions": [
+        {
+          "q": "You have prevalence, sensitivity, and a false-alarm rate. Which three counts do you write before you own a positive predictive value?",
+          "a": "How many in the group are sick, how many of those test positive, and how many of the healthy test positive. The positive predictive value is the second of those over the second plus the third. Mandel writes that as a/(a+c)."
+        },
+        {
+          "q": "Wikipedia's 2% group of 1,000, with a 5% false-positive rate and no misses, produces which two positive counts?",
+          "a": "20 true positives and 49 false positives. The table, not a new formula, is the update."
+        },
+        {
+          "q": "What does the table hide if you start from rounded percents and round again at each cell?",
+          "a": "The comparison of small counts. A rare disease in a group of 1,000 may be one person. Rounding each percent to a whole number can erase that person or inflate the false alarms. Keep the counts exact until the last ratio."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Mandel, The psychology of Bayesian reasoning (2014)",
+          "u": "https://doi.org/10.3389/fpsyg.2014.01144"
+        },
+        {
+          "t": "Wikipedia contributors, Base rate fallacy (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Base_rate_fallacy"
+        },
+        {
+          "t": "Hoffrage, Krauss, Martignon, and Gigerenzer, Natural frequencies improve Bayesian reasoning (2015)",
+          "u": "https://doi.org/10.3389/fpsyg.2015.01473"
+        }
+      ]
+    },
+    {
+      "id": "several-hypotheses",
+      "phase": 6,
+      "label": "Several hypotheses",
+      "desc": "Bayes' rule is not limited to yes or no. Any partition works: Grinstead sums over m hypotheses, and Hoffrage shows the count method surviving three hypotheses and several cues.",
+      "outline": [
+        "List hypotheses that are disjoint and cover the possibilities you care about",
+        "Give each a prior that, with the others, sums to 1",
+        "Give each a likelihood of the evidence you saw",
+        "Normalize across the whole list, not across a pair you happened to mention"
+      ],
+      "ideas": [
+        "Grinstead's formula is already written for m hypotheses",
+        "Hoffrage's first study: natural frequencies still raised Bayesian answers by about 37 percentage points with three cue values, three hypotheses, or two or three cues",
+        "Leaving out a hypothesis quietly gives its prior to the ones you kept"
+      ],
+      "questions": [
+        {
+          "q": "How does Grinstead's denominator change when a third hypothesis is added?",
+          "a": "You add one more product, P(H_3)P(E|H_3), inside the sum. Every posterior, including the first two, is then divided by a larger marginal, unless that new product is zero."
+        },
+        {
+          "q": "What did Hoffrage's medical students gain when the task was no longer two hypotheses and one yes-or-no cue?",
+          "a": "Natural frequencies, versus probabilities, raised the rate of Bayesian answers by about 37 percentage points on average across three cue values, three hypotheses, two cues, and three cues."
+        },
+        {
+          "q": "You normalize disease A against disease B and forget disease C, which is common and can cause the same symptom. What happens to A and B?",
+          "a": "They absorb C's share of the evidence. Their posteriors add to 1 only inside a partition that omitted C, so both are too high for the real three-way question."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Grinstead and Snell, Introduction to Probability, Chapter 4 (GNU FDL)",
+          "u": "https://math.dartmouth.edu/~doyle/docs/prob/prob.pdf"
+        },
+        {
+          "t": "Hoffrage, Krauss, Martignon, and Gigerenzer, Natural frequencies improve Bayesian reasoning (2015)",
+          "u": "https://doi.org/10.3389/fpsyg.2015.01473"
+        }
+      ]
+    },
+    {
+      "id": "sequential-update",
+      "phase": 6,
+      "label": "Carry the posterior",
+      "desc": "After the evidence arrives, the posterior is what you now believe. Mandel's definition of the prior — everything you know before the next piece — makes that posterior the next prior.",
+      "outline": [
+        "Finish the first update and check the posteriors add to 1",
+        "When a new, separate result arrives, put those posteriors in the prior slot",
+        "Do not walk back to the original base rate unless the first result was discarded",
+        "Multiply an independent likelihood ratio onto the odds you are carrying"
+      ],
+      "ideas": [
+        "Mandel: the prior is the personal probability given all that is known before this new evidence",
+        "He notes that classic word problems never stage a second look, so they do not test this carrying forward",
+        "Wikipedia's odds update multiplies; the output odds are the input odds of the next independent factor"
+      ],
+      "questions": [
+        {
+          "q": "Using Mandel's definition, what is the prior when a second, later result arrives?",
+          "a": "Your probability for the hypothesis given everything you knew before that second result. The first result is part of that knowledge, so the first posterior is the second prior. The original base rate is what you knew before either result."
+        },
+        {
+          "q": "Why does Mandel say the usual mammography word problem does not show whether someone can revise a belief?",
+          "a": "The information is not staged, and the experiment does not collect a prior and then a posterior from the same person. It is a one-shot combination of printed statistics."
+        },
+        {
+          "q": "You kept the original 1-in-1,000 as the prior for a second independent positive test. What did you do to the first test?",
+          "a": "You discarded it. The first positive had already moved the probability. Using the population rate again pretends you never saw it."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Mandel, The psychology of Bayesian reasoning (2014)",
+          "u": "https://doi.org/10.3389/fpsyg.2014.01144"
+        },
+        {
+          "t": "Wikipedia contributors, Bayes' theorem (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Bayes%27_theorem"
+        }
+      ]
+    },
+    {
+      "id": "check-sums-to-one",
+      "phase": 6,
+      "label": "Posteriors sum to 1",
+      "desc": "The posteriors of a partition are a probability distribution. They add to 1. If yours do not, the marginal was skipped or a hypothesis was dropped.",
+      "outline": [
+        "List every hypothesis in the partition",
+        "Write the posterior you gave each",
+        "Add them",
+        "If the total is not 1, divide by the total or find the missing hypothesis"
+      ],
+      "ideas": [
+        "OpenIntro's grade-distribution exercise is the same check: shares must add to 1 and must not be negative",
+        "Grinstead's rescaling constant exists so the conditional distribution sums to 1",
+        "The positive predictive value and the probability of health given a positive are one pair: they share the positive column and add to 1"
+      ],
+      "questions": [
+        {
+          "q": "Your two posteriors are 0.7 and 0.7. What is the smallest repair?",
+          "a": "They sum to 1.4, so each still includes a missing division. Divide both by 1.4. You get 0.5 and 0.5. If a third hypothesis belongs in the partition, it has to be in the sum before you divide."
+        },
+        {
+          "q": "OpenIntro asks which proposed grade rows are valid probability distributions. What two failures does a row show?",
+          "a": "The shares do not add to 1, or a share is negative. Both are illegal for the same reason a posterior list is illegal: it is not a distribution on the probability scale."
+        },
+        {
+          "q": "You computed P(disease|positive) = 0.2. What else is determined, and how do you know?",
+          "a": "P(no disease|positive) = 0.8, because those two hypotheses partition the positive column. Grinstead's conditional distribution is scaled to sum to 1. If you cannot name the complement, you do not yet have a posterior."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Diez, Çetinkaya-Rundel, and Barr, OpenIntro Statistics, 4th ed., Chapter 3 (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        },
+        {
+          "t": "Grinstead and Snell, Introduction to Probability, Chapter 4 (GNU FDL)",
+          "u": "https://math.dartmouth.edu/~doyle/docs/prob/prob.pdf"
+        }
+      ]
+    },
+    {
+      "id": "prosecutors-fallacy",
+      "phase": 6,
+      "label": "Prosecutor's fallacy",
+      "desc": "In court the base-rate fallacy has a name. Wikipedia, following Thompson and Schumann, calls it the prosecutor's fallacy: treating a tiny chance of the evidence if innocent as a tiny chance of innocence.",
+      "outline": [
+        "Write the match probability as P(evidence|innocent)",
+        "Write the question the court actually asks, P(innocent|evidence)",
+        "Notice the swap",
+        "Put the base rate of the matching trait, and the size of the search, back into the table"
+      ],
+      "ideas": [
+        "Wikipedia: the base-rate fallacy is called the prosecutor's fallacy in criminal trials, a term from Thompson and Schumann (1987)",
+        "The confusion-of-the-inverse article is the same swap in logical dress",
+        "A small false-alarm rate times a large innocent population is still a large count"
+      ],
+      "questions": [
+        {
+          "q": "What swap does Wikipedia identify when it equates the base-rate fallacy in court with the prosecutor's fallacy?",
+          "a": "The probability of the evidence given innocence is treated as the probability of innocence given the evidence. The name is Thompson and Schumann's, 1987. The arithmetic error is the inverse fallacy plus a missing base rate."
+        },
+        {
+          "q": "A trait occurs in 1 in 1,000 innocent people, and the defendant matches. Why is that not a 999-in-1,000 chance of guilt?",
+          "a": "1 in 1,000 is P(match|innocent), a false-alarm rate. Guilt given the match depends on how many innocent people were in the net. The positive column can still be mostly innocent people who match."
+        },
+        {
+          "q": "Which node in this map is the same mistake outside a courtroom?",
+          "a": "The inverse fallacy, and with it the base-rate fallacy. The courtroom name does not change the conditional that got swapped."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Wikipedia contributors, Base rate fallacy (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Base_rate_fallacy"
+        },
+        {
+          "t": "Wikipedia contributors, Confusion of the inverse (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Confusion_of_the_inverse"
+        }
+      ]
+    },
+    {
+      "id": "where-prior-comes-from",
+      "phase": 6,
+      "label": "Where a prior comes from",
+      "desc": "A screening problem hands you a prevalence. A person with a history hands you a previous posterior. Mandel: different knowledge, different priors, and both can update coherently.",
+      "outline": [
+        "Ask what is known before this result, not what the worksheet's first number is",
+        "Use a prevalence when the person is a new draw from that group",
+        "Use the previous posterior when this result continues an earlier update",
+        "Say so when neither is available: the prior is then a judgment, and two people may differ"
+      ],
+      "ideas": [
+        "Mandel separates the printed base rate from the personal prior",
+        "He allows two people with the same new evidence to start from different priors and both be coherent",
+        "Laplace's sixth principle already multiplies by the prior possibility of each cause"
+      ],
+      "questions": [
+        {
+          "q": "Name two different legitimate priors for 'this person has the condition,' and when each is the right one.",
+          "a": "The group prevalence, when the person is a fresh draw and you know nothing more. The posterior from an earlier independent test, when that test has already been seen. Mandel defines the prior as everything known before the evidence now in hand."
+        },
+        {
+          "q": "Mandel says two people can see the same new fact and assign different probabilities. When is that still coherent?",
+          "a": "When their priors differed because what they already knew differed, and each updates by the rule. Coherence here is not 'everyone states the printed base rate.'"
+        },
+        {
+          "q": "What fails if a worksheet always labels the first printed percent as the prior?",
+          "a": "Accuracy, sensitivity, and prevalence are all percents printed up front. Only the probability of the hypothesis before this evidence is the prior. The label has to follow the meaning, not the order on the page."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Mandel, The psychology of Bayesian reasoning (2014)",
+          "u": "https://doi.org/10.3389/fpsyg.2014.01144"
+        },
+        {
+          "t": "Laplace, A Philosophical Essay on Probabilities (Truscott and Emory, 1902)",
+          "u": "https://www.gutenberg.org/ebooks/58881"
+        }
+      ]
+    },
+    {
+      "id": "what-moves-the-answer",
+      "phase": 6,
+      "label": "What moves the answer",
+      "desc": "The posterior moves when the prior odds move or the likelihood ratio moves. A more accurate test moves it only through that ratio. A rarer condition moves it through the prior.",
+      "outline": [
+        "Change the base rate, hold the test fixed, and watch the positive column",
+        "Change the false-alarm rate, hold the base rate fixed, and watch it again",
+        "See that sensitivity alone cannot rescue a tiny prior against a large healthy group",
+        "Track the same two levers in odds: prior odds, likelihood ratio"
+      ],
+      "ideas": [
+        "Wikipedia's 40% group and 2% group share a test; only the base rate changes, and the positive predictive value flips",
+        "Wikipedia's odds example: a likelihood ratio of 99 against prior odds of 1/99 lands at 1/1",
+        "Ioannidis: the chance a research finding is true moves with how many of the tested hypotheses were true to begin with"
+      ],
+      "questions": [
+        {
+          "q": "Holding the test fixed, what does Wikipedia's comparison of a 40% group and a 2% group isolate?",
+          "a": "The base rate. The false-positive rate stays 5% and there are no misses, but the positive calls go from mostly true to mostly false. The prior is the lever."
+        },
+        {
+          "q": "A likelihood ratio of 99 sounds decisive. Wikipedia multiplies it by prior odds of 1/99. Why is the result only even odds?",
+          "a": "The prior odds were 99 to 1 against. The evidence pulls exactly that hard the other way. Posterior odds are 1 to 1. Strength of evidence is the ratio, not a slogan, and it spends itself against the prior."
+        },
+        {
+          "q": "Ioannidis's point, translated into these two levers, is which one a field controls when it tests long shots?",
+          "a": "The prior. If few of the hypotheses under test are true, the positive predictive value of a 'significant' result stays low even when each study is run carefully. The likelihood ratio of one study does not replace the base rate of true effects."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Wikipedia contributors, Base rate fallacy (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Base_rate_fallacy"
+        },
+        {
+          "t": "Wikipedia contributors, Bayes' theorem (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Bayes%27_theorem"
+        },
+        {
+          "t": "Ioannidis, Why most published research findings are false (PLoS Medicine, 2005)",
+          "u": "https://doi.org/10.1371/journal.pmed.0020124"
+        }
+      ]
+    },
+    {
+      "id": "ruling-out",
+      "phase": 6,
+      "label": "Ruling a cause out",
+      "desc": "A negative result from a highly sensitive test rules a condition out because false negatives are scarce. It does not, by itself, rule a condition in. Ruling in is the positive column.",
+      "outline": [
+        "Ask whether the result is negative or positive",
+        "For a negative, look at sensitivity: misses are false negatives",
+        "For a positive, look at the false-alarm rate and the base rate",
+        "Keep the two decisions in their own columns of the table"
+      ],
+      "ideas": [
+        "Wikipedia: a negative on a high-sensitivity test is useful for ruling out",
+        "The always-positive kit shows sensitivity cannot rule in",
+        "The negative predictive value is the probability you are well given a negative"
+      ],
+      "questions": [
+        {
+          "q": "Wikipedia describes an always-positive test kit. What are its sensitivity and its false-positive rate, and what can it rule?",
+          "a": "Sensitivity is 1, because every sick person tests positive. The false-positive rate is also 1. A negative never happens, and a positive cannot rule the condition in. Sensitivity alone does not identify the sick."
+        },
+        {
+          "q": "Which error must be rare before a negative result rules a condition out?",
+          "a": "A false negative. That scarcity is high sensitivity: sick people are rarely called negative. Wikipedia ties the negative result on such a test to ruling the condition out."
+        },
+        {
+          "q": "You have a high negative predictive value and a low positive predictive value. Which result can you act on, and which one sends you back to the table?",
+          "a": "A negative supports ruling the condition out. A positive does not yet support ruling it in; the positive column is still full of false alarms. The two predictive values are different columns."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Wikipedia contributors, Sensitivity and specificity (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Sensitivity_and_specificity"
+        },
+        {
+          "t": "Wikipedia contributors, Base rate fallacy (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Base_rate_fallacy"
+        }
+      ]
+    },
+    {
+      "id": "explain-rare-event-update",
+      "phase": 6,
+      "label": "Explain a rare-event test",
+      "desc": "The goal: explain a rare-condition test in counts, say what a second independent test uses as its prior, and show the posteriors adding to 1.",
+      "outline": [
+        "Start from a concrete group and the base rate, in counts",
+        "Split positives into true positives and false alarms",
+        "State the positive predictive value as that ratio, and its complement",
+        "For a second independent positive, carry the posterior forward and check the new pair still adds to 1"
+      ],
+      "ideas": [
+        "Wikipedia: if prevalence is below the false-positive rate, most positives are false alarms",
+        "Mandel: the next prior is everything known before the next result, which includes the first posterior",
+        "OpenIntro and Grinstead: after you divide by the marginal, the hypothesis probabilities are a distribution"
+      ],
+      "questions": [
+        {
+          "q": "A condition is rarer than the test's false-alarm rate, and someone tests positive. What do you say, in counts, about why most such positives are false alarms?",
+          "a": "In a large healthy group a small false-alarm rate still produces many positives. The sick group is small, so its true positives can be fewer. Wikipedia states the comparison directly: when prevalence is lower than the false-positive rate, false positives outnumber true positives. The positive predictive value is the true-positive count over all positives."
+        },
+        {
+          "q": "The same person tests positive again, on a test whose errors are independent of the first. What is the prior, and what would be the wrong prior?",
+          "a": "The prior is the posterior after the first test, because Mandel defines the prior as everything known before the new evidence. The wrong prior is the original population rate, which pretends the first test did not happen. Independence is what lets the new likelihood multiply rather than repeat the old error."
+        },
+        {
+          "q": "Your worked posteriors add to 0.8. What is missing, and what do they become?",
+          "a": "The division by the marginal evidence. Divide each weight by 0.8. OpenIntro requires a distribution to sum to 1, and Grinstead rescales a conditional distribution for that reason. Until you do, the numbers are not posteriors."
+        }
+      ],
+      "sources": [
+        {
+          "t": "Wikipedia contributors, Base rate fallacy (CC BY-SA 4.0)",
+          "u": "https://en.wikipedia.org/wiki/Base_rate_fallacy"
+        },
+        {
+          "t": "Mandel, The psychology of Bayesian reasoning (2014)",
+          "u": "https://doi.org/10.3389/fpsyg.2014.01144"
+        },
+        {
+          "t": "Diez, Çetinkaya-Rundel, and Barr, OpenIntro Statistics, 4th ed., Chapter 3 (2019)",
+          "u": "https://www.openintro.org/book/os/"
+        },
+        {
+          "t": "Grinstead and Snell, Introduction to Probability, Chapter 4 (GNU FDL)",
+          "u": "https://math.dartmouth.edu/~doyle/docs/prob/prob.pdf"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "outcomes-and-events",
+      "to": "probability-scale",
+      "why": "A probability is assigned to events in the outcome list. The scale has nothing to attach to until those events exist."
+    },
+    {
+      "from": "outcomes-and-events",
+      "to": "complement-rule",
+      "why": "The complement is the outcomes left over. You cannot name the remainder of an event you have not defined."
+    },
+    {
+      "from": "outcomes-and-events",
+      "to": "addition-rule",
+      "why": "Adding probabilities is legal for disjoint events, and disjoint means the events share no outcomes. The outcome list comes first."
+    },
+    {
+      "from": "sample-space",
+      "to": "probability-scale",
+      "why": "The scale's top, certainty, is the whole sample space. A probability is a share of that space, so the space is the unit you are sharing."
+    },
+    {
+      "from": "sample-space",
+      "to": "equally-likely",
+      "why": "Equal likelihood is a claim about the cases in the sample space. Laplace's count is favorable cases over all cases possible, and the denominator is that space."
+    },
+    {
+      "from": "counting-cases",
+      "to": "addition-rule",
+      "why": "The addition rule adds weights of cases. You need the case count, and the warning that only equally weighed cases add as raw counts, before the sum means a probability."
+    },
+    {
+      "from": "counting-cases",
+      "to": "equally-likely",
+      "why": "A count becomes a probability only after you have checked the cases are equally possible. The count is the material that check is applied to."
+    },
+    {
+      "from": "counting-cases",
+      "to": "natural-frequencies",
+      "why": "A natural frequency is a count that kept its group. Without the habit of counting cases, the nested table is just another percent in disguise."
+    },
+    {
+      "from": "long-run-frequency",
+      "to": "probability-scale",
+      "why": "A long-run rate is a probability on the 0-to-1 scale: so many per hundred repeats. That reading is one justification of the scale."
+    },
+    {
+      "from": "long-run-frequency",
+      "to": "natural-frequencies",
+      "why": "Natural frequencies are the long-run reading left as counts inside one group, instead of cancelled down to a single percent."
+    },
+    {
+      "from": "degree-of-belief",
+      "to": "probability-scale",
+      "why": "A degree of belief is the other reading of the same 0-to-1 scale. Laplace ties the number to knowledge and ignorance, and it still has to live between impossible and certain."
+    },
+    {
+      "from": "probability-scale",
+      "to": "conditional-probability",
+      "why": "The conditional is a ratio of two probabilities. Both have to already sit on one scale, or the ratio is not a probability."
+    },
+    {
+      "from": "natural-frequencies",
+      "to": "conditional-probability",
+      "why": "Conditioning is what you do when you keep only the rows that meet the condition and read the share inside them. The nested count is that operation with the arithmetic showing."
+    },
+    {
+      "from": "natural-frequencies",
+      "to": "joint-probability",
+      "why": "The joint is one cell of the count. Natural frequencies put that cell on the page before it is turned into a symbol."
+    },
+    {
+      "from": "addition-rule",
+      "to": "joint-probability",
+      "why": "A marginal is the sum of the joint cells in a row or column. You need the addition rule for disjoint cells before that margin is a probability."
+    },
+    {
+      "from": "natural-frequencies",
+      "to": "probability-trees",
+      "why": "A tree is the nested count drawn as branches. The first split is the base group; the second split is the cue. Frequencies tell you which numbers go on the branches."
+    },
+    {
+      "from": "equally-likely",
+      "to": "probability-trees",
+      "why": "Branch thickness is a claim about equal or unequal cases. A tree drawn with equal branches has already assumed Laplace's equal possibility, which a rare disease does not have."
+    },
+    {
+      "from": "addition-rule",
+      "to": "overlap-vs-exclusive",
+      "why": "Exclusive events are exactly the ones the disjoint addition rule allows you to add. You cannot see how overlap differs until that rule is in hand."
+    },
+    {
+      "from": "complement-rule",
+      "to": "overlap-vs-exclusive",
+      "why": "Checking a relation against the complement is how you tell exclusion from a mere lack of overlap in one direction. The remainder of the event has to be named first."
+    },
+    {
+      "from": "complement-rule",
+      "to": "conditioning-shrinks",
+      "why": "Shrinking the denominator throws out the cases the evidence rules out. Those ruled-out cases are a complement of the condition. You need the complement before you know what was removed."
+    },
+    {
+      "from": "natural-frequencies",
+      "to": "conditioning-shrinks",
+      "why": "The new denominator is the count that survived. Natural frequencies keep that count visible instead of cancelling it into a percent you can no longer shrink."
+    },
+    {
+      "from": "conditional-probability",
+      "to": "multiplication-rule",
+      "why": "OpenIntro's multiplication rule is the conditional definition rearranged: joint equals condition times conditional. The conditional has to come first because the product is defined from it."
+    },
+    {
+      "from": "joint-probability",
+      "to": "multiplication-rule",
+      "why": "The product is a way to build the joint. You need to know what a joint is — both things happening — before a product of two different probabilities is that quantity."
+    },
+    {
+      "from": "conditional-probability",
+      "to": "independence",
+      "why": "Independence is the special case P(A|B) = P(A). Without the conditional, the sentence cannot even be written."
+    },
+    {
+      "from": "overlap-vs-exclusive",
+      "to": "independence",
+      "why": "People add exclusive events and multiply independent ones. Independence is invisible as its own relation until exclusion is already a different tool on the table."
+    },
+    {
+      "from": "probability-trees",
+      "to": "total-probability",
+      "why": "Total probability adds the paths that end in the same observation. The tree is where those paths were multiplied. The sum is the next operation, not a new idea."
+    },
+    {
+      "from": "conditioning-shrinks",
+      "to": "total-probability",
+      "why": "Each path weight uses a shrunk group, the cases inside one hypothesis. Total probability adds those already-conditional pieces back up, so the shrinking step is what made the pieces."
+    },
+    {
+      "from": "conditional-probability",
+      "to": "inverting-conditional",
+      "why": "Inversion is asking for the other conditional of the same pair. You have to know what one conditional means before 'the other one' is a different question."
+    },
+    {
+      "from": "joint-probability",
+      "to": "inverting-conditional",
+      "why": "Both conditionals are ratios of one joint. The joint is why an inversion is possible at all: the two questions share a cell and differ in the margin."
+    },
+    {
+      "from": "multiplication-rule",
+      "to": "bayes-rule",
+      "why": "Bayes' numerator is the multiplication rule: prior times likelihood is the joint of hypothesis and evidence. The fraction is that product, normalized."
+    },
+    {
+      "from": "total-probability",
+      "to": "bayes-rule",
+      "why": "Bayes' denominator is the law of total probability applied to the evidence. Without that sum, the fraction's bottom is an unspecified P(evidence)."
+    },
+    {
+      "from": "total-probability",
+      "to": "prior",
+      "why": "The priors are the weights on the partition that total probability adds over. They are fixed before the evidence is folded in, which is what 'before' means."
+    },
+    {
+      "from": "multiplication-rule",
+      "to": "likelihood",
+      "why": "The likelihood is the conditional factor in the product, the probability of the evidence once the hypothesis is assumed. The product distinguishes that factor from the prior factor."
+    },
+    {
+      "from": "inverting-conditional",
+      "to": "likelihood",
+      "why": "The likelihood is the conditional you were given, the one that still needs inverting. Naming it as given, not as the answer, is the inversion problem stated on one side of the bar."
+    },
+    {
+      "from": "total-probability",
+      "to": "marginal-evidence",
+      "why": "The marginal evidence is the total-probability sum itself: every route to what you saw, added. The name changes; the sum does not."
+    },
+    {
+      "from": "multiplication-rule",
+      "to": "marginal-evidence",
+      "why": "Each route in that sum is a product of a prior and a likelihood. The marginal is those products added, so the product has to exist first."
+    },
+    {
+      "from": "inverting-conditional",
+      "to": "posterior",
+      "why": "The posterior is the inverted conditional, P(hypothesis|evidence). Inversion names the target; the posterior is that target once the fraction is evaluated."
+    },
+    {
+      "from": "total-probability",
+      "to": "posterior",
+      "why": "The posterior divides by the total-probability sum. A weight that has not been through that sum is not yet a posterior, because it is not conditional on all the ways the evidence happens."
+    },
+    {
+      "from": "multiplication-rule",
+      "to": "odds-form",
+      "why": "Odds-form Bayes multiplies prior odds by a ratio of likelihoods. Multiplication is the update. The ratio is two products with the marginal cancelled."
+    },
+    {
+      "from": "independence",
+      "to": "odds-form",
+      "why": "Stacking likelihood ratios presumes each new result is independent of the last. Without independence, the second ratio is not a new factor and the odds product overcounts one error."
+    },
+    {
+      "from": "likelihood",
+      "to": "sensitivity",
+      "why": "Sensitivity is one likelihood: the probability of a positive result given the condition. It inherits the likelihood's direction, evidence given hypothesis."
+    },
+    {
+      "from": "likelihood",
+      "to": "false-alarm-rate",
+      "why": "The false-alarm rate is the other likelihood, the probability of a positive result given health. Same direction of the bar, other hypothesis."
+    },
+    {
+      "from": "likelihood",
+      "to": "specificity",
+      "why": "Specificity is the likelihood of a negative result given health. It is a likelihood about the complementary evidence, not a posterior."
+    },
+    {
+      "from": "prior",
+      "to": "base-rate",
+      "why": "In a screening problem the base rate is the prior: how common the condition was before this test. The prior slot is what makes the prevalence do that job."
+    },
+    {
+      "from": "posterior",
+      "to": "ppv",
+      "why": "The positive predictive value is one posterior, P(condition|positive). It is the inverted conditional for a positive result, which is why it is not the sensitivity."
+    },
+    {
+      "from": "bayes-rule",
+      "to": "ppv",
+      "why": "You compute a positive predictive value by putting the test's two likelihoods and the prior into Bayes' rule. The name is the posterior of a positive test."
+    },
+    {
+      "from": "posterior",
+      "to": "npv",
+      "why": "The negative predictive value is the posterior of health given a negative result. Same object as any posterior, other column of the table."
+    },
+    {
+      "from": "bayes-rule",
+      "to": "npv",
+      "why": "The negative column has its own Bayes fraction: likelihood of a negative under each hypothesis, same prior, new evidence. The rule does not change when the result flips."
+    },
+    {
+      "from": "prior",
+      "to": "base-rate-fallacy",
+      "why": "The fallacy is what happens when the prior is dropped. You have to know the prior was required before you can see that an answer equal to the accuracy never used it."
+    },
+    {
+      "from": "posterior",
+      "to": "base-rate-fallacy",
+      "why": "The fallacy is recognized by comparing the quoted answer with the posterior. Mandel's 0.80 likelihood against his 0.078 posterior is that comparison."
+    },
+    {
+      "from": "likelihood",
+      "to": "inverse-fallacy",
+      "why": "The inverse fallacy reports a likelihood as if it were the answer. The likelihood has to be identified first, or the swap has nothing to swap."
+    },
+    {
+      "from": "posterior",
+      "to": "inverse-fallacy",
+      "why": "The fallacy confuses the posterior you owe with the likelihood you were handed. Both sides of the confusion need their names."
+    },
+    {
+      "from": "odds-form",
+      "to": "likelihood-ratio",
+      "why": "The likelihood ratio is the factor the odds form multiplies by. It is defined as the update weight in that form, once prior odds are already a separate factor."
+    },
+    {
+      "from": "likelihood",
+      "to": "likelihood-ratio",
+      "why": "The ratio is one likelihood divided by the likelihood under the alternative. Neither entry exists until a likelihood is a probability of evidence given a hypothesis."
+    },
+    {
+      "from": "marginal-evidence",
+      "to": "ignoring-the-marginal",
+      "why": "Skipping the marginal is a named mistake only after the marginal is the bottom of the fraction. The failure is refusing a quantity you can already compute."
+    },
+    {
+      "from": "posterior",
+      "to": "ignoring-the-marginal",
+      "why": "The symptom is a list of would-be posteriors that do not add to 1. You see the skip by comparing those weights with a real posterior, which has been divided."
+    },
+    {
+      "from": "sensitivity",
+      "to": "counts-table",
+      "why": "The true-positive cell is the sick group times the sensitivity. The table cannot be filled from the base rate alone."
+    },
+    {
+      "from": "false-alarm-rate",
+      "to": "counts-table",
+      "why": "The false-positive cell is the healthy group times the false-alarm rate. That cell is most of a rare-event table, so the rate has to be in hand."
+    },
+    {
+      "from": "specificity",
+      "to": "counts-table",
+      "why": "Specificity fixes the true-negative cell, and on a yes-or-no test it also fixes the false-alarm rate as its complement. The healthy row of the table is that pair."
+    },
+    {
+      "from": "base-rate",
+      "to": "counts-table",
+      "why": "The base rate sizes the sick group and the healthy group. Without it the two likelihoods have no groups to multiply."
+    },
+    {
+      "from": "likelihood-ratio",
+      "to": "several-hypotheses",
+      "why": "With several hypotheses, each gets a likelihood in the numerator and the ratio between any two is their odds factor. The two-hypothesis ratio is the pattern you extend, not a different rule."
+    },
+    {
+      "from": "base-rate",
+      "to": "several-hypotheses",
+      "why": "Each hypothesis needs a prior weight, and in a population those weights are base rates of each cause. They have to sum to 1 across the whole list."
+    },
+    {
+      "from": "ignoring-the-marginal",
+      "to": "sequential-update",
+      "why": "You carry a posterior forward, not an un-normalized weight. Skipping the marginal on the first test hands the second test a prior that is not a probability."
+    },
+    {
+      "from": "ppv",
+      "to": "sequential-update",
+      "why": "After one positive test, the number you believe is the positive predictive value. That number is what a second test must take as its prior, in place of the original base rate."
+    },
+    {
+      "from": "ignoring-the-marginal",
+      "to": "check-sums-to-one",
+      "why": "The sum-to-1 check is how you catch a skipped marginal. The weights add to the marginal; the posteriors add to 1. The check tells those apart."
+    },
+    {
+      "from": "npv",
+      "to": "check-sums-to-one",
+      "why": "The negative predictive value and the probability of disease given a negative are one distribution. Checking they add to 1 is the same check as on the positive column."
+    },
+    {
+      "from": "inverse-fallacy",
+      "to": "prosecutors-fallacy",
+      "why": "The prosecutor's fallacy is the inverse fallacy spoken in court: the chance of the evidence if innocent is treated as the chance of innocence. The swap is the same swap."
+    },
+    {
+      "from": "ppv",
+      "to": "prosecutors-fallacy",
+      "why": "The quantity the court owes is a positive predictive value, the posterior of guilt given the match. Naming that value shows what the quoted match-probability replaced."
+    },
+    {
+      "from": "base-rate",
+      "to": "where-prior-comes-from",
+      "why": "One legitimate prior is the base rate of the group the person is drawn from. Knowing that source is what lets you notice when it is the wrong source."
+    },
+    {
+      "from": "base-rate-fallacy",
+      "to": "where-prior-comes-from",
+      "why": "The fallacy often comes from grabbing the wrong printed percent as the prior. Tracing where a prior may come from is how you stop taking the first percent on the page."
+    },
+    {
+      "from": "likelihood-ratio",
+      "to": "what-moves-the-answer",
+      "why": "One lever on the posterior odds is the likelihood ratio. Changing the test changes the answer only by changing that factor."
+    },
+    {
+      "from": "base-rate-fallacy",
+      "to": "what-moves-the-answer",
+      "why": "The other lever is the prior, and the fallacy is what you get by refusing to move it. Seeing the failure shows you which input actually swings a rare-event problem."
+    },
+    {
+      "from": "npv",
+      "to": "ruling-out",
+      "why": "Ruling out is believing the condition is absent after a negative, which is the negative predictive value. The decision inherits that posterior."
+    },
+    {
+      "from": "specificity",
+      "to": "ruling-out",
+      "why": "Specificity, through the scarcity of false alarms among the well, is only half of a negative column. High sensitivity is what makes a negative rare among the sick. You need the true-negative idea in hand to see which error a negative result speaks to."
+    },
+    {
+      "from": "counts-table",
+      "to": "explain-rare-event-update",
+      "why": "The explanation owed is a count: true positives against false alarms. The table is that explanation, and the goal is being able to say it."
+    },
+    {
+      "from": "several-hypotheses",
+      "to": "explain-rare-event-update",
+      "why": "A real update may have more than two rows. The goal includes not forcing a rare-event story into a single yes against an unspoken everything-else."
+    },
+    {
+      "from": "sequential-update",
+      "to": "explain-rare-event-update",
+      "why": "The goal's second half is a second test. Carrying the posterior is the step that test requires, so the explanation has to include it."
+    },
+    {
+      "from": "check-sums-to-one",
+      "to": "explain-rare-event-update",
+      "why": "The goal asks you to notice when the posteriors do not add to 1. The check is the last line of the explanation, not an optional audit."
+    },
+    {
+      "from": "prosecutors-fallacy",
+      "to": "explain-rare-event-update",
+      "why": "The rare-event mistake shows up in clinics and in court under different names. An explanation that only works for medical words has not grasped the swap."
+    },
+    {
+      "from": "where-prior-comes-from",
+      "to": "explain-rare-event-update",
+      "why": "The second test is exactly the question of where the prior comes from. The goal is unfinished if the original base rate is reused out of habit."
+    },
+    {
+      "from": "what-moves-the-answer",
+      "to": "explain-rare-event-update",
+      "why": "A good explanation says which input did the work: the thin prior, the false-alarm rate, or a likelihood ratio. Naming the lever is part of explaining the number."
+    },
+    {
+      "from": "ruling-out",
+      "to": "explain-rare-event-update",
+      "why": "The same table tells you when a negative rules the condition out. The goal's explanation is lopsided if it only talks about positives."
+    }
+  ]
+}
+/*DATA-END*/
+;
+
+/*MAP-THEME-START*/
+const THEME={
+  name:"Ink and evidence",
+  rationale:"A proof notebook: cool paper, slate-blue evidence accumulating into indigo belief. The depth ramp darkens left to right, from a pale first principle to a settled posterior.",
+  webfont:"https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,600;6..72,700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap",
+  fontDisplay:"'Newsreader', 'Iowan Old Style', Georgia, serif",
+  fontBody:"'Source Sans 3', 'Segoe UI', Helvetica, Arial, sans-serif",
+  vars:{ink:"#1B2836","ink-2":"#314256",muted:"#5C6B7A",line:"#D5DDE6",bg:"#F4F7FB",panel:"#FFFFFF",accent:"#1A4468","dep-bg":"#E7EEF5",edge:"#5C7C99","edge-related":"#1A4468","hover-bg":"#E4EDF6",match:"#0F6B4C","btn-hover-border":"#8AA4BC","overlay-bg":"rgba(244,247,251,0.94)","overlay-bg-2":"rgba(244,247,251,0.82)"},
+  anchors:["#A9C0D4","#86A8C6","#628EAE","#457494","#2C5878","#1A3C58"]
+};
+/*MAP-THEME-END*/
+
+// ---------- theme applier (engine — edit THEME above, never this) ----------
+const appliedVars=[];
+function applyTheme(t){
+  const r=document.documentElement.style;
+  appliedVars.splice(0).forEach(k=>r.removeProperty("--"+k));
+  if(!t)return;
+  if(t.webfont&&!document.querySelector('link[href="'+t.webfont+'"]')){const l=document.createElement("link");l.rel="stylesheet";l.href=t.webfont;document.head.appendChild(l);}
+  const set=(k,v)=>{if(v){r.setProperty("--"+k,v);appliedVars.push(k);}};
+  Object.keys(t.vars||{}).forEach(k=>set(k,t.vars[k]));
+  set("font-display",t.fontDisplay);set("font-body",t.fontBody);
+}
+const THEME_DEFAULT={name:"Neutral slate",rationale:"Neutral default.",webfont:"",fontDisplay:"-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif",fontBody:"-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif",vars:{},anchors:["#1e3a8a","#2563eb","#0d9488","#16a34a","#ca8a04","#eab308"]};
+applyTheme(typeof THEME!=="undefined"?THEME:null);
+
+/*MAP-METADATA-START*/
+const THEMES=[
+ {name:"Events and chance",color:"#3E6D8C"},
+ {name:"Probability rules",color:"#2F6F6A"},
+ {name:"Conditioning",color:"#4E7A45"},
+ {name:"Path into the rule",color:"#8A6A32"},
+ {name:"Prior, likelihood, posterior",color:"#8A4E62"},
+ {name:"Tests, base rates, and mistakes",color:"#5C4D8A"},
+ {name:"Working an update",color:"#1E4E78"}
+];
+const THEME_BLURBS=[
+ "What a probability is about: outcomes, the full list of cases, counts, a long-run rate, and a degree of belief.",
+ "The scale, the complement, addition, and the warning that a raw count is a probability only for equally possible cases.",
+ "Conditioning, joints, trees, and the difference between exclusive events and independent ones.",
+ "The product, independence, the sum over routes, and the job of turning one conditional into the other.",
+ "Bayes' rule and the four quantities it ties together, plus the odds form where the marginal cancels.",
+ "What a test's published rates mean, and the two swaps that make a rare positive look decisive.",
+ "Doing the update in counts, carrying it to a second test, and checking the result is a distribution."
+];
+const GOAL_STATEMENT="Enough Bayes' rule to update a belief when new evidence arrives: work a rare-condition test in counts, update again on a second independent test, and check that the posterior probabilities add to 1.";
+const GOAL_SOURCES_NOTE="The spine is OpenIntro Statistics, 4th ed., Chapter 3 (Diez, Çetinkaya-Rundel, and Barr, CC BY-SA 3.0) and Grinstead and Snell, Introduction to Probability, Chapter 4 (GNU FDL). Laplace's Philosophical Essay on Probabilities (public domain) supplies the principles. Screening mistakes and the count method come from Mandel (2014), Hoffrage, Krauss, Martignon, and Gigerenzer (2015), Brase and Hill (2015), and the Wikipedia articles on Bayes' theorem, the base-rate fallacy, and sensitivity and specificity. The Stanford Encyclopedia entry is linked, not copied. Out of scope: MCMC, hierarchical models, and variational inference.";
+const SUGGESTED_PATH=[
+ {h:"Events and chance",t:"Outcomes, the sample space, counting cases, and the two readings of a probability."},
+ {h:"Probability rules",t:"The scale, complements, addition, equally likely cases, and natural frequencies."},
+ {h:"Conditioning",t:"Conditionals, joints, trees, and why exclusion is not independence."},
+ {h:"Path into the rule",t:"The product, total probability, and what it means to invert a conditional."},
+ {h:"Prior, likelihood, posterior",t:"Bayes' rule, the four quantities, and the odds form."},
+ {h:"Tests and mistakes",t:"Sensitivity, false alarms, base rates, and the inverse fallacy."},
+ {h:"Working an update",t:"A count table, a second test, and the check that posteriors add to 1."}
+];
+const BUILD=1;
+/*MAP-METADATA-END*/
+
+// ---------- topological levels ----------
+const LEVEL={};DATA.nodes.forEach(n=>LEVEL[n.id]=0);
+let changed=true,levelGuard=0;
+while(changed&&levelGuard++<=DATA.nodes.length+1){
+  changed=false;
+  for(const e of DATA.edges){
+    if(LEVEL[e.to]<LEVEL[e.from]+1){LEVEL[e.to]=LEVEL[e.from]+1;changed=true;}
+  }
+}
+const MAXL=Math.max(...Object.values(LEVEL));
+const NLEVELS=MAXL+1;
+if(changed)console.error("WARNING: cycle detected in edges — prerequisite graph is not a DAG; level layout is truncated. Run the validator.");
+// Layout uses the computed longest-path levels as-is. Do not invent skip-level
+// edges here — the validator requires every DATA edge to be adjacent (k → k+1).
+DATA.edges.forEach(e=>{
+  const span=LEVEL[e.to]-LEVEL[e.from];
+  if(span!==1)console.error("WARNING: non-adjacent edge",e.from,"->",e.to,"span",span,"— drop, bridge, or demote to see-also; do not redraw it as a long diagonal.");
+});
+
+// depth color scale: early → late
+const ANCHORS=(typeof THEME!=="undefined"&&THEME.anchors&&THEME.anchors.length>=2)?THEME.anchors:["#1e3a8a","#2563eb","#0d9488","#16a34a","#ca8a04","#eab308"]; // depth ramp — set in MAP-THEME
+function hex2rgb(h){return [1,3,5].map(i=>parseInt(h.slice(i,i+2),16));}
+function rgb2hex(r){return "#"+r.map(v=>v.toString(16).padStart(2,"0")).join("");}
+function levelColor(l){
+  const t=MAXL?l/MAXL:0,seg=t*(ANCHORS.length-1);
+  const i=Math.min(Math.floor(seg),ANCHORS.length-2),f=seg-i;
+  const a=hex2rgb(ANCHORS[i]),b=hex2rgb(ANCHORS[i+1]);
+  return rgb2hex(a.map((v,k)=>Math.round(v+(b[k]-v)*f)));
+}
+const LCOL=Array.from({length:NLEVELS},(_,l)=>levelColor(l));
+const LUM=h=>{const a=hex2rgb(h).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*a[0]+.7152*a[1]+.0722*a[2]};
+
+// ---------- helpers ----------
+const $=s=>document.querySelector(s);
+const SVGNS="http://www.w3.org/2000/svg";
+function svgEl(tag,attrs){const el=document.createElementNS(SVGNS,tag);for(const k in attrs)el.setAttribute(k,attrs[k]);return el;}
+function nodeById(id){return DATA.nodes.find(n=>n.id===id);}
+function nodeLabel(id){return nodeById(id).label;}
+function learnerStateOf(n){
+  return (n&&(n.learner==="known"||n.learner==="frontier"||n.learner==="later"))?n.learner:"";
+}
+function learnerNote(){
+  return (typeof LEARNER_NOTE==="string"&&LEARNER_NOTE.trim())?LEARNER_NOTE.trim():"";
+}
+function learnerEntry(){
+  return (typeof LEARNER_ENTRY==="string")?LEARNER_ENTRY:"";
+}
+function hasLearnerData(){
+  return DATA.nodes.some(n=>learnerStateOf(n))||!!learnerNote()||!!learnerEntry();
+}
+function learnerEntryId(){
+  const named=learnerEntry();
+  if(named&&DATA.nodes.some(n=>n.id===named))return named;
+  const f=DATA.nodes.find(n=>n.learner==="frontier");
+  return f?f.id:"";
+}
+function wrapLabel(t){
+  const max=17,words=t.split(" "),lines=[];let cur="";
+  for(const w of words){const cand=cur?cur+" "+w:w;if(cand.length<=max||!cur){cur=cand;}else{lines.push(cur);cur=w;}}
+  if(cur)lines.push(cur);
+  return lines.slice(0,3);
+}
+function mq(q){return typeof matchMedia==="function"&&matchMedia(q).matches;}
+function isNarrow(){return mq("(max-width:900px)");}
+function isCoarse(){return mq("(pointer: coarse)");}
+function usesTouchCopy(){return isNarrow()||isCoarse();}
+function hintCopy(){
+  return usesTouchCopy()
+    ? "A → B means “learn A before B”. Tap any arrow to see <b>why</b> it is a prerequisite."
+    : "A → B means “learn A before B”. Hover or click any arrow to see <b>why</b> it is a prerequisite.";
+}
+
+// ---------- layout: columns = topological levels ----------
+const NODE_W=200,NODE_H=52,GAP_Y=16,GAP_X=74,TOP=64,LEFT=56,MAX_PER_COL=8;
+const cols=[];
+for(let l=0;l<NLEVELS;l++){
+  const ids=DATA.nodes.filter(n=>LEVEL[n.id]===l).map(n=>n.id);
+  for(let i=0;i<ids.length;i+=MAX_PER_COL)cols.push({level:l,ids:ids.slice(i,i+MAX_PER_COL),cont:i>0});
+}
+let cx=LEFT;cols.forEach(c=>{c.x=cx;cx+=NODE_W+GAP_X;});
+const pos={};
+function assignY(){cols.forEach(c=>c.ids.forEach((id,i)=>{pos[id]={x:c.x,y:TOP+i*(NODE_H+GAP_Y)};}));}
+assignY();
+function barycenterPass(dir){
+  const seq=dir>0?cols:[...cols].reverse();
+  seq.forEach((c,ci)=>{
+    const skip=dir>0?ci===0:ci===cols.length-1;
+    if(skip)return;
+    const scored=c.ids.map((id,idx)=>{
+      let sum=0,cnt=0;
+      for(const e of DATA.edges){
+        let other=null;
+        if(e.from===id)other=e.to;else if(e.to===id)other=e.from;else continue;
+        const p2=pos[other];if(!p2)continue;
+        sum+=p2.y+NODE_H/2;cnt++;
+      }
+      return{id,idx,score:cnt?sum/cnt:pos[id].y+NODE_H/2};
+    });
+    scored.sort((a,b)=>a.score-b.score||a.idx-b.idx);
+    c.ids=scored.map(s=>s.id);
+  });
+  assignY();
+}
+for(let i=0;i<6;i++)barycenterPass(i%2===0?1:-1);
+// The entry flag is drawn 16px above its node. If the entry is not the first
+// card in its column, that flag lands on the card above. Open a gap so it doesn't.
+if(hasLearnerData()){
+  const entry=learnerEntryId();
+  const col=cols.find(c=>c.ids.includes(entry));
+  if(col){
+    const idx=col.ids.indexOf(entry);
+    if(idx>0){for(let i=idx;i<col.ids.length;i++)pos[col.ids[i]].y+=20;}
+  }
+}
+let maxX=0,maxY=0;
+cols.forEach(c=>{maxX=Math.max(maxX,c.x+NODE_W);});
+Object.values(pos).forEach(p=>{maxY=Math.max(maxY,p.y+NODE_H);});
+
+// ---------- render ----------
+const svg=$("#graph");
+const gRoot=svgEl("g");svg.appendChild(gRoot);
+const gBg=svgEl("g"),gEdges=svgEl("g"),gNodes=svgEl("g");
+gRoot.appendChild(gBg);gRoot.appendChild(gEdges);gRoot.appendChild(gNodes);
+const edgeEls=[],nodeEls={},colEls=[];
+
+cols.forEach(c=>{
+  const color=LCOL[c.level];
+  const lift=hasLearnerData()&&c.ids.includes(learnerEntryId())?22:0;
+  let minY=Infinity,maxCy=-Infinity;
+  c.ids.forEach(id=>{minY=Math.min(minY,pos[id].y);maxCy=Math.max(maxCy,pos[id].y+NODE_H);});
+  const r=svgEl("rect",{x:c.x-16,y:minY-34-lift,width:NODE_W+32,height:maxCy-minY+50+lift,rx:14,fill:color,"class":"colbg"});
+  gBg.appendChild(r);colEls.push(r);
+  const t=svgEl("text",{x:c.x+NODE_W/2,y:minY-(lift?36:14),"text-anchor":"middle","class":"collabel","data-level":c.level,fill:color});
+  t.textContent="Level "+c.level+(c.cont?" (cont.)":"")+" · "+c.ids.length;
+  gBg.appendChild(t);
+});
+
+DATA.edges.forEach((e,i)=>{
+  const a=pos[e.from],b=pos[e.to];
+  const x1=a.x+NODE_W,y1=a.y+NODE_H/2,x2=b.x,y2=b.y+NODE_H/2;
+  const dx=Math.max(46,(x2-x1)*0.5);
+  const g=svgEl("g",{"class":"edge","data-i":i});
+  const line=svgEl("path",{d:`M ${x1} ${y1} C ${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2-7} ${y2}`,"class":"line"});
+  const arrow=svgEl("polygon",{points:`${x2},${y2} ${x2-8},${y2-4} ${x2-8},${y2+4}`});
+  const hit=svgEl("path",{d:`M ${x1} ${y1} C ${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2} ${y2}`,"class":"hit"});
+  g.appendChild(line);g.appendChild(arrow);g.appendChild(hit);
+  gEdges.appendChild(g);edgeEls.push(g);
+  g.addEventListener("mouseenter",ev=>onEdgeEnter(i,ev));
+  g.addEventListener("mousemove",ev=>onEdgeMove(ev));
+  g.addEventListener("mouseleave",()=>onEdgeLeave(i));
+});
+
+DATA.nodes.forEach(n=>{
+  const p=pos[n.id],color=LCOL[LEVEL[n.id]];
+  const ls=learnerStateOf(n);
+  const isEntry=hasLearnerData()&&n.id===learnerEntryId();
+  const here=isEntry||ls==="frontier";
+  const g=svgEl("g",{"class":"node"+(ls?" learner-"+ls:"")+(isEntry?" learner-here":""),"data-id":n.id,transform:`translate(${p.x},${p.y})`});
+  if(here){
+    g.appendChild(svgEl("rect",{x:-5,y:-5,width:NODE_W+10,height:NODE_H+10,rx:13,"class":"here-ring"}));
+  }
+  const rect=svgEl("rect",{x:0,y:0,width:NODE_W,height:NODE_H,rx:10,"class":"main",fill:color,"fill-opacity":0.12,stroke:color});
+  g.appendChild(rect);
+  const lines=wrapLabel(n.label),midY=NODE_H/2;
+  const txt=svgEl("text",{"text-anchor":"middle",x:NODE_W/2});
+  lines.forEach((ln,i)=>{
+    const ts=svgEl("tspan",{x:NODE_W/2,y:midY+(i-(lines.length-1)/2)*16+4});
+    ts.textContent=ln;txt.appendChild(ts);
+  });
+  g.appendChild(txt);
+  if(isEntry){
+    const flag=svgEl("text",{x:NODE_W/2,y:-16,"text-anchor":"middle","class":"here-flag"});
+    flag.textContent="Start here";
+    g.appendChild(flag);
+  }
+  gNodes.appendChild(g);nodeEls[n.id]=g;
+});
+
+// ---------- view transform ----------
+const state={sel:null};
+let view={x:0,y:0,k:1};
+let viewTouched=false;
+function applyView(){gRoot.setAttribute("transform",`translate(${view.x},${view.y}) scale(${view.k})`);}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function zoomAt(px,py,f){
+  const k2=clamp(view.k*f,0.18,3.2),r=k2/view.k;
+  view.x=px-(px-view.x)*r;view.y=py-(py-view.y)*r;view.k=k2;applyView();
+}
+svg.addEventListener("wheel",e=>{
+  e.preventDefault();viewTouched=true;
+  const rect=svg.getBoundingClientRect();
+  zoomAt(e.clientX-rect.left,e.clientY-rect.top,Math.exp(-e.deltaY*0.0016));
+},{passive:false});
+
+const pointers=new Map();
+let panning=false,panStart=null,dragMoved=false,pinch0=null;
+function pointerXY(e){return {cx:e.clientX,cy:e.clientY};}
+function pinchState(){
+  const pts=[...pointers.values()];
+  if(pts.length<2)return null;
+  const rect=svg.getBoundingClientRect();
+  return {
+    dist:Math.hypot(pts[0].cx-pts[1].cx,pts[0].cy-pts[1].cy),
+    midX:(pts[0].cx+pts[1].cx)/2-rect.left,
+    midY:(pts[0].cy+pts[1].cy)/2-rect.top
+  };
+}
+function applyPinch(){
+  const now=pinchState();
+  if(!now||!pinch0)return;
+  const k2=clamp(pinch0.k*(now.dist/Math.max(8,pinch0.dist)),0.18,3.2);
+  const r=k2/pinch0.k;
+  view.k=k2;
+  view.x=now.midX-(pinch0.midX-pinch0.vx)*r;
+  view.y=now.midY-(pinch0.midY-pinch0.vy)*r;
+  applyView();
+}
+svg.addEventListener("pointerdown",e=>{
+  pointers.set(e.pointerId,pointerXY(e));
+  if(pointers.size>=2){
+    const p=pinchState();
+    pinch0=p?{...p,vx:view.x,vy:view.y,k:view.k}:null;
+    panning=false;dragMoved=true;viewTouched=true;
+    svg.classList.add("panning");
+    return;
+  }
+  panning=true;dragMoved=false;panStart={x:e.clientX,y:e.clientY,vx:view.x,vy:view.y};
+  svg.classList.add("panning");
+});
+window.addEventListener("pointermove",e=>{
+  if(pointers.has(e.pointerId))pointers.set(e.pointerId,pointerXY(e));
+  if(pinch0&&pointers.size>=2){applyPinch();return;}
+  if(!panning)return;
+  const dx=e.clientX-panStart.x,dy=e.clientY-panStart.y;
+  if(Math.abs(dx)+Math.abs(dy)>(usesTouchCopy()?14:4)){dragMoved=true;viewTouched=true;}
+  if(!dragMoved)return;
+  view.x=panStart.vx+dx;view.y=panStart.vy+dy;applyView();
+});
+function endPan(e){
+  if(e&&e.pointerId!=null)pointers.delete(e.pointerId);
+  if(pointers.size<2)pinch0=null;
+  if(pointers.size===1){
+    const leftover=[...pointers.values()][0];
+    panning=true;panStart={x:leftover.cx,y:leftover.cy,vx:view.x,vy:view.y};
+  }
+  if(pointers.size===0){panning=false;svg.classList.remove("panning");}
+  setTimeout(()=>{if(pointers.size===0)dragMoved=false;},0);
+}
+// selection/activation on pointerup: setPointerCapture-free, so the event target is the real element
+svg.addEventListener("pointerup",e=>{
+  if(dragMoved||pinch0){endPan(e);return;}
+  const t=e.target;
+  const ng=t.closest?t.closest("g.node"):null;
+  const eg=t.closest?t.closest("g.edge"):null;
+  if(ng)select(ng.dataset.id);
+  else if(eg)onEdgeActivate(+eg.dataset.i,e);
+  else{clearSel();unpinTT();}
+  endPan(e);
+});
+svg.addEventListener("pointercancel",endPan);
+window.addEventListener("pointerup",endPan);
+window.addEventListener("pointercancel",endPan);
+window.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){closeChrome();clearSel();unpinTT();}
+});
+window.addEventListener("resize",()=>{if(isNarrow()&&!viewTouched)fit();});
+
+function fit(){
+  const rect=svg.getBoundingClientRect();
+  if(isNarrow()){
+    // Readable first paint: keep node labels at engine size and start at the
+    // entry columns. Pinch/drag still reach the rest of the graph.
+    view.k=1;
+    const entry=learnerEntryId();
+    if(entry&&pos[entry]){
+      view.x=16-pos[entry].x+8;
+      view.y=Math.max(20,rect.height/2-(pos[entry].y+NODE_H/2));
+    }else{
+      view.x=16;
+      view.y=Math.max(20,(rect.height-(maxY+TOP))/2);
+    }
+    applyView();
+    return;
+  }
+  const s=Math.min(rect.width/(maxX+LEFT),rect.height/(maxY+TOP))*0.96;
+  view.k=clamp(s,0.18,1.4);
+  view.x=(rect.width-(maxX+LEFT)*view.k)/2;view.y=(rect.height-(maxY+TOP)*view.k)/2;
+  applyView();
+  const entry=learnerEntryId();
+  if(entry&&pos[entry]){
+    view.k=clamp(Math.max(view.k,0.92),0.18,1.4);
+    centerOn(entry);
+  }
+}
+function closeHeaderChrome(){
+  const hdr=document.querySelector("header");
+  hdr.classList.remove("search-open","menu-open");
+  $("#btn-search-toggle").setAttribute("aria-expanded","false");
+  $("#btn-more").setAttribute("aria-expanded","false");
+}
+function closeChrome(){
+  closeHeaderChrome();
+  guidePinned=false;
+  legend.classList.remove("is-open");
+  $("#btn-legend").setAttribute("aria-expanded","false");
+  $("#btn-guide").setAttribute("aria-expanded","false");
+  if(isNarrow())setPanelOpen(false);
+  unpinTT();
+  syncScrim();
+}
+function anyOverlay(){
+  return panel.classList.contains("is-open")&&isNarrow()
+    ||legend.classList.contains("is-open")
+    ||(tt.style.display==="block"&&(isNarrow()||isCoarse()))
+    ||document.querySelector("header").classList.contains("menu-open");
+}
+function syncScrim(){
+  const on=anyOverlay();
+  $("#scrim").classList.toggle("is-on",on);
+  $("#scrim").hidden=!on;
+}
+function setPanelOpen(open){
+  panel.classList.toggle("is-open",!!open);
+  $("#btn-guide").setAttribute("aria-expanded",open&&!state.sel?"true":"false");
+  syncScrim();
+}
+let guidePinned=false;
+function syncFitLabel(){$("#btn-fit").textContent=isNarrow()?"Reset view":"Fit";}
+syncFitLabel();
+window.addEventListener("resize",syncFitLabel);
+$("#btn-fit").addEventListener("click",()=>{closeHeaderChrome();fit();syncScrim();});
+$("#btn-reset").addEventListener("click",()=>{guidePinned=false;clearSel();fit();closeChrome();});
+$("#btn-search-toggle").addEventListener("click",()=>{
+  const hdr=document.querySelector("header");
+  const open=!hdr.classList.contains("search-open");
+  hdr.classList.toggle("search-open",open);
+  hdr.classList.remove("menu-open");
+  $("#btn-search-toggle").setAttribute("aria-expanded",open);
+  $("#btn-more").setAttribute("aria-expanded","false");
+  if(open){searchInput.focus();searchInput.select();}
+  else{results.style.display="none";searchInput.blur();}
+});
+$("#btn-more").addEventListener("click",()=>{
+  const hdr=document.querySelector("header");
+  const open=!hdr.classList.contains("menu-open");
+  hdr.classList.toggle("menu-open",open);
+  hdr.classList.remove("search-open");
+  $("#btn-more").setAttribute("aria-expanded",open);
+  $("#btn-search-toggle").setAttribute("aria-expanded","false");
+  syncScrim();
+});
+$("#btn-legend").addEventListener("click",()=>{
+  const open=!legend.classList.contains("is-open");
+  closeHeaderChrome();
+  guidePinned=false;
+  if(isNarrow())setPanelOpen(false);
+  unpinTT();
+  legend.classList.toggle("is-open",open);
+  $("#btn-legend").setAttribute("aria-expanded",open);
+  syncScrim();
+});
+$("#btn-guide").addEventListener("click",()=>{
+  closeHeaderChrome();
+  legend.classList.remove("is-open");
+  $("#btn-legend").setAttribute("aria-expanded","false");
+  unpinTT();
+  guidePinned=true;
+  state.sel=null;
+  svg.classList.remove("dimmed");
+  Object.values(nodeEls).forEach(g=>{g.classList.remove("related");g.classList.remove("sel");g.classList.remove("match");});
+  edgeEls.forEach(g=>{g.classList.remove("related");g.classList.remove("direct");});
+  renderDefaultPanel();
+  setPanelOpen(true);
+});
+$("#scrim").addEventListener("click",()=>{
+  closeHeaderChrome();
+  legend.classList.remove("is-open");
+  $("#btn-legend").setAttribute("aria-expanded","false");
+  if(isNarrow()){guidePinned=false;setPanelOpen(false);}
+  unpinTT();
+  syncScrim();
+});
+
+// ---------- focus / selection ----------
+function applyFocus(related,keepEdges){
+  svg.classList.add("dimmed");
+  for(const id in nodeEls){nodeEls[id].classList.toggle("related",related.has(id));}
+  colEls.forEach(r=>r.classList.add("related"));
+  svg.querySelectorAll(".collabel").forEach(t=>t.classList.add("related"));
+  edgeEls.forEach((g,i)=>{
+    const rel=keepEdges.has(i);
+    g.classList.toggle("related",rel);
+    const e=DATA.edges[i];
+    g.classList.toggle("direct",rel&&(e.from===state.sel||e.to===state.sel));
+  });
+}
+function clearSel(){
+  state.sel=null;
+  svg.classList.remove("dimmed");
+  Object.values(nodeEls).forEach(g=>{g.classList.remove("related");g.classList.remove("sel");g.classList.remove("match");});
+  edgeEls.forEach(g=>{g.classList.remove("related");g.classList.remove("direct");});
+  renderDefaultPanel();
+  if(isNarrow())setPanelOpen(!!guidePinned);
+}
+function select(id){
+  state.sel=id;guidePinned=false;unpinTT();closeHeaderChrome();
+  if(isNarrow())legend.classList.remove("is-open");
+  const anc=new Set([id]),keepEdges=new Set(),stack=[id];
+  while(stack.length){
+    const cur=stack.pop();
+    DATA.edges.forEach((e,i)=>{
+      if(e.to===cur&&!anc.has(e.from)){anc.add(e.from);keepEdges.add(i);stack.push(e.from);}
+    });
+  }
+  const related=new Set(anc);
+  DATA.edges.forEach(e=>{if(e.from===id)related.add(e.to);});
+  DATA.edges.forEach((e,i)=>{if(e.from===id)keepEdges.add(i);});
+  Object.values(nodeEls).forEach(g=>g.classList.remove("sel"));
+  nodeEls[id].classList.add("sel");
+  applyFocus(related,keepEdges);
+  renderNodePanel(id,anc.size-1);
+  if(isNarrow())setPanelOpen(true);
+}
+function focusTheme(ti){
+  state.sel=null;unpinTT();
+  const related=new Set(DATA.nodes.filter(n=>n.phase===ti).map(n=>n.id));
+  const keepEdges=new Set();
+  DATA.edges.forEach((e,i)=>{if(related.has(e.from)||related.has(e.to))keepEdges.add(i);});
+  svg.classList.add("dimmed");
+  for(const id in nodeEls)nodeEls[id].classList.toggle("related",related.has(id));
+  colEls.forEach(r=>r.classList.add("related"));
+  edgeEls.forEach((g,i)=>g.classList.toggle("related",keepEdges.has(i)));
+  renderThemePanel(ti);
+}
+function focusLevel(l){
+  state.sel=null;unpinTT();
+  const related=new Set(DATA.nodes.filter(n=>LEVEL[n.id]===l).map(n=>n.id));
+  const keepEdges=new Set();
+  DATA.edges.forEach((e,i)=>{if(related.has(e.from)||related.has(e.to))keepEdges.add(i);});
+  svg.classList.add("dimmed");
+  for(const id in nodeEls)nodeEls[id].classList.toggle("related",related.has(id));
+  colEls.forEach(r=>r.classList.add("related"));
+  edgeEls.forEach((g,i)=>g.classList.toggle("related",keepEdges.has(i)));
+  renderLevelPanel(l);
+}
+
+// ---------- tooltip ----------
+const tt=$("#tt");let pinnedEdge=null;
+function showTT(html,px,py){
+  if(usesTouchCopy()){
+    tt.innerHTML=`<div class="sheet-handle"></div><div class="sheet-head narrow-only"><strong>Why this is a prerequisite</strong><button type="button" class="sheet-close" id="btn-why-close">Close</button></div>${html}`;
+    tt.style.display="block";tt.style.left="0";tt.style.top="auto";
+    const close=$("#btn-why-close");if(close)close.addEventListener("click",unpinTT);
+    syncScrim();
+    return;
+  }
+  tt.innerHTML=html;tt.style.display="block";
+  const wrap=$("#canvaswrap").getBoundingClientRect();
+  let x=px-wrap.left+14,y=py-wrap.top+14;
+  const tw=tt.offsetWidth,th=tt.offsetHeight;
+  if(x+tw>wrap.width-10)x=px-wrap.left-tw-14;
+  if(y+th>wrap.height-10)y=py-wrap.top-th-14;
+  tt.style.left=Math.max(4,x)+"px";tt.style.top=Math.max(4,y)+"px";
+}
+function hideTT(){if(pinnedEdge===null)tt.style.display="none";}
+function unpinTT(){pinnedEdge=null;tt.style.display="none";edgeEls.forEach(g=>g.classList.remove("hov"));if(typeof syncScrim==="function")syncScrim();}
+function edgeHTML(i){
+  const e=DATA.edges[i];
+  return `<div class="who">${nodeLabel(e.from)} <span class="arrow">→</span> ${nodeLabel(e.to)}</div><div>${e.why}</div>`;
+}
+function onEdgeEnter(i,ev){if(dragMoved||usesTouchCopy())return;edgeEls[i].classList.add("hov");if(pinnedEdge===null)showTT(edgeHTML(i),ev.clientX,ev.clientY);}
+function onEdgeMove(ev){if(pinnedEdge!==null||usesTouchCopy())return;showTT(tt.innerHTML,ev.clientX,ev.clientY);}
+function onEdgeLeave(i){if(usesTouchCopy())return;edgeEls[i].classList.remove("hov");if(pinnedEdge!==i)hideTT();}
+function onEdgeActivate(i,ev){
+  if(pinnedEdge===i){unpinTT();syncScrim();return;}
+  pinnedEdge=i;edgeEls.forEach(g=>g.classList.remove("hov"));edgeEls[i].classList.add("hov");
+  if(isNarrow()){legend.classList.remove("is-open");setPanelOpen(false);}
+  showTT(edgeHTML(i),ev.clientX,ev.clientY);
+}
+
+// ---------- panel ----------
+const panel=$("#panel");
+function themeChip(ti){return `<span class="chip" style="background:${THEMES[ti].color}">${THEMES[ti].name}</span>`;}
+function levelChip(l){const c=LCOL[l];return `<span class="chip" style="background:${c}${LUM(c)>0.28?";color:var(--ink)":""}">Level ${l}</span>`;}
+function depBlock(dir,e){
+  const other=dir==="req"?e.from:e.to;
+  return `<div class="dep"><b data-goto="${other}">${dir==="req"?"← ":"→ "}${nodeLabel(other)}</b><p>${e.why}</p></div>`;
+}
+function gotoHandler(){
+  panel.querySelectorAll("[data-goto]").forEach(b=>{
+    if(b.dataset.goto==="__back")return;
+    b.addEventListener("click",()=>{select(b.dataset.goto);centerOn(b.dataset.goto);});
+  });
+}
+function bindBack(){
+  panel.querySelectorAll("[data-goto='__back']").forEach(el=>{
+    el.addEventListener("click",()=>{guidePinned=false;clearSel();});
+  });
+}
+function sheetChrome(title){
+  return `<div class="sheet-handle"></div><div class="sheet-head narrow-only"><strong>${title}</strong><button type="button" class="sheet-close" data-goto="__back">Close</button></div>`;
+}
+function renderNodePanel(id,ancCount){
+  const n=nodeById(id);
+  const reqs=DATA.edges.filter(e=>e.to===id).sort((a,b)=>LEVEL[a.from]-LEVEL[b.from]);
+  const unl=DATA.edges.filter(e=>e.from===id).sort((a,b)=>LEVEL[a.to]-LEVEL[b.to]);
+  let h=`${sheetChrome(n.label)}<span class="backlink" data-goto="__back">← overview</span><br>
+  ${levelChip(LEVEL[id])} ${themeChip(n.phase)}
+  ${n.id===learnerEntryId()?`<p class="here-summary" style="margin-top:10px">Where you're starting.</p>`:learnerStateOf(n)==="known"?`<p style="color:var(--muted);font-size:14.5px">In your comfortable set — still here if you want to review.</p>`:""}
+  <h2>${n.label}</h2><p>${n.desc}</p>
+  <h3>Rough outline — study in this order</h3>
+  <ol class="outline">${n.outline.map(o=>`<li>${o}</li>`).join("")}</ol>
+  <h3>Key ideas</h3><ul>${n.ideas.map(i=>`<li>${i}</li>`).join("")}</ul>
+  <h3>Mastery check — prove you know this</h3>
+  ${n.questions.map((q,i)=>`<div class="dep"><b>Q${i+1}. ${q.q}</b><details><summary>Show answer</summary><p>${q.a}</p></details></div>`).join("")}
+  <h3>Study sources</h3><ul>${n.sources.map(s=>`<li>${s.u?`<a href="${s.u}" target="_blank" rel="noopener">${s.t}</a>`:s.t}</li>`).join("")}</ul>`;
+  h+=`<h3>Requires — why these are prerequisites (${reqs.length})</h3>`;
+  h+=reqs.length?reqs.map(e=>depBlock("req",e)).join(""):"<p style='color:var(--muted)'>Nothing — this is an entry point.</p>";
+  h+=`<h3>Unlocks (${unl.length})</h3>`;
+  h+=unl.length?unl.map(e=>depBlock("unl",e)).join(""):"<p style='color:var(--muted)'>Nothing directly — this is a terminal destination.</p>";
+  h+=`<p style="margin-top:14px;font-size:14px;color:var(--muted)">Graph focus: this node (highlighted), its ${ancCount} transitive prerequisite${ancCount===1?"":"s"}, and its direct downstream targets.</p>`;
+  panel.innerHTML=h;
+  bindBack();
+  gotoHandler();
+}
+function renderThemePanel(ti){
+  const ids=DATA.nodes.filter(n=>n.phase===ti).map(n=>n.id);
+  panel.innerHTML=`${sheetChrome(THEMES[ti].name)}<span class="backlink" data-goto="__back">← overview</span><br>${themeChip(ti)}
+  <h2>${THEMES[ti].name}</h2>
+  <p>${THEME_BLURBS[ti]||""}</p>
+  <h3>Concepts in this theme (${ids.length})</h3>
+  ${ids.map(i=>`<div class="dep"><b data-goto="${i}">${nodeLabel(i)}</b> <span style="font-size:14px;color:var(--muted)">Level ${LEVEL[i]}</span><p>${nodeById(i).desc}</p></div>`).join("")}`;
+  bindBack();
+  gotoHandler();
+  if(isNarrow())setPanelOpen(true);
+}
+function renderLevelPanel(l){
+  const ids=DATA.nodes.filter(n=>LEVEL[n.id]===l).map(n=>n.id);
+  panel.innerHTML=`${sheetChrome("Level "+l)}<span class="backlink" data-goto="__back">← overview</span><br>${levelChip(l)}
+  <h2>Level ${l}</h2>
+  <p>Everything on this level can be studied in parallel: nothing here depends on anything else at the same level, and every prerequisite sits strictly to the left.</p>
+  <h3>Concepts at this level (${ids.length})</h3>
+  ${ids.map(i=>`<div class="dep"><b data-goto="${i}">${nodeLabel(i)}</b> <span style="font-size:14px;color:var(--muted)">${THEMES[nodeById(i).phase].name}</span><p>${nodeById(i).desc}</p></div>`).join("")}`;
+  bindBack();
+  gotoHandler();
+  if(isNarrow())setPanelOpen(true);
+}
+function renderDefaultPanel(){
+  const nodeVerb=usesTouchCopy()?"Tap":"Click";
+  const arrowLine=usesTouchCopy()
+    ?"Tap any <b>arrow</b> for its rationale (tap again to dismiss). Drag to pan, pinch to zoom, search to jump."
+    :"Hover or click any <b>arrow</b> for its rationale (click again to pin). Drag to pan, scroll to zoom, search to jump.";
+  const colorLine=usesTouchCopy()
+    ?"the tint deepens from the entry level at the left to the frontier at the right — the theme's depth ramp, also drawn in the Levels sheet (tap a band to focus that level)."
+    :"the tint deepens from the entry level at the left to the frontier at the right — the theme's depth ramp, also drawn as the legend bar bottom-left (click a band to focus that level).";
+  const startHTML=hasLearnerData()?(function(){
+    const entry=learnerEntryId();
+    const note=learnerNote()||"Where you're starting is marked on the map. Quieter nodes are ones you already reported as comfortable — they're still here if you want to review.";
+    const jump=entry?`<p><b class="here-jump" data-goto="${entry}">Start here: ${nodeLabel(entry)}</b></p>`:"";
+    return `<div class="here-summary" id="learner-start"><h3>Your starting point</h3><p>${note}</p>${jump}</div>`;
+  })():"";
+  panel.innerHTML=`${sheetChrome("How to read this map")}
+  <h2 style="margin-top:0">Concept dependency map</h2>
+  <p>This map lays out the ${DATA.nodes.length} concepts between ${hasLearnerData()?"where you're starting":"zero background"} and the end goal: <b>${GOAL_STATEMENT}</b></p>
+  ${startHTML}
+  <h3>How to read it</h3>
+  <ul>
+    <li><b>Columns are topological levels.</b> An arrow A → B means learn A before B, so B always sits to the right of A. Everything in one column can be learned in parallel once the columns to its left are done.</li>
+    <li><b>Color encodes depth:</b> ${colorLine}</li>
+    <li>${nodeVerb} any <b>node</b> for its description, a <b>rough study outline</b> (ordered steps), key ideas, sources, and — for every arrow touching it — <b>why</b> that prerequisite holds.</li>
+    <li>${nodeVerb === "Tap" ? "Tapping" : "Clicking"} a node also lights up its entire prerequisite chain: what you'd need to study, in the graph's own order.</li>
+    <li>${arrowLine}</li>
+  </ul>
+  <h3>A suggested path through the graph</h3>
+  <ul>
+    ${SUGGESTED_PATH.map(s=>`<li><b>${s.h}:</b> ${s.t}</li>`).join("")}
+  </ul>
+  <h3>Themes</h3>
+  <div>${THEMES.map((p,i)=>`<span class="chipbtn" data-phase="${i}" style="margin:2px"><span class="dot" style="background:${p.color}"></span>${p.name}</span>`).join("")}</div>
+  <p style="font-size:14px;color:var(--muted)">${nodeVerb} a theme to highlight its nodes across the graph.</p>
+  <h3>Sources</h3>
+  <p style="font-size:14.5px">${GOAL_SOURCES_NOTE}</p>`;
+  bindBack();
+  gotoHandler();
+  panel.querySelectorAll("[data-phase]").forEach(b=>{
+    b.addEventListener("click",()=>focusTheme(+b.dataset.phase));
+  });
+}
+
+// ---------- search ----------
+const searchInput=$("#search"),results=$("#results");
+searchInput.addEventListener("input",()=>{
+  const q=searchInput.value.trim().toLowerCase();
+  if(!q){results.style.display="none";return;}
+  const matches=DATA.nodes.filter(n=>
+    n.label.toLowerCase().includes(q)||n.desc.toLowerCase().includes(q)||n.ideas.some(i=>i.toLowerCase().includes(q))||n.outline.some(o=>o.toLowerCase().includes(q))
+  ).slice(0,8);
+  results.innerHTML=matches.map(n=>`<div data-id="${n.id}">${n.label}<span class="rphase">${THEMES[n.phase].name}</span></div>`).join("")||"<div><i>No matches</i></div>";
+  results.style.display="block";
+  results.querySelectorAll("[data-id]").forEach(r=>{
+    r.addEventListener("click",()=>{
+      Object.values(nodeEls).forEach(g=>g.classList.remove("match"));
+      nodeEls[r.dataset.id].classList.add("match");
+      select(r.dataset.id);centerOn(r.dataset.id);
+      results.style.display="none";searchInput.value="";
+    });
+  });
+});
+document.addEventListener("click",e=>{if(!e.target.closest(".searchwrap"))results.style.display="none";});
+function centerOn(id){
+  const p=pos[id],rect=svg.getBoundingClientRect();
+  const cxg=p.x+NODE_W/2,cyg=p.y+NODE_H/2;
+  view.x=rect.width/2-cxg*view.k;view.y=rect.height/2-cyg*view.k;applyView();
+}
+
+// ---------- legend & init ----------
+const legend=$("#legend");
+(function buildLegend(){
+  const stops=LCOL.map((c,i)=>`${c} ${Math.round(100*i/(NLEVELS-1))}%`).join(", ");
+  const bandVerb=usesTouchCopy()?"Tap":"Click";
+  legend.innerHTML=`<div class="sheet-handle"></div>
+  <div class="sheet-head narrow-only"><strong>Topological levels</strong><button type="button" class="sheet-close" id="btn-legend-close">Close</button></div>
+  <div class="bar" style="background:linear-gradient(90deg, ${stops})"></div>
+  <div class="barlabels"><span>0</span><span>topological level →</span><span>${MAXL}</span></div>
+  <div class="cap">Every column is a dependency level: all its prerequisites sit strictly to the left, so a level can be studied in parallel. ${bandVerb} a band below to focus it.</div>
+  <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:5px">${LCOL.map((c,i)=>`<span class="chipbtn lvlchip" data-level="${i}" style="border-color:${c};font-size:14px;padding:1px 6px">${i}</span>`).join("")}</div>`;
+  legend.querySelectorAll(".lvlchip").forEach(b=>b.addEventListener("click",()=>{
+    if(isNarrow()){legend.classList.remove("is-open");$("#btn-legend").setAttribute("aria-expanded","false");}
+    focusLevel(+b.dataset.level);
+  }));
+  const close=$("#btn-legend-close");if(close)close.addEventListener("click",()=>{legend.classList.remove("is-open");$("#btn-legend").setAttribute("aria-expanded","false");syncScrim();});
+})();
+$("#stats").textContent=`${DATA.nodes.length} concepts · ${DATA.edges.length} prerequisite links · ${NLEVELS} topological levels · build ${BUILD}`;
+$("#hint").innerHTML=hintCopy();
+renderDefaultPanel();
+if(!isNarrow())panel.classList.add("is-open");
+fit();
+
+// ---------- theme toggle (engine): Themed ↔ Default, re-skins palette, fonts, and the depth ramp live ----------
+const ANCHORS_THEMED=ANCHORS.slice();
+let themedOn=true;
+function recolorGraph(){
+  LCOL.length=0;LCOL.push(...Array.from({length:NLEVELS},(_,l)=>levelColor(l)));
+  cols.forEach((c,i)=>colEls[i].setAttribute("fill",LCOL[c.level]));
+  svg.querySelectorAll(".collabel").forEach(t=>t.setAttribute("fill",LCOL[+t.dataset.level]));
+  for(const id in nodeEls){const c=LCOL[LEVEL[id]],rc=nodeEls[id].querySelector("rect.main");rc.setAttribute("fill",c);rc.setAttribute("stroke",c);}
+  const stops=LCOL.map((c,i)=>`${c} ${Math.round(100*i/(NLEVELS-1))}%`).join(", ");
+  const bar=legend.querySelector(".bar");if(bar)bar.style.background=`linear-gradient(90deg, ${stops})`;
+  legend.querySelectorAll(".lvlchip").forEach(b=>b.style.borderColor=LCOL[+b.dataset.level]);
+}
+function setTheme(on){
+  themedOn=on;
+  const t=on?THEME:THEME_DEFAULT;
+  applyTheme(t);
+  const ramp=on?ANCHORS_THEMED:THEME_DEFAULT.anchors;
+  if(ramp&&ramp.length>=2){ANCHORS.length=0;ANCHORS.push(...ramp);}
+  recolorGraph();
+  $("#btn-theme").textContent=on?"Themed":"Default";
+}
+$("#btn-theme").addEventListener("click",()=>setTheme(!themedOn));
+// deep link: open with #node-id to start with that concept selected
+(function(){
+  const id=location.hash&&location.hash.slice(1);
+  if(id&&nodeEls[id]){select(id);centerOn(id);}
+})();
+</script>
+</body>
+</html>

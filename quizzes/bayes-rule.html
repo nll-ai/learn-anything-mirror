@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bayes&#x27; rule · misconception quiz</title>
+<noscript><style>.feedback[hidden]{display:block !important}</style></noscript>
+<style>
+
+  :root{
+    --ink:#1e293b; --muted:#64748b; --line:#e2e8f0; --bg:#f8fafc; --panel:#ffffff;
+    --accent:#2563eb; --ink-2:#334155; --dep-bg:#fbfdff;
+    --ok:#166534; --ok-bg:#ecfdf3; --bad:#9f1239; --bad-bg:#fff1f2;
+    --font-display:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --font-body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --safe-t:env(safe-area-inset-top,0px); --safe-r:env(safe-area-inset-right,0px);
+    --safe-b:env(safe-area-inset-bottom,0px); --safe-l:env(safe-area-inset-left,0px);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);line-height:1.5}
+  header{background:var(--panel);border-bottom:1px solid var(--line);
+    padding:max(14px,var(--safe-t)) max(16px,var(--safe-r)) 14px max(16px,var(--safe-l))}
+  header h1{font-family:var(--font-display);font-size:1.25rem;font-weight:650;margin:0 0 6px;line-height:1.3}
+  header p{margin:0;color:var(--muted);font-size:15px}
+  main{max-width:40rem;margin:0 auto;
+    padding:18px max(16px,var(--safe-r)) calc(36px + var(--safe-b)) max(16px,var(--safe-l))}
+  .lede{font-size:1.05rem;line-height:1.55;margin:0 0 8px;color:var(--ink-2)}
+  article.item{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:14px 14px 8px;margin:14px 0}
+  article.item h2{font-family:var(--font-display);font-size:1.05rem;font-weight:650;
+    line-height:1.4;margin:0 0 10px}
+  .choice{margin:0 0 8px}
+  button.option{display:block;width:100%;text-align:left;min-height:44px;padding:12px 14px;
+    border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);
+    font:inherit;font-size:16px;line-height:1.45;cursor:pointer;touch-action:manipulation}
+  button.option:hover{border-color:#94a3b8}
+  button.option[aria-pressed="true"][data-correct="true"]{border-color:var(--ok);background:var(--ok-bg)}
+  button.option[aria-pressed="true"][data-correct="false"]{border-color:var(--bad);background:var(--bad-bg)}
+  .feedback{margin:8px 0 0;padding:10px 12px;border-radius:10px;background:var(--dep-bg);
+    border:1px solid var(--line);font-size:15.5px;line-height:1.5;color:var(--ink-2)}
+  .feedback.is-right{background:var(--ok-bg);border-color:#bbf7d0}
+  .feedback.is-wrong{background:var(--bad-bg);border-color:#fecdd3}
+  .reflect{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:16px}
+  .reflect h2{font-family:var(--font-display);font-size:1.05rem;margin:0 0 8px}
+  .reflect ol{margin:0;padding-left:1.2rem}
+  .reflect li{margin:6px 0;font-size:16px}
+  footer{color:var(--muted);font-size:14px;margin-top:14px}
+
+</style>
+</head>
+<body>
+<header>
+  <h1>Bayes&#x27; rule</h1>
+  <p>Misconception quiz</p>
+</header>
+<main>
+  <p class="lede">Five questions on Bayes&#x27; rule. Every wrong option is a misconception people actually hold. Pick one. The note says why that choice was tempting, and what is going on instead.</p>
+    <article class="item">
+      <h2>1. In Bayes&#x27; rule, what is the prior?</h2>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="true" aria-describedby="q1o1">What you believed about the hypotheses before this new evidence.</button>
+        <p id="q1o1" class="feedback" hidden>The prior is your probability for each hypothesis before this piece of evidence. The evidence updates it. The prior is not a property of the test.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q1o2">The accuracy figure printed for the test.</button>
+        <p id="q1o2" class="feedback" hidden>Printed accuracy is a percent you are given up front, so it feels like what you start with. Accuracy describes how the test behaves. The prior describes how common the hypotheses were before you saw this result.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q1o3">The chance of seeing the data, which is the same for every hypothesis.</button>
+        <p id="q1o3" class="feedback" hidden>That quantity is the marginal probability of the evidence, the thing you divide by so the posteriors add to 1. It is not the prior. It is also not a single shared constant you can skip: you compute it from the priors and the likelihoods.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q1o4">The result you are holding, expressed as a percent.</button>
+        <p id="q1o4" class="feedback" hidden>Holding the result makes that number seem to be the starting point. The result is the evidence. The prior is what you believed before it arrived.</p>
+      </div>
+    </article>
+    <article class="item">
+      <h2>2. A condition is uncommon. A test is called 99% accurate, and this person&#x27;s result is positive. Which claim is right?</h2>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q2o1">A positive result on a 99% accurate test means you&#x27;re 99% likely to have it.</button>
+        <p id="q2o1" class="feedback" hidden>Hearing &quot;99% accurate&quot; sounds like &quot;99% chance this positive is a true one,&quot; as if accuracy were the chance you have the condition. Accuracy is about how often the test is right across people. When the condition is rare, most people who test positive can be healthy people who set off a false alarm. Your chance is the positive predictive value, and it can sit far below 99%.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="true" aria-describedby="q2o2">A positive result can still leave you unlikely to have it, because false alarms among the many people without it can outnumber true positives.</button>
+        <p id="q2o2" class="feedback" hidden>Count the groups. In a large healthy group, a small false-alarm rate still produces many positive results. The sick group is small, so its true positives can be fewer than those false alarms. Bayes&#x27; rule is that comparison. It is not the accuracy number relabeled as your personal chance.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q2o3">A positive result means the 99% figure was already your prior, so one positive result does not move the chance at all.</button>
+        <p id="q2o3" class="feedback" hidden>Seeing two percents at the start makes the accuracy seem to be the prior. The prior is how common the condition was before this test. Accuracy is not that prevalence, and a real result does update the prior.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q2o4">A positive result means you multiply 99% by 99%, and that product is the chance you have the condition.</button>
+        <p id="q2o4" class="feedback" hidden>Multiplying two 99% figures feels like combining independent chances. Multiplying the accuracy by itself is not Bayes&#x27; rule. You need the prior and both kinds of error, then you normalize.</p>
+      </div>
+    </article>
+    <article class="item">
+      <h2>3. A test is very likely to be positive if someone has the condition. What is that statement?</h2>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="true" aria-describedby="q3o1">It is the likelihood of a positive result given the condition, not the chance they have the condition given a positive.</button>
+        <p id="q3o1" class="feedback" hidden>The chance of a positive result if they have the condition is a likelihood. Bayes&#x27; rule turns it into the chance they have the condition given a positive only together with the prior and the false-alarm rate. A high likelihood is not itself the posterior.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q3o2">It is the same number as the chance they have the condition given a positive result.</button>
+        <p id="q3o2" class="feedback" hidden>Reversing the two sentences feels harmless in ordinary speech. Those two probabilities are not equal. Swapping the condition and the evidence is the inverse fallacy.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q3o3">It is the prior for the condition.</button>
+        <p id="q3o3" class="feedback" hidden>Reading &quot;if they have it&quot; sounds like a fact about the condition, which is what a prior feels like. This statement is about the test&#x27;s behavior when the condition is already present. That is a likelihood, not a prior.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q3o4">It is the chance the test is positive for a healthy person.</button>
+        <p id="q3o4" class="feedback" hidden>That would be the false-positive rate. The statement was about people who have the condition. Mixing those two rates swaps the rows of the test&#x27;s table.</p>
+      </div>
+    </article>
+    <article class="item">
+      <h2>4. The same person tests positive a second time, on a test that fails independently of the first. What should you use as the prior for that second update?</h2>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="true" aria-describedby="q4o1">The posterior from the first test.</button>
+        <p id="q4o1" class="feedback" hidden>After the first result, the posterior is what you now believe. That becomes the prior for the next independent result. You do not walk back to the population rate.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q4o2">The original rate of the condition in the population, because each test starts over.</button>
+        <p id="q4o2" class="feedback" hidden>Restarting each test makes each one seem to begin from the same population figure. The second test is new evidence about the same person. The first result already changed what you should believe, and discarding it throws away evidence you have.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q4o3">The test&#x27;s accuracy, because a second positive should be scored from scratch.</button>
+        <p id="q4o3" class="feedback" hidden>Resetting from the accuracy percent treats the only number on the test as a fresh prior. Accuracy is not a prior. Using it as one treats a property of the test as a property of the person.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q4o4">The average of the two positive results, written as a percent.</button>
+        <p id="q4o4" class="feedback" hidden>Blending two results treats them like two scores. Bayes&#x27; rule does not average the labels. It updates a probability with each likelihood.</p>
+      </div>
+    </article>
+    <article class="item">
+      <h2>5. For two hypotheses you multiply likelihood by prior and get 0.4 and 0.4. You stop. What is wrong with stopping?</h2>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="true" aria-describedby="q5o1">Those products are not posteriors yet. Divide by their total so the two posteriors add to 1.</button>
+        <p id="q5o1" class="feedback" hidden>0.4 and 0.4 still have to be divided by everything those hypotheses can produce together (0.8 if they are the only two). Each posterior is then 0.5. Skipping that division leaves numbers that are not probabilities.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q5o2">Those products are already the posteriors, and posteriors do not need to add to 1.</button>
+        <p id="q5o2" class="feedback" hidden>Stopping after each multiplication treats 0.4 as a finished probability. A set of posteriors for hypotheses that cover the possibilities has to add to 1. Unnormalized products do not.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q5o3">Add the two products and call the sum the chance of the first hypothesis.</button>
+        <p id="q5o3" class="feedback" hidden>Adding the pieces feels like the combine step the rule asked for. The sum is the marginal probability of the evidence, the divisor. It is not the posterior of the first hypothesis.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q5o4">Drop the prior and keep whichever likelihood is larger. That larger likelihood is the posterior.</button>
+        <p id="q5o4" class="feedback" hidden>Keeping only the likelihood treats the data term as the only part that should survive. Dropping the prior is not Bayes&#x27; rule. And the larger likelihood, by itself, is not a posterior.</p>
+      </div>
+    </article>
+  <section class="reflect">
+    <h2>Before you leave</h2>
+    <ol>
+      <li>Which item felt hardest?</li>
+      <li>Which would you like drilled?</li>
+    </ol>
+  </section>
+  <footer>Nothing you pick is saved.</footer>
+</main>
+<script>
+// Shuffling (no position memory): a new order on every load, not a fixed seed.
+// Each note lives in its option's .choice, so the feedback moves with that option.
+// Heading numbers follow the on-screen order. With JavaScript off, the authored
+// order is what the page shows.
+function rnd(n) {
+  if (window.crypto && crypto.getRandomValues) {
+    var limit = Math.floor(4294967296 / n) * n;
+    var buf = new Uint32Array(1);
+    do { crypto.getRandomValues(buf); } while (buf[0] >= limit);
+    return buf[0] % n;
+  }
+  return Math.floor(Math.random() * n);
+}
+function shuffled(items) {
+  var copy = items.slice();
+  for (var i = copy.length - 1; i > 0; i--) {
+    var j = rnd(i + 1);
+    var held = copy[i];
+    copy[i] = copy[j];
+    copy[j] = held;
+  }
+  return copy;
+}
+var questions = Array.prototype.slice.call(document.querySelectorAll("article.item"));
+var afterQuestions = questions.length ? questions[questions.length - 1].nextSibling : null;
+shuffled(questions).forEach(function (item, index) {
+  var heading = item.querySelector("h2");
+  if (heading) {
+    heading.textContent = heading.textContent.replace(/^\d+\.\s*/, (index + 1) + ". ");
+  }
+  shuffled(Array.prototype.slice.call(item.querySelectorAll(".choice"))).forEach(function (choice) {
+    item.appendChild(choice);
+  });
+  item.parentNode.insertBefore(item, afterQuestions);
+});
+
+document.querySelectorAll("article.item").forEach(function (item) {
+  item.querySelectorAll("button.option").forEach(function (button) {
+    button.addEventListener("click", function () {
+      item.querySelectorAll("button.option").forEach(function (other) {
+        other.setAttribute("aria-pressed", other === button ? "true" : "false");
+      });
+      item.querySelectorAll(".feedback").forEach(function (note) {
+        note.hidden = true;
+        note.classList.remove("is-right", "is-wrong");
+      });
+      var noteId = button.getAttribute("aria-describedby");
+      var note = document.getElementById(noteId);
+      if (!note) return;
+      note.hidden = false;
+      note.classList.add(button.getAttribute("data-correct") === "true" ? "is-right" : "is-wrong");
+    });
+  });
+});
+
+</script>
+</body>
+</html>

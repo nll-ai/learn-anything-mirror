@@ -1,0 +1,897 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Constructing Lebesgue measure & the Lebesgue integral · Prerequisite Map</title>
+<style>
+  :root{
+    --ink:#1e293b; --muted:#64748b; --line:#e2e8f0; --bg:#f8fafc; --panel:#ffffff;
+    --accent:#2563eb;
+    /* engine defaults — the MAP-THEME block in the page's script overrides all of these at startup */
+    --ink-2:#334155; --dep-bg:#fbfdff; --edge:#bcc7d4; --edge-related:#7c8aa0;
+    --hover-bg:#eff6ff; --match:#f59e0b; --btn-hover-border:#94a3b8;
+    --overlay-bg:rgba(255,255,255,.92); --overlay-bg-2:rgba(255,255,255,.85);
+    --font-display:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --font-body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --safe-t:env(safe-area-inset-top,0px); --safe-r:env(safe-area-inset-right,0px);
+    --safe-b:env(safe-area-inset-bottom,0px); --safe-l:env(safe-area-inset-left,0px);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;height:100dvh;margin:0;overflow:hidden;overscroll-behavior:none;-webkit-text-size-adjust:100%}
+  body{font-family:var(--font-body);color:var(--ink);background:var(--bg);display:flex;flex-direction:column;max-width:100%}
+  header{display:flex;align-items:center;gap:14px;padding:10px 16px;padding-left:max(16px,var(--safe-l));padding-right:max(16px,var(--safe-r));padding-top:max(10px,var(--safe-t));background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap;position:relative;z-index:30}
+  .brand{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;min-width:0}
+  header h1{font-size:17px;margin:0;font-weight:650;font-family:var(--font-display)}
+  header .stats{font-size:14px;color:var(--muted)}
+  .spacer{flex:1}
+  .toolbar{display:flex;align-items:center;gap:8px}
+  .toolbar-actions{display:flex;align-items:center;gap:8px}
+  @media (min-width:901px){
+    .brand,.toolbar,.toolbar-actions{display:contents}
+  }
+  .searchwrap{position:relative}
+  #search{width:230px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;font-size:15px;outline:none;background:var(--panel);color:var(--ink)}
+  #search:focus{border-color:var(--accent)}
+  #results{position:absolute;top:36px;left:0;width:300px;max-height:260px;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px rgba(15,23,42,.12);display:none;z-index:50}
+  #results div{padding:7px 10px;font-size:15px;cursor:pointer}
+  #results div:hover{background:var(--hover-bg)}
+  #results .rphase{color:var(--muted);font-size:14px;margin-left:6px}
+  button{padding:6px 11px;border:1px solid var(--line);background:var(--panel);border-radius:8px;font-size:15px;cursor:pointer;color:var(--ink)}
+  button:hover{border-color:var(--btn-hover-border)}
+  .iconbtn{display:none;align-items:center;justify-content:center;width:44px;height:44px;padding:0;flex-shrink:0}
+  .iconbtn svg{display:block}
+  .narrow-only{display:none}
+  main{flex:1;display:flex;min-height:0;min-width:0}
+  #canvaswrap{flex:1;position:relative;overflow:hidden;min-width:0;min-height:0}
+  #graph{width:100%;height:100%;display:block;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+  #graph.panning{cursor:grabbing}
+  #legend{position:absolute;left:12px;bottom:12px;background:var(--overlay-bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:14px;max-width:340px;z-index:20}
+  #legend .bar{height:10px;border-radius:5px}
+  #legend .barlabels{display:flex;justify-content:space-between;margin-top:3px;color:var(--muted)}
+  #legend .cap{margin-top:4px;color:var(--muted);line-height:1.4}
+  .sheet-head{display:none;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+  .sheet-head strong{font-size:15px;font-family:var(--font-display)}
+  .sheet-handle{display:none;width:36px;height:4px;border-radius:999px;background:var(--line);margin:0 auto 10px}
+  .sheet-close{min-height:44px;padding:8px 12px}
+  #hint{position:absolute;left:12px;top:12px;font-size:14px;color:var(--muted);background:var(--overlay-bg-2);border:1px solid var(--line);border-radius:8px;padding:5px 9px;z-index:20}
+  #tt{position:absolute;display:none;max-width:330px;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgba(15,23,42,.18);padding:10px 12px;font-size:14.5px;z-index:40;pointer-events:none;line-height:1.45}
+  #tt .who{font-weight:650;font-size:14px;margin-bottom:4px}
+  #tt .who .arrow{color:var(--accent)}
+  #panel{width:400px;flex-shrink:0;background:var(--panel);border-left:1px solid var(--line);overflow-y:auto;padding:18px 20px 40px}
+  #panel h2{font-size:19px;margin:6px 0 6px;line-height:1.3;font-family:var(--font-display)}
+  #panel h3{font-size:14px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:18px 0 8px}
+  #panel p{font-size:15px;line-height:1.55;margin:6px 0}
+  #panel ul,#panel ol{margin:4px 0;padding-left:20px}
+  #panel li{font-size:15px;line-height:1.5;margin:3px 0}
+  #panel ol.outline li{margin:6px 0}
+  #panel ol.outline li::marker{color:var(--muted);font-weight:650;font-size:14px}
+  #panel details{margin-top:6px}
+  #panel summary{cursor:pointer;color:var(--accent);font-size:14px}
+  #panel details p{margin:6px 0 2px;font-size:14.5px;color:var(--ink-2)}
+  #panel .chip{display:inline-block;font-size:14px;font-weight:600;letter-spacing:.03em;padding:3px 9px;border-radius:999px;color:#fff}
+  .dep{border:1px solid var(--line);border-radius:10px;padding:9px 11px;margin:8px 0;background:var(--dep-bg)}
+  .dep b{font-size:15px;cursor:pointer;color:var(--accent)}
+  .dep b:hover{text-decoration:underline}
+  .dep p{margin:4px 0 2px;font-size:14.5px;color:var(--ink-2)}
+  #panel a{color:var(--accent);text-decoration:none;font-size:15px}
+  #panel a:hover{text-decoration:underline}
+  .backlink{font-size:14.5px;color:var(--accent);cursor:pointer}
+  .backlink:hover{text-decoration:underline}
+  #scrim{display:none}
+  .colbg{opacity:.05}
+  .collabel{font-size:14px;font-weight:650;filter:brightness(.62) saturate(1.15)}
+  .node rect.main{stroke-width:1.3;cursor:pointer}
+  .node text{font-size:14px;fill:var(--ink);pointer-events:none;font-weight:520}
+  .node{cursor:pointer}
+  .edge path.line{stroke:var(--edge);stroke-width:1.3;fill:none;transition:stroke-width .1s}
+  .edge polygon{fill:var(--edge)}
+  .edge path.hit{stroke:transparent;stroke-width:16;fill:none;pointer-events:stroke;cursor:pointer}
+  svg.dimmed .node:not(.related){opacity:.13}
+  svg.dimmed .edge:not(.related){opacity:.05}
+  svg.dimmed .colbg{opacity:.02}
+  svg.dimmed .collabel:not(.related){opacity:.2}
+  .edge.related path.line{stroke:var(--edge-related);stroke-width:1.7}
+  .edge.related polygon{fill:var(--edge-related)}
+  .edge.direct path.line{stroke:var(--accent);stroke-width:2.1}
+  .edge.direct polygon{fill:var(--accent)}
+  .edge.hov path.line{stroke:var(--accent);stroke-width:2.6}
+  .edge.hov polygon{fill:var(--accent)}
+  .node.related rect.main{stroke-width:2.2}
+  .node.sel rect.main{stroke-width:2.8}
+  .node.match rect.main{stroke:var(--match);stroke-width:2.6}
+  .node.learner-known rect.main{fill-opacity:0.08;stroke-opacity:0.5}
+  .node.learner-frontier rect.main{stroke-width:2.35}
+  .node .here-ring{fill:none;stroke:var(--accent);stroke-width:1.6;opacity:.88}
+  .node .here-flag{font-size:14px;font-weight:650;fill:var(--accent)}
+  .here-summary{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:10px 0 4px;background:var(--dep-bg)}
+  .here-summary h3{margin-top:0}
+  .here-jump{color:var(--accent);cursor:pointer}
+  .here-jump:hover{text-decoration:underline}
+  .chipbtn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:999px;padding:2px 9px;font-size:14px;font-weight:600;cursor:pointer;background:var(--panel)}
+  .chipbtn:hover{border-color:var(--btn-hover-border)}
+  .chipbtn .dot{width:8px;height:8px;border-radius:50%}
+  @media (pointer:coarse){
+    .edge path.hit{stroke-width:28}
+  }
+  @media (max-width:900px){
+    header{z-index:70;flex-wrap:nowrap;gap:8px;padding:8px 12px;padding-left:max(12px,var(--safe-l));padding-right:max(12px,var(--safe-r));padding-top:max(8px,var(--safe-t))}
+    .brand{flex:1}
+    header h1{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    header .stats,.spacer{display:none}
+    .iconbtn,.narrow-only{display:inline-flex}
+    .sheet-head.narrow-only{display:flex}
+    .toolbar{position:relative;flex-shrink:0}
+    .searchwrap{display:none;flex:1;min-width:0}
+    header.search-open .brand{display:none}
+    header.search-open .searchwrap{display:block}
+    header.search-open #btn-more{display:none}
+    #search{width:100%;min-height:44px;font-size:16px;padding:10px 12px}
+    #results{left:0;right:0;width:100%;top:calc(100% + 6px);max-height:min(50dvh,360px)}
+    #results div{min-height:44px;display:flex;align-items:center;padding:10px 12px}
+    .toolbar-actions{display:none;position:absolute;top:calc(100% + 6px);right:0;flex-direction:column;align-items:stretch;min-width:196px;padding:8px;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(15,23,42,.16);z-index:80}
+    header.menu-open .toolbar-actions{display:flex}
+    .toolbar-actions button{min-height:44px;width:100%;text-align:left;padding:10px 12px}
+    button,.iconbtn,.chipbtn,#panel .backlink,#panel summary{min-height:44px}
+    .chipbtn{padding:10px 14px}
+    #hint{display:none}
+    #legend{display:none;position:fixed;left:0;right:0;bottom:0;top:auto;max-width:none;max-height:min(52dvh,460px);overflow:auto;z-index:60;border-radius:16px 16px 0 0;border:1px solid var(--line);background:var(--panel);padding:12px 16px calc(16px + var(--safe-b));box-shadow:0 -8px 28px rgba(15,23,42,.16)}
+    #legend.is-open{display:block}
+    #legend .lvlchip{min-width:44px;min-height:44px;justify-content:center}
+    #tt{position:fixed;left:0;right:0;bottom:0;top:auto;max-width:none;max-height:min(42dvh,360px);overflow:auto;pointer-events:auto;border-radius:16px 16px 0 0;padding:12px 16px calc(16px + var(--safe-b));z-index:70}
+    #panel .backlink{display:inline-flex;align-items:center;min-height:44px;padding-right:8px}
+    #tt .sheet-handle,#legend .sheet-handle,#panel .sheet-handle{display:block}
+    button,.iconbtn{touch-action:manipulation}
+    #panel,#legend,#tt{-webkit-overflow-scrolling:touch}
+    #panel{position:fixed;left:0;right:0;bottom:0;width:100%;max-height:min(58dvh,520px);border-left:none;border-top:1px solid var(--line);border-radius:16px 16px 0 0;padding:14px 16px calc(18px + var(--safe-b));z-index:60;transform:translateY(110%);box-shadow:0 -8px 28px rgba(15,23,42,.16)}
+    #panel.is-open{transform:translateY(0)}
+    #scrim.is-on{display:block;position:fixed;inset:0;background:rgba(15,23,42,.28);z-index:45}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <h1>Building Lebesgue measure & integral, with reasons</h1>
+    <span class="stats" id="stats"></span>
+  </div>
+  <div class="spacer"></div>
+  <div class="toolbar">
+    <button type="button" id="btn-search-toggle" class="iconbtn narrow-only" aria-label="Search concepts" aria-expanded="false" title="Search">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.25" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.2 15.2 21 21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <div class="searchwrap">
+      <input id="search" type="search" placeholder="Search concepts…" autocomplete="off" enterkeyhint="search">
+      <div id="results"></div>
+    </div>
+    <div class="toolbar-actions" id="toolbar-actions">
+      <button type="button" id="btn-theme" title="Toggle themed / default skin">Themed</button>
+      <button type="button" id="btn-fit" title="Zoom to fit">Fit</button>
+      <button type="button" id="btn-reset" title="Clear selection">Reset</button>
+      <button type="button" id="btn-legend" class="narrow-only" aria-expanded="false">Levels</button>
+      <button type="button" id="btn-guide" class="narrow-only" aria-expanded="false">Guide</button>
+    </div>
+    <button type="button" id="btn-more" class="iconbtn narrow-only" aria-label="More controls" aria-expanded="false" aria-controls="toolbar-actions" title="More">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="6" r="1.7" fill="currentColor"/><circle cx="12" cy="12" r="1.7" fill="currentColor"/><circle cx="12" cy="18" r="1.7" fill="currentColor"/></svg>
+    </button>
+  </div>
+</header>
+<main>
+  <div id="canvaswrap">
+    <svg id="graph" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div id="hint">A → B means “learn A before B”. Hover or click any arrow to see <b>why</b> it is a prerequisite.</div>
+    <div id="legend"></div>
+    <div id="tt"></div>
+  </div>
+  <aside id="panel"></aside>
+</main>
+<div id="scrim" hidden></div>
+
+<script>
+/*DATA-START*/
+const DATA =
+{"nodes": [{"id": "sets-countability", "phase": 0, "label": "Sets & countability", "desc": "Set operations, De Morgan's laws, and the countable/uncountable distinction: the bookkeeping that every measure-theory argument runs on.", "outline": ["Unions, intersections, complements and De Morgan's laws for arbitrary families", "Countable sets: ℕ, ℤ, ℚ; countable unions of countable sets are countable", "Uncountability of ℝ (diagonal argument)", "Disjointifying a sequence: B₁=A₁, Bₙ=Aₙ∖(A₁∪…∪Aₙ₋₁)"], "ideas": ["Measure theory lives on countable operations: finite is too weak, arbitrary is too strong", "Disjointification turns unions into disjoint unions without changing the union", "Countable sets will turn out to have measure zero"], "questions": [{"q": "Show that any countable union ⋃Aₙ equals a disjoint union of sets Bₙ ⊆ Aₙ.", "a": "Set B₁=A₁ and Bₙ=Aₙ∖(A₁∪…∪Aₙ₋₁). The Bₙ are pairwise disjoint, Bₙ⊆Aₙ, and ⋃Bₙ=⋃Aₙ because each point lies in a first Aₙ."}, {"q": "Why is ℚ countable but ℝ not?", "a": "ℚ is the image of ℤ×ℕ, a countable set; ℝ is uncountable by Cantor's diagonal argument on decimal expansions."}, {"q": "State De Morgan's law for a countable family.", "a": "(⋃Aₙ)ᶜ = ⋂Aₙᶜ and (⋂Aₙ)ᶜ = ⋃Aₙᶜ, so a family closed under complements and countable unions is also closed under countable intersections."}], "sources": [{"t": "Abbott, Understanding Analysis, 2nd ed. (Springer, 2015), Ch. 1", "u": "https://link.springer.com/book/10.1007/978-1-4939-2712-8"}, {"t": "Folland, Real Analysis: Modern Techniques and Their Applications, 2nd ed. (Wiley, 1999), Ch. 0"}]}, {"id": "sup-inf-series", "phase": 0, "label": "Sup, inf & series in [0,∞]", "desc": "Completeness of ℝ, sup and inf, and sums of nonnegative series in the extended reals [0,∞], where every such sum exists and order of terms doesn't matter.", "outline": ["Least-upper-bound property and approximation by elements (sup − ε)", "Extended reals [0,∞] and arithmetic conventions (including 0·∞=0)", "Nonnegative series always converge in [0,∞]", "Rearrangement and double-sum invariance for nonnegative terms", "The ε/2ⁿ trick"], "ideas": ["Measures take values in [0,∞], so infinite values must behave", "Nonnegative double series can be summed in any order (Tonelli for sums)", "ε/2ⁿ spreads a total error ε over countably many steps"], "questions": [{"q": "Why does any series of nonnegative terms have a sum in [0,∞]?", "a": "Its partial sums are increasing, so they converge to their supremum, which is finite or +∞."}, {"q": "What is the ε/2ⁿ trick and where will it appear?", "a": "Choose the n-th approximation within ε/2ⁿ so total error is at most Σε/2ⁿ = ε. It is how countable subadditivity of outer measure is proved."}, {"q": "Why can nonnegative double series be summed in either order?", "a": "Both iterated sums equal the supremum of finite partial sums over finite index sets, which doesn't depend on order."}], "sources": [{"t": "Abbott, Understanding Analysis, 2nd ed. (Springer, 2015), Ch. 1–2", "u": "https://link.springer.com/book/10.1007/978-1-4939-2712-8"}, {"t": "Folland, Real Analysis: Modern Techniques and Their Applications, 2nd ed. (Wiley, 1999), Ch. 0 (extended reals, unordered sums)"}]}, {"id": "open-sets-r", "phase": 0, "label": "Open sets in ℝ", "desc": "Open, closed and compact subsets of ℝ, and the structure theorem: every open subset of ℝ is a countable disjoint union of open intervals.", "outline": ["Open and closed sets; complements", "Compactness and Heine–Borel", "Structure theorem: open U ⊆ ℝ is a countable disjoint union of open intervals", "Approximating a set from outside by open sets"], "ideas": ["Open sets are 'measurable by construction': their length is a sum of interval lengths", "Compactness turns countable covers into finite ones (used to show m*([a,b]) = b−a)", "Open sets generate the Borel σ-algebra"], "questions": [{"q": "Why is every open U ⊆ ℝ a countable disjoint union of open intervals?", "a": "Each point lies in a maximal open interval inside U (its connected component); distinct components are disjoint, and each contains a rational, so there are countably many."}, {"q": "Where does Heine–Borel enter measure theory first?", "a": "In proving the outer measure of [a,b] is b−a: any countable open cover has a finite subcover, so the lengths must sum to at least b−a."}, {"q": "Why might you approximate a set from outside by open sets?", "a": "Open sets have a computable length; outer measure equals the infimum of the lengths of open supersets (outer regularity)."}], "sources": [{"t": "Abbott, Understanding Analysis, 2nd ed. (Springer, 2015), Ch. 3", "u": "https://link.springer.com/book/10.1007/978-1-4939-2712-8"}, {"t": "Royden & Fitzpatrick, Real Analysis, 4th ed. (Pearson, 2010), Ch. 1"}]}, {"id": "riemann-integral", "phase": 0, "label": "The Riemann integral", "desc": "Upper and lower Darboux sums over partitions of the domain, and integrability as their sup and inf coinciding.", "outline": ["Partitions, upper and lower sums", "Integrability criterion: U(f,P) − L(f,P) < ε for some P", "Continuous and monotone functions are integrable", "Fundamental theorem of calculus"], "ideas": ["Riemann partitions the domain; Lebesgue will partition the range", "Integrability depends on how badly discontinuous f is", "The Riemann integral is the benchmark the new integral must agree with"], "questions": [{"q": "Define the Riemann (Darboux) integral of a bounded f on [a,b].", "a": "f is integrable if sup over partitions of the lower sums equals inf of the upper sums; the common value is the integral."}, {"q": "Why is the Dirichlet function 1_ℚ not Riemann integrable on [0,1]?", "a": "Every subinterval contains rationals and irrationals, so every upper sum is 1 and every lower sum is 0."}, {"q": "What is the key structural difference between Riemann and Lebesgue integration?", "a": "Riemann chops the domain into intervals; Lebesgue chops the range and measures the sets where f takes those values."}], "sources": [{"t": "Abbott, Understanding Analysis, 2nd ed. (Springer, 2015), Ch. 7", "u": "https://link.springer.com/book/10.1007/978-1-4939-2712-8"}, {"t": "Axler, Measure, Integration & Real Analysis (Springer GTM 282, 2020; open access), Ch. 1A", "u": "https://measure.axler.net/"}]}, {"id": "function-limits", "phase": 0, "label": "Pointwise & uniform limits", "desc": "Sequences of functions, pointwise versus uniform convergence, and which properties survive each kind of limit.", "outline": ["Pointwise and uniform convergence", "Uniform limits preserve continuity and Riemann integrals", "Counterexamples where pointwise limits break integrals", "lim sup and lim inf of sequences of functions"], "ideas": ["Uniform convergence is too strong for most applications", "Pointwise convergence is natural but needs a better integral", "lim inf / lim sup of functions are where Fatou's lemma will live"], "questions": [{"q": "Give a sequence fₙ → 0 pointwise on [0,1] with ∫fₙ = 1 for all n.", "a": "fₙ = n·1_(0,1/n]: each has integral 1, but fₙ(x) → 0 for every x, so the integral of the limit (0) is not the limit of the integrals (1)."}, {"q": "Why does uniform convergence let you swap limit and Riemann integral?", "a": "|∫fₙ − ∫f| ≤ (b−a)·sup|fₙ − f| → 0."}, {"q": "Define lim inf of a sequence of functions.", "a": "(lim inf fₙ)(x) = sup over k of inf over n≥k of fₙ(x), a pointwise construction in the extended reals."}], "sources": [{"t": "Abbott, Understanding Analysis, 2nd ed. (Springer, 2015), Ch. 6", "u": "https://link.springer.com/book/10.1007/978-1-4939-2712-8"}, {"t": "Royden & Fitzpatrick, Real Analysis, 4th ed. (Pearson, 2010), Ch. 1"}]}, {"id": "outer-measure", "phase": 1, "label": "Lebesgue outer measure", "desc": "m*(A) = inf of Σ ℓ(Iₖ) over all countable covers of A by open intervals. Defined for every subset of ℝ, monotone, countably subadditive, translation invariant, and correct on intervals.", "outline": ["Definition via countable covers by open intervals", "Monotonicity and m*(∅)=0", "Countable subadditivity (ε/2ⁿ proof)", "m*([a,b]) = b−a (uses Heine–Borel)", "Countable sets have outer measure 0"], "ideas": ["Countable covers fix what finite covers (Jordan) get wrong", "Outer measure is defined on all sets but is not additive on all sets", "Translation invariance is inherited from interval length"], "questions": [{"q": "Prove that m* is countably subadditive.", "a": "Given Aₙ, cover each by intervals with total length ≤ m*(Aₙ) + ε/2ⁿ; together they cover ⋃Aₙ with total length ≤ Σm*(Aₙ) + ε. Let ε → 0."}, {"q": "Why is m*(ℚ) = 0?", "a": "Enumerate ℚ = {q₁, q₂, …} and cover qₙ by an interval of length ε/2ⁿ; total length ε, for every ε > 0."}, {"q": "Why does proving m*([a,b]) ≥ b−a need compactness?", "a": "An arbitrary countable cover has no direct relation to b−a; Heine–Borel reduces it to a finite cover, where an elementary argument shows the lengths sum to at least b−a."}], "sources": [{"t": "Axler, Measure, Integration & Real Analysis (Springer GTM 282, 2020; open access), Sec. 2A", "u": "https://measure.axler.net/"}, {"t": "Tao, An Introduction to Measure Theory (AMS GSM 126, 2011; free PDF), Sec. 1.2", "u": "https://terrytao.files.wordpress.com/2012/12/gsm-126-tao5-measure-book.pdf"}, {"t": "Royden & Fitzpatrick, Real Analysis, 4th ed. (Pearson, 2010), Ch. 2"}]}, {"id": "jordan-measure", "phase": 1, "label": "Jordan measure & its limits", "desc": "The pre-Lebesgue attempt: approximate a set from inside and outside by finite unions of intervals. It matches Riemann integration and fails exactly where Riemann does.", "outline": ["Elementary sets: finite unions of intervals, and their measure", "Inner and outer Jordan content (sup and inf over elementary sets)", "Jordan measurable iff inner = outer iff 1_E is Riemann integrable", "Failure: ℚ ∩ [0,1] is not Jordan measurable", "Jordan measurable sets form an algebra, not a σ-algebra"], "ideas": ["Finite approximation is the root problem", "Jordan measurability ↔ Riemann integrability of the indicator", "Countable unions of Jordan-null sets need not be Jordan measurable"], "questions": [{"q": "Why is ℚ ∩ [0,1] not Jordan measurable?", "a": "Its inner content is 0 (it contains no interval) and its outer content is 1 (any finite union of intervals containing it covers [0,1] up to finitely many points)."}, {"q": "How is Jordan measure linked to the Riemann integral?", "a": "A bounded set E is Jordan measurable iff 1_E is Riemann integrable, and then its content equals ∫1_E."}, {"q": "What closure property fails for Jordan measurable sets?", "a": "Closure under countable unions: each rational point is Jordan measurable with content 0, but their union ℚ ∩ [0,1] is not Jordan measurable."}], "sources": [{"t": "Tao, An Introduction to Measure Theory (AMS GSM 126, 2011; free PDF), Sec. 1.1", "u": "https://terrytao.files.wordpress.com/2012/12/gsm-126-tao5-measure-book.pdf"}, {"t": "Bressoud, A Radical Approach to Lebesgue's Theory of Integration (MAA/Cambridge, 2008): the history of why each definition was needed"}]}, {"id": "riemann-limits", "phase": 1, "label": "Where Riemann breaks", "desc": "The concrete failures that force a new integral: pointwise limits of integrable functions that aren't integrable, and no good theorem for swapping limits and integrals.", "outline": ["Enumerate ℚ∩[0,1] as q₁,q₂,…; fₙ = indicator of {q₁,…,qₙ} is integrable (∫=0), limit 1_ℚ is not", "Pointwise convergence doesn't preserve integrability", "No monotone convergence theorem for Riemann integrals", "Want: a larger class of integrable functions, closed under limits"], "ideas": ["The Riemann-integrable functions aren't closed under monotone limits", "A good integral should satisfy: fₙ ↑ f ⇒ ∫fₙ ↑ ∫f", "This 'wishlist for integrals' motivates every later definition"], "questions": [{"q": "Give an increasing sequence of Riemann integrable functions whose limit isn't Riemann integrable.", "a": "fₙ = 1_{q₁,…,qₙ} for an enumeration of ℚ∩[0,1]: each is integrable with integral 0, and fₙ ↑ 1_ℚ, which isn't Riemann integrable."}, {"q": "What property of limits should a better integral have?", "a": "Monotone convergence: if 0 ≤ fₙ ↑ f pointwise then ∫fₙ → ∫f, with f automatically integrable in the extended sense."}, {"q": "Why does the Riemann integral fail on this example at root?", "a": "Its partitions see only intervals; it can't 'notice' that ℚ is small, because ℚ is dense in every interval."}], "sources": [{"t": "Axler, Measure, Integration & Real Analysis (Springer GTM 282, 2020; open access), Sec. 1B", "u": "https://measure.axler.net/"}, {"t": "Bressoud, A Radical Approach to Lebesgue's Theory of Integration (MAA/Cambridge, 2008): the history of why each definition was needed"}]}, {"id": "axiom-of-choice", "phase": 1, "label": "Axiom of choice", "desc": "The set-theoretic axiom that lets you pick one element from each set in an arbitrary family: the tool needed to build a non-measurable set.", "outline": ["Statement: every family of nonempty sets has a choice function", "Equivalence relations and equivalence classes", "Example: x ~ y iff x − y ∈ ℚ partitions ℝ into cosets of ℚ", "Choosing one representative from each coset"], "ideas": ["Non-measurable sets can't be written down explicitly; their existence uses choice", "Cosets of ℚ are dense and uncountably many", "Vitali's set is a set of coset representatives"], "questions": [{"q": "Why does choosing coset representatives of ℝ/ℚ need the axiom of choice?", "a": "There are uncountably many cosets and no definable rule picks a point from each; choice asserts a selection exists."}, {"q": "Describe the equivalence classes of x ~ y ⇔ x − y ∈ ℚ.", "a": "Each class is a translate x + ℚ, a countable dense set; ℝ is the disjoint union of uncountably many such classes."}, {"q": "Why does it matter for theory building that non-measurable sets need choice?", "a": "It explains why no simple example exists, and why restricting to measurable sets costs nothing in practice."}], "sources": [{"t": "Folland, Real Analysis: Modern Techniques and Their Applications, 2nd ed. (Wiley, 1999), Ch. 0 and Sec. 1.1"}, {"t": "Royden & Fitzpatrick, Real Analysis, 4th ed. (Pearson, 2010), Ch. 2 (Vitali)"}]}, {"id": "vitali-set", "phase": 1, "label": "No measure on all subsets", "desc": "Vitali's theorem: no function on all subsets of ℝ can be countably additive, translation invariant, and give intervals their length. Outer measure fails additivity.", "outline": ["Pick V ⊂ [0,1] with one point from each coset x + ℚ", "Translates V + q for rational q ∈ [−1,1] are disjoint and cover [0,1] inside [−1,2]", "If V had a measure m(V): Σ m(V) ∈ [1,3], impossible for 0 or positive", "Conclusion: outer measure isn't countably additive on all sets", "Consequence: restrict to a class of 'measurable' sets"], "ideas": ["The wishlist is inconsistent on the full power set", "Something must give: we give up 'all subsets'", "This is why σ-algebras enter the definition"], "questions": [{"q": "Sketch why the Vitali set V can't have a translation-invariant countably additive measure.", "a": "The translates V + q (q ∈ ℚ∩[−1,1]) are disjoint, contain [0,1], and lie in [−1,2]; additivity would give 1 ≤ Σ_q m(V) ≤ 3, but a countable sum of one constant is 0 or ∞."}, {"q": "Which property do we give up in response, and why that one?", "a": "Being defined on all subsets. Countable additivity is needed for limit theorems and translation invariance for length on ℝ, so the domain is what shrinks."}, {"q": "What does Vitali's set say about Lebesgue outer measure?", "a": "There are disjoint sets A, B with m*(A ∪ B) < m*(A) + m*(B), so m* isn't a measure on the full power set."}], "sources": [{"t": "Axler, Measure, Integration & Real Analysis (Springer GTM 282, 2020; open access), Sec. 2A (nonadditivity of outer measure)", "u": "https://measure.axler.net/"}, {"t": "Royden & Fitzpatrick, Real Analysis, 4th ed. (Pearson, 2010), Ch. 2"}, {"t": "Tao, An Introduction to Measure Theory (AMS GSM 126, 2011; free PDF), Sec. 1.2.3", "u": "https://terrytao.files.wordpress.com/2012/12/gsm-126-tao5-measure-book.pdf"}]}, {"id": "sigma-algebras", "phase": 2, "label": "σ-algebras", "desc": "A family of sets closed under complements and countable unions: the right domain for a measure, closed under exactly the countable operations limits need.", "outline": ["Definition: contains ∅, closed under complement and countable union", "Consequences: countable intersections, differences, lim sup / lim inf of sets", "Comparison: algebras (finite unions) vs σ-algebras", "σ-algebra generated by a family", "Examples: power set, {∅, X}, countable/co-countable"], "ideas": ["Finite closure (Jordan) was too weak; all subsets (Vitali) too strong", "'Generated by' gives the smallest σ-algebra containing what you need", "lim sup Aₙ = ⋂ₖ⋃ₙ≥ₖ Aₙ stays inside the σ-algebra"], "questions": [{"q": "Why closure under countable unions rather than finite unions?", "a": "Limits involve countably many sets (like ℚ as a union of points); finite closure leaves out sets like ℚ ∩ [0,1] that limit arguments produce."}, {"q": "Show a σ-algebra is closed under countable intersections.", "a": "⋂Aₙ = (⋃Aₙᶜ)ᶜ by De Morgan, a complement of a countable union of complements."}, {"q": "What is the σ-algebra generated by a family 𝓔?", "a": "The intersection of all σ-algebras containing 𝓔: the smallest σ-algebra containing it."}], "sources": [{"t": "Axler, Measure, Integration & Real Analysis (Springer GTM 282, 2020; open access), Sec. 2B", "u": "https://measure.axler.net/"}, {"t": "Folland, Real Analysis: Modern Techniques and Their Applications, 2nd ed. (Wiley, 1999), Sec. 1.2"}]}, {"id": "measure-wishlist", "phase": 1, "label": "What a measure must do", "desc": "Writing down the properties we want, length on intervals, translation invariance, and countable additivity, and noting that outer measure already has all but additivity.", "outline": ["List desiderata: m(I) = ℓ(I), m(E + x) = m(E), countable additivity, monotonicity", "Why finite additivity is too weak (Jordan, Riemann limits)", "Outer measure: satisfies all but additivity", "The plan: find a large family where m* is additive"], "ideas": ["Each axiom is justified by a failure seen earlier", "Countable additivity is what monotone convergence will need", "The construction is 'restrict outer measure to good sets'"], "questions": [{"q": "Why countable rather than finite additivity?", "a": "Monotone convergence and similar limit theorems need m(⋃Aₙ) = lim m(A₁∪…∪Aₙ), which is countable additivity; finite additivity can't handle limits."}, {"q": "Which of the desiderata does Lebesgue outer measure already satisfy?", "a": "Length on intervals, translation invariance, monotonicity and countable subadditivity, but not additivity on all sets."}, {"q": "What is the overall plan after the wishlist?", "a": "Find a σ-algebra on which outer measure is countably additive, and make it contain all intervals."}], "sources": [{"t": "Tao, An Introduction to Measure Theory (AMS GSM 126, 2011; free PDF), Sec. 1.2 (intro)", "u": "https://terrytao.files.wordpress.com/2012/12/gsm-126-tao5-measure-book.pdf"}, {"t": "Bressoud, A Radical Approach to Lebesgue's Theory of Integration (MAA/Cambridge, 2008): the history of why each definition was needed"}, {"t": "Axler, Measure, Integration & Real Analysis (Springer GTM 282, 2020; open access), Sec. 2A–2C", "u": "https://measure.axler.net/"}]}, {"id": "caratheodory", "phase": 2, "label": "Carathéodory's criterion", "desc": "A set E is measurable if it splits every test set additively: m*(A) = m*(A ∩ E) + m*(A ∖ E) for all A. These sets form a σ-algebra on which m* is countably additive, and intervals qualify.", "outline": ["State the criterion; only ≥ needs proof (≤ is subadditivity)", "Show the measurable sets form an algebra, then a σ-algebra", "Show m* is countably additive on them", "Show every interval (a,∞) satisfies the criterion", "Conclude every Borel set is measurable"], "ideas": ["The criterion is designed exactly to recover the additivity Vitali sets break", "Testing against every A makes the σ-algebra large", "The theorem works for any outer measure, not just on ℝ"], "questions": [{"q": "State Carathéodory's criterion and explain why only one inequality matters.", "a": "E is measurable if m*(A) = m*(A∩E) + m*(A∖E) for all A ⊆ ℝ; m*(A) ≤ the sum by subadditivity, so only ≥ needs checking (and only for m*(A) < ∞)."}, {"q": "Why does a Vitali set fail the criterion?", "a": "Its translates show m* isn't additive on V and its complement pieces; for a suitable test set A the splitting is strictly subadditive."}, {"q": "Why does showing intervals (a,∞) are measurable give all Borel sets?", "a": "The measurable sets form a σ-algebra, and the Borel σ-algebra is generated by the rays (a,∞), so it is contained in any σ-algebra containing them."}], "sources": [{"t": "Folland, Real Analysis: Modern Techniques and Their Applications, 2nd ed. (Wiley, 1999), Sec. 1.4"}, {"t": "Tao, An Introduction to Measure Theory (AMS GSM 126, 2011; free PDF), Sec. 1.7", "u": "https://terrytao.files.wordpress.com/2012/12/gsm-126-tao5-measure-book.pdf"}, {"t": "Royden & Fitzpatrick, Real Analysis, 4th ed. (Pearson, 2010), Ch. 2 and Ch. 17"}]}, {"id": "abstract-measures", "phase": 2, "label": "Measures on σ-algebras", "desc": "A measure is a function μ: 𝒮 → [0,∞] on a σ-algebra with μ(∅) = 0 and countable additivity. The axioms are the wishlist with the domain restricted.", "outline": ["Definition of measure space (X, 𝒮, μ)", "Examples: counting measure, point mass, Lebesgue measure (to come)", "Monotonicity and countable subadditivity from additivity", "Difference rule μ(B∖A) = μ(B) − μ(A) when μ(A) < ∞"], "ideas": ["Abstracting lets the same theorems serve ℝ, ℝⁿ and probability", "Every property is derived from countable additivity", "Finite-measure assumptions are needed for subtraction"], "questions": [{"q": "State the definition of a measure.", "a": "A function μ from a σ-algebra 𝒮 to [0,∞] with μ(∅) = 0 and μ(⋃Eₙ) = Σμ(Eₙ) for every disjoint sequence in 𝒮."}, {"q": "Derive monotonicity from additivity.", "a": "If A ⊆ B then B = A ∪ (B∖A) disjointly, so μ(B) = μ(A) + μ(B∖A) ≥ μ(A)."}, {"q": "Why is μ(B∖A) = μ(B) − μ(A) only valid when μ(A) < ∞?", "a": "Otherwise the right side may be ∞ − ∞, which is undefined."}], "sources": [{"t": "Axler, Measure, Integration & Real Analysis (Springer GTM 282, 2020; open access), Sec. 2C", "u": "https://measure.axler.net/"}, {"t": "Folland, Real Analysis: Modern Techniques and Their Applications, 2nd ed. (Wiley, 1999), Sec. 1.3"}]}, {"id": "borel-sets", "phase": 2, "label": "Borel sets", "desc": "The σ-algebra generated by open sets: contains every set you can build from intervals by countable operations, and is the standard domain for measurable functions.", "outline": ["Definition: σ-algebra generated by the open sets", "Equivalent generators: open intervals, closed intervals, rays (a,∞)", "Examples: closed sets, Gδ and Fσ sets, ℚ, the Cantor set", "Not every subset is Borel"], "ideas": ["Choose generators to suit the proof (rays are easiest)", "Borel sets are the 'natural' sets of analysis", "Lebesgue measurable sets will be strictly larger"], "questions": [{"q": "Why do the rays (a,∞) generate the Borel σ-algebra?", "a": "Each open interval (a,b) = (a,∞) ∖ [b,∞) with [b,∞) = ⋂(b − 1/n, ∞), and every open set is a countable union of open intervals."}, {"q": "Is ℚ Borel? Is the set of irrationals?", "a": "Yes: ℚ is a countable union of closed singletons (Fσ), and the irrationals are its complement (Gδ)."}, {"q": "Why is the Borel σ-algebra the right one for measurable functions?", "a": "It is generated by intervals, so checking f⁻¹((a,∞)) is measurable is enough, which matches how functions are tested in practice."}], "sources": [{"t": "Axler, Measure, Integration & Real Analysis (Springer GTM 282, 2020; open access), Sec. 2B", "u": "https://measure.axler.net/"}, {"t": "Folland, Real Analysis: Modern Techniques and Their Applications, 2nd ed. (Wiley, 1999), Sec. 1.2"}]}, {"id": "lebesgue-measure", "phase": 2, "label": "Lebesgue measure on ℝ", "desc": "m* restricted to the Carathéodory-measurable sets: a countably additive, translation-invariant measure that gives intervals their length, contains all Borel sets, and is complete.", "outline": ["Define m = m* on the Lebesgue measurable sets", "Check the wishlist: m(I) = ℓ(I), translation invariance, countable additivity", "Continuity from below and above", "Regularity: approximate by open sets from outside and closed sets from inside", "Completeness: subsets of null sets are measurable"], "ideas": ["Every wishlist item is now a theorem", "Regularity ties measurable sets back to open sets", "The Cantor set: uncountable but measure zero"], "questions": [{"q": "Why is Lebesgue measure translation invariant?", "a": "Outer measure is, since translated covers have the same lengths, and Carathéodory's criterion is preserved under translation."}, {"q": "State continuity from below and why it follows from additivity.", "a": "If E₁ ⊆ E₂ ⊆ … then m(⋃Eₙ) = lim m(Eₙ): write ⋃Eₙ as the disjoint union of Eₙ ∖ Eₙ₋₁ and sum."}, {"q": "Why does the Cantor set have measure 0?", "a": "At stage n it is covered by 2ⁿ intervals of length 3⁻ⁿ, total (2/3)ⁿ → 0."}], "sources": [{"t": "Axler, Measure, Integration & Real Analysis (Springer GTM 282, 2020; open access), Sec. 2D", "u": "https://measure.axler.net/"}, {"t": "Royden & Fitzpatrick, Real Analysis, 4th ed. (Pearson, 2010), Ch. 2"}, {"t": "Stein & Shakarchi, Real Analysis: Measure Theory, Integration, and Hilbert Spaces (Princeton, 2005), Ch. 1"}]}, {"id": "measurable-functions", "phase": 3, "label": "Measurable functions", "desc": "f is measurable if f⁻¹((a,∞)) is measurable for every a. Exactly the functions whose level sets a measure can measure; closed under algebra and pointwise limits.", "outline": ["Definition via preimages of rays (equivalently, of Borel sets)", "Continuous and monotone functions are Borel measurable", "Closed under sums, products, sup, inf, lim sup, lim inf", "Pointwise limits of measurable functions are measurable"], "ideas": ["Defined so that {f > a} has a measure, which is what Lebesgue sums need", "Closure under limits is what Riemann integrability lacked", "Measurability is about the σ-algebra, not the measure"], "questions": [{"q": "Why define measurability with preimages of rays?", "a": "The integral will measure sets {f > a}; the rays generate the Borel sets, so this test is equivalent to f⁻¹(B) measurable for all Borel B."}, {"q": "Show sup fₙ is measurable if each fₙ is.", "a": "{sup fₙ > a} = ⋃{fₙ > a}, a countable union of measurable sets."}, {"q": "Why are pointwise limits of measurable functions measurable?", "a": "lim fₙ = lim sup fₙ = inf over k of sup over n ≥ k of fₙ, built from countable sups and infs."}], "sources": [{"t": "Axler, Measure, Integration & Real Analysis (Springer GTM 282, 2020; open access), Sec. 2B", "u": "https://measure.axler.net/"}, {"t": "Folland, Real Analysis: Modern Techniques and Their Applications, 2nd ed. (Wiley, 1999), Sec. 2.1"}]}, {"id": "simple-functions", "phase": 3, "label": "Simple functions", "desc": "Finite linear combinations Σ cₖ 1_{Aₖ} of indicators of measurable sets, whose integral is defined as Σ cₖ μ(Aₖ), and which approximate every nonnegative measurable function from below.", "outline": ["Definition and standard representation (distinct values, disjoint sets)", "Integral of a simple function: Σ cₖ μ(Aₖ)", "Well-definedness: independent of representation", "Approximation: φₙ ↑ f for any measurable f ≥ 0 (dyadic range cuts)"], "ideas": ["Simple functions cut the range, not the domain", "Their integral is forced by 'area = height × measure of base'", "Every nonnegative measurable function is an increasing limit of simple ones"], "questions": [{"q": "Why must the integral of a simple function be Σ cₖ μ(Aₖ)?", "a": "Linearity plus ∫1_A = μ(A) (area of a rectangle with base A and height 1) force it."}, {"q": "Construct simple φₙ ↑ f for measurable f ≥ 0.", "a": "φₙ = Σ (k/2ⁿ)·1_{k/2ⁿ ≤ f < (k+1)/2ⁿ} for k < n·2ⁿ, plus n·1_{f ≥ n}. Each refinement is larger and φₙ → f pointwise."}, {"q": "Why is well-definedness of Σ cₖ μ(Aₖ) a real issue?", "a": "The same function has many representations; you must show they all give the same sum, using a common refinement into disjoint sets."}], "sources": [{"t": "Folland, Real Analysis: Modern Techniques and Their Applications, 2nd ed. (Wiley, 1999), Sec. 2.1–2.2"}, {"t": "Axler, Measure, Integration & Real Analysis (Springer GTM 282, 2020; open access), Sec. 2E and 3A", "u": "https://measure.axler.net/"}]}, {"id": "measure-continuity", "phase": 2, "label": "Continuity of measure", "desc": "For increasing sets, μ(⋃Eₙ) = lim μ(Eₙ); for decreasing sets of finite measure, μ(⋂Eₙ) = lim μ(Eₙ). The set-level form of monotone convergence.", "outline": ["Continuity from below via disjointification", "Continuity from above using complements, needs μ(E₁) < ∞", "Counterexample: Eₙ = [n,∞) in ℝ", "Borel–Cantelli: Σμ(Eₙ) < ∞ ⇒ μ(lim sup Eₙ) = 0"], "ideas": ["Continuity from below is monotone convergence for indicator functions", "The finiteness hypothesis in continuity from above is the same one DCT needs", "Borel–Cantelli is the main tool for 'almost every' statements"], "questions": [{"q": "Prove continuity from below.", "a": "With E₀ = ∅, ⋃Eₙ is the disjoint union of Eₙ ∖ Eₙ₋₁, so μ(⋃Eₙ) = Σ μ(Eₙ ∖ Eₙ₋₁) = lim μ(Eₙ) by additivity."}, {"q": "Why does continuity from above need μ(E₁) < ∞?", "a": "Eₙ = [n,∞) decrease to ∅ but each has measure ∞, so the limit ∞ ≠ 0."}, {"q": "State and prove Borel–Cantelli.", "a": "If Σμ(Eₙ) < ∞, then μ(lim sup Eₙ) ≤ μ(⋃ₙ≥ₖ Eₙ) ≤ Σₙ≥ₖ μ(Eₙ) → 0."}], "sources": [{"t": "Axler, Measure, Integration & Real Analysis (Springer GTM 282, 2020; open access), Sec. 2C", "u": "https://measure.axler.net/"}, {"t": "Folland, Real Analysis: Modern Techniques and Their Applications, 2nd ed. (Wiley, 1999), Sec. 1.3"}]}, {"id": "lebesgue-integral", "phase": 3, "label": "The Lebesgue integral", "desc": "For measurable f ≥ 0: ∫f = sup{∫φ : φ simple, 0 ≤ φ ≤ f}. Then ∫f = ∫f⁺ − ∫f⁻ when finite. The definition is chosen so that monotone limits pass through.", "outline": ["Define ∫f for f ≥ 0 as the sup over simple functions below f", "Check it agrees with the simple-function integral", "Monotonicity, and ∫ over a set E as ∫f·1_E", "Integral = 0 iff f = 0 almost everywhere", "Extend to real f via f⁺ − f⁻ when ∫|f| < ∞"], "ideas": ["Approximation from below is what lets monotone limits work", "No partition of the domain: the measure does the work", "Splitting f = f⁺ − f⁻ avoids ∞ − ∞"], "questions": [{"q": "Why define ∫f as a sup over simple functions below f rather than above?", "a": "Approximating from below works for unbounded f and fits monotone convergence: increasing simple φₙ ↑ f give ∫φₙ ↑ ∫f."}, {"q": "Show ∫f = 0 for f ≥ 0 implies f = 0 a.e.", "a": "If m({f > 1/n}) > 0 for some n, the simple function (1/n)·1_{f > 1/n} ≤ f has positive integral. So each {f > 1/n} is null, and so is their union {f > 0}."}, {"q": "Why is ∫ 1_ℚ dm = 0 on [0,1]?", "a": "1_ℚ is the simple function 1·1_ℚ, with integral m(ℚ ∩ [0,1]) = 0."}], "sources": [{"t": "Axler, Measure, Integration & Real Analysis (Springer GTM 282, 2020; open access), Sec. 3A", "u": "https://measure.axler.net/"}, {"t": "Folland, Real Analysis: Modern Techniques and Their Applications, 2nd ed. (Wiley, 1999), Sec. 2.2"}, {"t": "Stein & Shakarchi, Real Analysis: Measure Theory, Integration, and Hilbert Spaces (Princeton, 2005), Ch. 2"}]}, {"id": "null-sets-ae", "phase": 3, "label": "Null sets & almost everywhere", "desc": "Sets of measure zero, and properties that hold except on a null set. The integral can't see null sets, so 'a.e.' is the natural notion of equality.", "outline": ["Null sets: countable sets, the Cantor set, subsets of null sets (completeness)", "f = g a.e. and its effect on integrals", "Modifying a function on a null set preserves measurability (complete measure)", "Typical a.e. statements: a.e. convergence, a.e. finiteness"], "ideas": ["The integral is insensitive to null sets, so theorems are stated a.e.", "Completeness of Lebesgue measure makes a.e. reasoning clean", "Uncountable null sets exist (Cantor), so 'small' ≠ 'countable'"], "questions": [{"q": "Why is f = g a.e. enough for ∫f = ∫g?", "a": "∫|f − g| = 0 because |f − g| is zero off a null set, and the integral over a null set is 0."}, {"q": "Why does completeness matter for a.e. statements?", "a": "If f is measurable and g = f a.e., g is automatically measurable when the measure is complete, so a.e. modifications stay inside the theory."}, {"q": "Give an uncountable null set.", "a": "The Cantor set: uncountable (it corresponds to all ternary expansions using only 0s and 2s) but of measure 0."}], "sources": [{"t": "Axler, Measure, Integration & Real Analysis (Springer GTM 282, 2020; open access), Sec. 2D–2E", "u": "https://measure.axler.net/"}, {"t": "Royden & Fitzpatrick, Real Analysis, 4th ed. (Pearson, 2010), Ch. 2–3"}]}, {"id": "convergence-modes", "phase": 3, "label": "Modes of convergence", "desc": "Pointwise, a.e., uniform, and in measure, plus Egorov's theorem (a.e. convergence is nearly uniform on finite-measure sets) and Littlewood's three principles.", "outline": ["Convergence a.e. and in measure; how they relate", "Egorov: on finite measure, a.e. convergence is uniform off a set of small measure", "Littlewood's three principles (sets ≈ finite unions of intervals; functions ≈ continuous; convergence ≈ uniform)", "Counterexamples: the typewriter sequence; escape to infinity"], "ideas": ["Different modes fail differently: escape to horizontal infinity, vertical infinity, width infinity", "Egorov explains why convergence theorems work 'almost uniformly'", "These failure modes are exactly what DCT's hypothesis rules out"], "questions": [{"q": "State Egorov's theorem.", "a": "If m(E) < ∞ and fₙ → f a.e. on E (measurable, finite a.e.), then for every ε > 0 there is F ⊆ E with m(E ∖ F) < ε and fₙ → f uniformly on F."}, {"q": "What is the typewriter sequence and what does it show?", "a": "Indicators of intervals sweeping repeatedly across [0,1] with shrinking width: they converge to 0 in measure but at no point. So convergence in measure doesn't imply a.e. convergence."}, {"q": "Name the three ways mass can escape so that ∫fₙ ↛ ∫f.", "a": "Escape to horizontal infinity (1_[n,n+1]), to width infinity (1_[0,n]/n), and to vertical infinity (n·1_(0,1/n])."}], "sources": [{"t": "Tao, An Introduction to Measure Theory (AMS GSM 126, 2011; free PDF), Sec. 1.3.5 and 1.5", "u": "https://terrytao.files.wordpress.com/2012/12/gsm-126-tao5-measure-book.pdf"}, {"t": "Royden & Fitzpatrick, Real Analysis, 4th ed. (Pearson, 2010), Ch. 3"}]}, {"id": "convergence-theorems", "phase": 4, "label": "MCT, Fatou & DCT", "desc": "The payoff theorems: monotone convergence, Fatou's lemma, and dominated convergence, each a precise statement of when limits and integrals commute.", "outline": ["MCT: 0 ≤ fₙ ↑ f a.e. ⇒ ∫fₙ ↑ ∫f (via simple functions + continuity from below)", "Fatou: ∫ lim inf fₙ ≤ lim inf ∫fₙ for fₙ ≥ 0", "DCT: fₙ → f a.e., |fₙ| ≤ g integrable ⇒ ∫fₙ → ∫f", "Revisit n·1_(0,1/n] and see which hypothesis fails", "Consequences: termwise integration of series"], "ideas": ["MCT is the theorem the definition of ∫ was built to make true", "Fatou is the inequality left when you drop monotonicity", "Domination rules out escaping mass"], "questions": [{"q": "Sketch the proof of MCT.", "a": "∫fₙ is increasing and ≤ ∫f. For simple φ ≤ f and c < 1, the sets Eₙ = {fₙ ≥ cφ} increase to X, so ∫fₙ ≥ c∫_{Eₙ}φ → c∫φ by continuity from below. Let c → 1 and take sup over φ."}, {"q": "Derive Fatou's lemma from MCT.", "a": "gₖ = inf over n≥k of fₙ increases to lim inf fₙ, and gₖ ≤ fₖ, so ∫lim inf fₙ = lim ∫gₖ ≤ lim inf ∫fₙ."}, {"q": "Why does DCT fail for fₙ = n·1_(0,1/n]?", "a": "There is no integrable g dominating all fₙ: sup fₙ behaves like 1/x near 0, which isn't integrable."}], "sources": [{"t": "Axler, Measure, Integration & Real Analysis (Springer GTM 282, 2020; open access), Sec. 3A–3B", "u": "https://measure.axler.net/"}, {"t": "Folland, Real Analysis: Modern Techniques and Their Applications, 2nd ed. (Wiley, 1999), Sec. 2.2–2.3"}, {"t": "Stein & Shakarchi, Real Analysis: Measure Theory, Integration, and Hilbert Spaces (Princeton, 2005), Ch. 2"}]}, {"id": "riemann-vs-lebesgue", "phase": 4, "label": "Riemann vs Lebesgue", "desc": "Checking the new integral extends the old: every Riemann integrable function is Lebesgue integrable with the same value, and Lebesgue's criterion: f is Riemann integrable iff bounded and continuous a.e.", "outline": ["Upper and lower Darboux sums are integrals of step functions", "Squeeze: L(f,P) ≤ ∫f dm ≤ U(f,P)", "Lebesgue's criterion: discontinuity set has measure 0", "Example: Thomae's function vs 1_ℚ", "Improper Riemann integrals that aren't Lebesgue integrable (sin x / x)"], "ideas": ["A new definition must reproduce the old one where the old one worked", "Lebesgue's criterion explains Riemann's failures in measure terms", "Absolute integrability is the price of the Lebesgue integral's good behavior"], "questions": [{"q": "Why does a Riemann integrable f have the same Lebesgue integral?", "a": "Lower and upper Darboux sums are Lebesgue integrals of step functions below and above f; they squeeze both integrals to the same value."}, {"q": "State Lebesgue's criterion for Riemann integrability.", "a": "A bounded f on [a,b] is Riemann integrable iff its set of discontinuities has Lebesgue measure 0."}, {"q": "Why is sin x / x on [1,∞) improperly Riemann integrable but not Lebesgue integrable?", "a": "The improper limit converges through cancellation, but ∫|sin x|/x = ∞, and Lebesgue integrability requires ∫|f| < ∞."}], "sources": [{"t": "Axler, Measure, Integration & Real Analysis (Springer GTM 282, 2020; open access), Sec. 3B", "u": "https://measure.axler.net/"}, {"t": "Abbott, Understanding Analysis, 2nd ed. (Springer, 2015), Sec. 7.6 and 8.1", "u": "https://link.springer.com/book/10.1007/978-1-4939-2712-8"}, {"t": "Royden & Fitzpatrick, Real Analysis, 4th ed. (Pearson, 2010), Ch. 4"}]}, {"id": "integrable-l1", "phase": 4, "label": "Integrable functions & L¹", "desc": "The space of f with ∫|f| < ∞, modulo a.e. equality: linearity of the integral, |∫f| ≤ ∫|f|, and L¹ as a normed space.", "outline": ["Definition of integrable: ∫|f| < ∞", "Linearity: ∫(af + bg) = a∫f + b∫g (via MCT for sums)", "Triangle inequality |∫f| ≤ ∫|f|", "L¹ as equivalence classes mod a.e. equality, with ‖f‖₁ = ∫|f|", "(Preview) completeness of L¹"], "ideas": ["Linearity for nonnegative functions needs MCT, so it comes after the limit theorems", "Equivalence classes are forced: ‖f‖₁ = 0 only means f = 0 a.e.", "L¹ completeness is a key reason for the Lebesgue theory"], "questions": [{"q": "Why is linearity ∫(f + g) = ∫f + ∫g not immediate from the sup definition?", "a": "A simple function below f + g needn't split as simple functions below f and g; the clean proof takes simple φₙ ↑ f, ψₙ ↑ g and applies MCT to φₙ + ψₙ."}, {"q": "Why is L¹ defined as equivalence classes?", "a": "‖f‖₁ = ∫|f| = 0 only implies f = 0 a.e., so the norm is only positive-definite after identifying functions equal a.e."}, {"q": "Prove |∫f| ≤ ∫|f|.", "a": "|∫f| = |∫f⁺ − ∫f⁻| ≤ ∫f⁺ + ∫f⁻ = ∫|f|."}], "sources": [{"t": "Axler, Measure, Integration & Real Analysis (Springer GTM 282, 2020; open access), Sec. 3A and 7A", "u": "https://measure.axler.net/"}, {"t": "Folland, Real Analysis: Modern Techniques and Their Applications, 2nd ed. (Wiley, 1999), Sec. 2.2"}]}, {"id": "goal-construct-justify", "phase": 4, "label": "Construct & justify it all", "desc": "The goal: build Lebesgue measure and the Lebesgue integral from interval length, and justify every definition by the failure it fixes or the theorem it makes true.", "outline": ["Start from length and the failures of Jordan and Riemann", "Outer measure → Vitali → Carathéodory → Lebesgue measure", "Measurable functions → simple functions → the sup definition of ∫", "MCT, Fatou, DCT as the design targets", "Check agreement with Riemann; L¹ as the payoff space"], "ideas": ["Every definition answers a 'why not the simpler thing?'", "The theory is built so the limit theorems are true", "Being able to explain the motivation is the test of understanding"], "questions": [{"q": "Give the chain of definitions from interval length to the Lebesgue integral, with one reason for each step.", "a": "Outer measure (countable covers fix Jordan); σ-algebra (Vitali shows not all sets); Carathéodory measurable sets (exactly where m* is additive); measurable functions (so {f > a} has a measure); simple functions (forced by area); sup over simple functions below f (makes MCT true)."}, {"q": "Why not define the integral as a limit of Lebesgue-style sums over range partitions?", "a": "You can, and it's equivalent for measurable f ≥ 0, but the sup over simple functions makes monotonicity and MCT immediate."}, {"q": "What would break if you used finite additivity instead of countable additivity?", "a": "Continuity from below fails in general, so MCT and with it all the limit theorems lose their proofs."}], "sources": [{"t": "Bressoud, A Radical Approach to Lebesgue's Theory of Integration (MAA/Cambridge, 2008): the history of why each definition was needed"}, {"t": "Axler, Measure, Integration & Real Analysis (Springer GTM 282, 2020; open access), Ch. 2–3", "u": "https://measure.axler.net/"}, {"t": "Tao, An Introduction to Measure Theory (AMS GSM 126, 2011; free PDF), Ch. 1", "u": "https://terrytao.files.wordpress.com/2012/12/gsm-126-tao5-measure-book.pdf"}]}], "edges": [{"from": "sets-countability", "to": "outer-measure", "why": "Outer measure ranges over countable covers and countable sums; you need countability (and why ℚ is countable) to work with them."}, {"from": "sup-inf-series", "to": "outer-measure", "why": "m* is an infimum of sums of nonnegative series, and the subadditivity proof is the ε/2ⁿ trick."}, {"from": "open-sets-r", "to": "outer-measure", "why": "Covers are by open intervals, and m*([a,b]) = b−a needs Heine–Borel compactness."}, {"from": "sets-countability", "to": "jordan-measure", "why": "Elementary sets are finite unions of intervals, and the key failure (ℚ ∩ [0,1]) uses a countable union of points."}, {"from": "sup-inf-series", "to": "jordan-measure", "why": "Inner and outer Jordan content are a sup and an inf over elementary sets."}, {"from": "riemann-integral", "to": "jordan-measure", "why": "A set is Jordan measurable exactly when its indicator is Riemann integrable; Jordan measure is the Riemann theory in set form."}, {"from": "riemann-integral", "to": "riemann-limits", "why": "You can't see where the Riemann integral breaks without its definition via upper and lower sums."}, {"from": "function-limits", "to": "riemann-limits", "why": "The failures are about pointwise limits of integrable functions, so pointwise vs uniform convergence must be clear."}, {"from": "sets-countability", "to": "axiom-of-choice", "why": "The axiom of choice is a statement about families of sets, applied here to the cosets of ℚ, an equivalence-class construction."}, {"from": "outer-measure", "to": "vitali-set", "why": "Vitali's argument shows specifically that Lebesgue outer measure isn't additive, using its translation invariance and value on intervals."}, {"from": "axiom-of-choice", "to": "vitali-set", "why": "The Vitali set is built by choosing one representative from each coset of ℚ, which needs the axiom of choice."}, {"from": "jordan-measure", "to": "sigma-algebras", "why": "Jordan sets are closed only under finite operations, which is exactly the weakness a σ-algebra repairs."}, {"from": "riemann-limits", "to": "sigma-algebras", "why": "Limits of functions produce sets from countably many operations; the σ-algebra is sized to contain them."}, {"from": "jordan-measure", "to": "measure-wishlist", "why": "Jordan measure shows finite additivity is not enough, which motivates demanding countable additivity."}, {"from": "riemann-limits", "to": "measure-wishlist", "why": "Monotone convergence is the property we want for integrals; it requires countable additivity of the underlying measure."}, {"from": "outer-measure", "to": "measure-wishlist", "why": "The wishlist is checked against outer measure: it satisfies everything except additivity, which sets the plan."}, {"from": "vitali-set", "to": "caratheodory", "why": "Vitali shows we must restrict to a subfamily of sets; Carathéodory's criterion is the precise test for membership."}, {"from": "sigma-algebras", "to": "caratheodory", "why": "The theorem's conclusion is that the measurable sets form a σ-algebra, so you must know what one is."}, {"from": "measure-wishlist", "to": "caratheodory", "why": "The criterion is designed to recover additivity, the one wishlist item outer measure lacks."}, {"from": "sigma-algebras", "to": "abstract-measures", "why": "A measure is defined on a σ-algebra; the domain must be understood first."}, {"from": "measure-wishlist", "to": "abstract-measures", "why": "The measure axioms are the wishlist's countable additivity, stated for a general σ-algebra."}, {"from": "sigma-algebras", "to": "borel-sets", "why": "The Borel sets are the σ-algebra generated by open sets, a direct application of 'generated by'."}, {"from": "caratheodory", "to": "lebesgue-measure", "why": "Lebesgue measure is outer measure restricted to the Carathéodory-measurable sets."}, {"from": "abstract-measures", "to": "lebesgue-measure", "why": "To call the result a measure, it must satisfy the abstract axioms, and its properties (continuity, subadditivity) come from them."}, {"from": "borel-sets", "to": "lebesgue-measure", "why": "A key property of Lebesgue measure is that every Borel set is measurable, and regularity is stated via open and closed sets."}, {"from": "borel-sets", "to": "measurable-functions", "why": "Measurability is tested on preimages of rays or Borel sets, so the Borel σ-algebra must be in hand."}, {"from": "abstract-measures", "to": "simple-functions", "why": "The integral of a simple function is Σ cₖ μ(Aₖ), which needs measurable sets and a measure."}, {"from": "abstract-measures", "to": "measure-continuity", "why": "Continuity from below and above are derived directly from countable additivity in the measure axioms."}, {"from": "lebesgue-measure", "to": "lebesgue-integral", "why": "The Lebesgue integral on ℝ integrates with respect to Lebesgue measure; it is undefined without it."}, {"from": "measurable-functions", "to": "lebesgue-integral", "why": "Only measurable functions can be integrated: the sets {f > a} must have a measure."}, {"from": "simple-functions", "to": "lebesgue-integral", "why": "The integral of f ≥ 0 is defined as a sup over simple functions below f."}, {"from": "measure-continuity", "to": "lebesgue-integral", "why": "Showing the sup definition agrees with the simple-function integral and behaves under increasing limits uses continuity from below."}, {"from": "lebesgue-measure", "to": "null-sets-ae", "why": "Null sets are sets of Lebesgue measure zero; completeness of Lebesgue measure makes a.e. arguments work."}, {"from": "measurable-functions", "to": "null-sets-ae", "why": "'Almost everywhere' statements are about measurable functions agreeing or converging off a null set."}, {"from": "measurable-functions", "to": "convergence-modes", "why": "Modes of convergence are defined for sequences of measurable functions, using measures of sets like {|fₙ − f| > ε}."}, {"from": "lebesgue-measure", "to": "convergence-modes", "why": "Convergence in measure and Egorov's theorem are stated in terms of Lebesgue measure of exceptional sets."}, {"from": "lebesgue-integral", "to": "convergence-theorems", "why": "MCT, Fatou and DCT are theorems about the Lebesgue integral and are proved from its sup definition."}, {"from": "null-sets-ae", "to": "convergence-theorems", "why": "The theorems assume convergence only a.e., which is valid because the integral ignores null sets."}, {"from": "convergence-modes", "to": "convergence-theorems", "why": "The escape-of-mass examples show exactly which hypothesis (monotonicity, domination) each theorem needs."}, {"from": "lebesgue-integral", "to": "riemann-vs-lebesgue", "why": "Comparing integrals needs both definitions; the squeeze uses Lebesgue integrals of step functions."}, {"from": "null-sets-ae", "to": "riemann-vs-lebesgue", "why": "Lebesgue's criterion says Riemann integrability means the discontinuity set is null."}, {"from": "lebesgue-integral", "to": "integrable-l1", "why": "Integrability means ∫|f| < ∞, using the integral of nonnegative functions."}, {"from": "null-sets-ae", "to": "integrable-l1", "why": "L¹ identifies functions equal a.e., so null sets are built into the definition."}, {"from": "convergence-theorems", "to": "goal-construct-justify", "why": "The limit theorems are the design targets that justify the integral's definition."}, {"from": "riemann-vs-lebesgue", "to": "goal-construct-justify", "why": "Justifying a new integral includes showing it agrees with Riemann where Riemann works."}, {"from": "integrable-l1", "to": "goal-construct-justify", "why": "L¹ and linearity complete the construction of the integral as a usable object."}]}
+/*DATA-END*/
+;
+
+/*MAP-THEME-START*/
+const THEME={"name": "Chalk & Folio", "rationale": "Warm folio paper and serif type of a classic analysis text; the depth ramp moves from ochre through brick to deep indigo as the construction goes from intervals to the finished integral.", "webfont": "https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap", "fontDisplay": "'EB Garamond', Garamond, 'Times New Roman', serif", "fontBody": "'Source Sans 3', 'Segoe UI', Helvetica, Arial, sans-serif", "vars": {"ink": "#231F1A", "muted": "#6E655A", "line": "#E2D8C6", "bg": "#FAF6EE", "panel": "#FFFDF8", "accent": "#2F4A7A", "ink-2": "#4A4238", "dep-bg": "#F3ECDF", "edge": "#9A8B76", "edge-related": "#2F4A7A", "hover-bg": "#F1E9D8", "match": "#B4532A", "btn-hover-border": "#C9B48F", "overlay-bg": "rgba(250,246,238,0.88)", "overlay-bg-2": "rgba(250,246,238,0.66)"}, "anchors": ["#D4A24C", "#C7843E", "#B0623A", "#8E4D52", "#6A4366", "#463A72"]};
+/*MAP-THEME-END*/
+
+// ---------- theme applier (engine — edit THEME above, never this) ----------
+const appliedVars=[];
+function applyTheme(t){
+  const r=document.documentElement.style;
+  appliedVars.splice(0).forEach(k=>r.removeProperty("--"+k));
+  if(!t)return;
+  if(t.webfont&&!document.querySelector('link[href="'+t.webfont+'"]')){const l=document.createElement("link");l.rel="stylesheet";l.href=t.webfont;document.head.appendChild(l);}
+  const set=(k,v)=>{if(v){r.setProperty("--"+k,v);appliedVars.push(k);}};
+  Object.keys(t.vars||{}).forEach(k=>set(k,t.vars[k]));
+  set("font-display",t.fontDisplay);set("font-body",t.fontBody);
+}
+const THEME_DEFAULT={name:"Neutral slate",rationale:"Neutral default.",webfont:"",fontDisplay:"-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif",fontBody:"-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif",vars:{},anchors:["#1e3a8a","#2563eb","#0d9488","#16a34a","#ca8a04","#eab308"]};
+applyTheme(typeof THEME!=="undefined"?THEME:null);
+
+/*MAP-METADATA-START*/
+const THEMES=[
+ {name:"Real-analysis footing",color:"#5A6B7B"},
+ {name:"First attempts & obstacles",color:"#B4532A"},
+ {name:"Building the measure",color:"#2F6E8E"},
+ {name:"Building the integral",color:"#6B4C9A"},
+ {name:"Payoff & justification",color:"#3D7A4F"}
+];
+const THEME_BLURBS=["What you bring from real analysis: sets and countability, sup/inf and series, open sets, the Riemann integral, and limits of functions.", "First attempts and the failures that force the theory: Jordan measure, Riemann's limit problems, Lebesgue outer measure, the wishlist, and Vitali's non-measurable set (via choice).", "σ-algebras, Carathéodory's criterion, abstract measures and Borel sets, assembled into Lebesgue measure.", "Measurable and simple functions, the sup definition of the integral, null sets, and modes of convergence.", "MCT, Fatou and DCT; agreement with Riemann; L¹; and the full justified construction."];
+const GOAL_STATEMENT="construct Lebesgue measure and the Lebesgue integral from scratch, and justify each definition by the problem it solves";
+const GOAL_SOURCES_NOTE="Follows the standard first course in measure theory. Main open-access texts: Axler, <i>Measure, Integration &amp; Real Analysis</i> (Ch. 1–3) and Tao, <i>An Introduction to Measure Theory</i> (Ch. 1). Cross-referenced with Folland (2nd ed., Ch. 1–2), Royden &amp; Fitzpatrick (4th ed., Ch. 1–4, 17) and Stein &amp; Shakarchi (Ch. 1–2). Motivation and history follow Bressoud, <i>A Radical Approach to Lebesgue's Theory of Integration</i>. Section numbers may differ slightly between printings and editions; any standard measure-theory text covers the same results in a similar order.";
+const SUGGESTED_PATH=[{"h": "The motivating failures", "t": "outer measure, Jordan measure, and where Riemann breaks: the motivating failures."}, {"h": "The obstruction", "t": "the axiom of choice and the Vitali set, then the wishlist and σ-algebras."}, {"h": "Build the measure", "t": "Carathéodory's criterion, abstract measures, Borel sets, then Lebesgue measure itself."}, {"h": "Build the integral", "t": "measurable and simple functions, continuity of measure, then the sup definition of ∫."}, {"h": "Justify it", "t": "MCT, Fatou, DCT, the Riemann comparison and L¹, then tell the whole story."}];
+const BUILD=1;
+/*MAP-METADATA-END*/
+
+// ---------- topological levels ----------
+const LEVEL={};DATA.nodes.forEach(n=>LEVEL[n.id]=0);
+let changed=true,levelGuard=0;
+while(changed&&levelGuard++<=DATA.nodes.length+1){
+  changed=false;
+  for(const e of DATA.edges){
+    if(LEVEL[e.to]<LEVEL[e.from]+1){LEVEL[e.to]=LEVEL[e.from]+1;changed=true;}
+  }
+}
+const MAXL=Math.max(...Object.values(LEVEL));
+const NLEVELS=MAXL+1;
+if(changed)console.error("WARNING: cycle detected in edges — prerequisite graph is not a DAG; level layout is truncated. Run the validator.");
+// Layout uses the computed longest-path levels as-is. Do not invent skip-level
+// edges here — the validator requires every DATA edge to be adjacent (k → k+1).
+DATA.edges.forEach(e=>{
+  const span=LEVEL[e.to]-LEVEL[e.from];
+  if(span!==1)console.error("WARNING: non-adjacent edge",e.from,"->",e.to,"span",span,"— drop, bridge, or demote to see-also; do not redraw it as a long diagonal.");
+});
+
+// depth color scale: early → late
+const ANCHORS=(typeof THEME!=="undefined"&&THEME.anchors&&THEME.anchors.length>=2)?THEME.anchors:["#1e3a8a","#2563eb","#0d9488","#16a34a","#ca8a04","#eab308"]; // depth ramp — set in MAP-THEME
+function hex2rgb(h){return [1,3,5].map(i=>parseInt(h.slice(i,i+2),16));}
+function rgb2hex(r){return "#"+r.map(v=>v.toString(16).padStart(2,"0")).join("");}
+function levelColor(l){
+  const t=MAXL?l/MAXL:0,seg=t*(ANCHORS.length-1);
+  const i=Math.min(Math.floor(seg),ANCHORS.length-2),f=seg-i;
+  const a=hex2rgb(ANCHORS[i]),b=hex2rgb(ANCHORS[i+1]);
+  return rgb2hex(a.map((v,k)=>Math.round(v+(b[k]-v)*f)));
+}
+const LCOL=Array.from({length:NLEVELS},(_,l)=>levelColor(l));
+const LUM=h=>{const a=hex2rgb(h).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*a[0]+.7152*a[1]+.0722*a[2]};
+
+// ---------- helpers ----------
+const $=s=>document.querySelector(s);
+const SVGNS="http://www.w3.org/2000/svg";
+function svgEl(tag,attrs){const el=document.createElementNS(SVGNS,tag);for(const k in attrs)el.setAttribute(k,attrs[k]);return el;}
+function nodeById(id){return DATA.nodes.find(n=>n.id===id);}
+function nodeLabel(id){return nodeById(id).label;}
+function learnerStateOf(n){
+  return (n&&(n.learner==="known"||n.learner==="frontier"||n.learner==="later"))?n.learner:"";
+}
+function learnerNote(){
+  return (typeof LEARNER_NOTE==="string"&&LEARNER_NOTE.trim())?LEARNER_NOTE.trim():"";
+}
+function learnerEntry(){
+  return (typeof LEARNER_ENTRY==="string")?LEARNER_ENTRY:"";
+}
+function hasLearnerData(){
+  return DATA.nodes.some(n=>learnerStateOf(n))||!!learnerNote()||!!learnerEntry();
+}
+function learnerEntryId(){
+  const named=learnerEntry();
+  if(named&&DATA.nodes.some(n=>n.id===named))return named;
+  const f=DATA.nodes.find(n=>n.learner==="frontier");
+  return f?f.id:"";
+}
+function wrapLabel(t){
+  const max=17,words=t.split(" "),lines=[];let cur="";
+  for(const w of words){const cand=cur?cur+" "+w:w;if(cand.length<=max||!cur){cur=cand;}else{lines.push(cur);cur=w;}}
+  if(cur)lines.push(cur);
+  return lines.slice(0,3);
+}
+function mq(q){return typeof matchMedia==="function"&&matchMedia(q).matches;}
+function isNarrow(){return mq("(max-width:900px)");}
+function isCoarse(){return mq("(pointer: coarse)");}
+function usesTouchCopy(){return isNarrow()||isCoarse();}
+function hintCopy(){
+  return usesTouchCopy()
+    ? "A → B means “learn A before B”. Tap any arrow to see <b>why</b> it is a prerequisite."
+    : "A → B means “learn A before B”. Hover or click any arrow to see <b>why</b> it is a prerequisite.";
+}
+
+// ---------- layout: columns = topological levels ----------
+const NODE_W=200,NODE_H=52,GAP_Y=16,GAP_X=74,TOP=64,LEFT=56,MAX_PER_COL=8;
+const cols=[];
+for(let l=0;l<NLEVELS;l++){
+  const ids=DATA.nodes.filter(n=>LEVEL[n.id]===l).map(n=>n.id);
+  for(let i=0;i<ids.length;i+=MAX_PER_COL)cols.push({level:l,ids:ids.slice(i,i+MAX_PER_COL),cont:i>0});
+}
+let cx=LEFT;cols.forEach(c=>{c.x=cx;cx+=NODE_W+GAP_X;});
+const pos={};
+function assignY(){cols.forEach(c=>c.ids.forEach((id,i)=>{pos[id]={x:c.x,y:TOP+i*(NODE_H+GAP_Y)};}));}
+assignY();
+function barycenterPass(dir){
+  const seq=dir>0?cols:[...cols].reverse();
+  seq.forEach((c,ci)=>{
+    const skip=dir>0?ci===0:ci===cols.length-1;
+    if(skip)return;
+    const scored=c.ids.map((id,idx)=>{
+      let sum=0,cnt=0;
+      for(const e of DATA.edges){
+        let other=null;
+        if(e.from===id)other=e.to;else if(e.to===id)other=e.from;else continue;
+        const p2=pos[other];if(!p2)continue;
+        sum+=p2.y+NODE_H/2;cnt++;
+      }
+      return{id,idx,score:cnt?sum/cnt:pos[id].y+NODE_H/2};
+    });
+    scored.sort((a,b)=>a.score-b.score||a.idx-b.idx);
+    c.ids=scored.map(s=>s.id);
+  });
+  assignY();
+}
+for(let i=0;i<6;i++)barycenterPass(i%2===0?1:-1);
+// The entry flag is drawn 16px above its node. If the entry is not the first
+// card in its column, that flag lands on the card above. Open a gap so it doesn't.
+if(hasLearnerData()){
+  const entry=learnerEntryId();
+  const col=cols.find(c=>c.ids.includes(entry));
+  if(col){
+    const idx=col.ids.indexOf(entry);
+    if(idx>0){for(let i=idx;i<col.ids.length;i++)pos[col.ids[i]].y+=20;}
+  }
+}
+let maxX=0,maxY=0;
+cols.forEach(c=>{maxX=Math.max(maxX,c.x+NODE_W);});
+Object.values(pos).forEach(p=>{maxY=Math.max(maxY,p.y+NODE_H);});
+
+// ---------- render ----------
+const svg=$("#graph");
+const gRoot=svgEl("g");svg.appendChild(gRoot);
+const gBg=svgEl("g"),gEdges=svgEl("g"),gNodes=svgEl("g");
+gRoot.appendChild(gBg);gRoot.appendChild(gEdges);gRoot.appendChild(gNodes);
+const edgeEls=[],nodeEls={},colEls=[];
+
+cols.forEach(c=>{
+  const color=LCOL[c.level];
+  const lift=hasLearnerData()&&c.ids.includes(learnerEntryId())?22:0;
+  let minY=Infinity,maxCy=-Infinity;
+  c.ids.forEach(id=>{minY=Math.min(minY,pos[id].y);maxCy=Math.max(maxCy,pos[id].y+NODE_H);});
+  const r=svgEl("rect",{x:c.x-16,y:minY-34-lift,width:NODE_W+32,height:maxCy-minY+50+lift,rx:14,fill:color,"class":"colbg"});
+  gBg.appendChild(r);colEls.push(r);
+  const t=svgEl("text",{x:c.x+NODE_W/2,y:minY-(lift?36:14),"text-anchor":"middle","class":"collabel","data-level":c.level,fill:color});
+  t.textContent="Level "+c.level+(c.cont?" (cont.)":"")+" · "+c.ids.length;
+  gBg.appendChild(t);
+});
+
+DATA.edges.forEach((e,i)=>{
+  const a=pos[e.from],b=pos[e.to];
+  const x1=a.x+NODE_W,y1=a.y+NODE_H/2,x2=b.x,y2=b.y+NODE_H/2;
+  const dx=Math.max(46,(x2-x1)*0.5);
+  const g=svgEl("g",{"class":"edge","data-i":i});
+  const line=svgEl("path",{d:`M ${x1} ${y1} C ${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2-7} ${y2}`,"class":"line"});
+  const arrow=svgEl("polygon",{points:`${x2},${y2} ${x2-8},${y2-4} ${x2-8},${y2+4}`});
+  const hit=svgEl("path",{d:`M ${x1} ${y1} C ${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2} ${y2}`,"class":"hit"});
+  g.appendChild(line);g.appendChild(arrow);g.appendChild(hit);
+  gEdges.appendChild(g);edgeEls.push(g);
+  g.addEventListener("mouseenter",ev=>onEdgeEnter(i,ev));
+  g.addEventListener("mousemove",ev=>onEdgeMove(ev));
+  g.addEventListener("mouseleave",()=>onEdgeLeave(i));
+});
+
+DATA.nodes.forEach(n=>{
+  const p=pos[n.id],color=LCOL[LEVEL[n.id]];
+  const ls=learnerStateOf(n);
+  const isEntry=hasLearnerData()&&n.id===learnerEntryId();
+  const here=isEntry||ls==="frontier";
+  const g=svgEl("g",{"class":"node"+(ls?" learner-"+ls:"")+(isEntry?" learner-here":""),"data-id":n.id,transform:`translate(${p.x},${p.y})`});
+  if(here){
+    g.appendChild(svgEl("rect",{x:-5,y:-5,width:NODE_W+10,height:NODE_H+10,rx:13,"class":"here-ring"}));
+  }
+  const rect=svgEl("rect",{x:0,y:0,width:NODE_W,height:NODE_H,rx:10,"class":"main",fill:color,"fill-opacity":0.12,stroke:color});
+  g.appendChild(rect);
+  const lines=wrapLabel(n.label),midY=NODE_H/2;
+  const txt=svgEl("text",{"text-anchor":"middle",x:NODE_W/2});
+  lines.forEach((ln,i)=>{
+    const ts=svgEl("tspan",{x:NODE_W/2,y:midY+(i-(lines.length-1)/2)*16+4});
+    ts.textContent=ln;txt.appendChild(ts);
+  });
+  g.appendChild(txt);
+  if(isEntry){
+    const flag=svgEl("text",{x:NODE_W/2,y:-16,"text-anchor":"middle","class":"here-flag"});
+    flag.textContent="Start here";
+    g.appendChild(flag);
+  }
+  gNodes.appendChild(g);nodeEls[n.id]=g;
+});
+
+// ---------- view transform ----------
+const state={sel:null};
+let view={x:0,y:0,k:1};
+let viewTouched=false;
+function applyView(){gRoot.setAttribute("transform",`translate(${view.x},${view.y}) scale(${view.k})`);}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function zoomAt(px,py,f){
+  const k2=clamp(view.k*f,0.18,3.2),r=k2/view.k;
+  view.x=px-(px-view.x)*r;view.y=py-(py-view.y)*r;view.k=k2;applyView();
+}
+svg.addEventListener("wheel",e=>{
+  e.preventDefault();viewTouched=true;
+  const rect=svg.getBoundingClientRect();
+  zoomAt(e.clientX-rect.left,e.clientY-rect.top,Math.exp(-e.deltaY*0.0016));
+},{passive:false});
+
+const pointers=new Map();
+let panning=false,panStart=null,dragMoved=false,pinch0=null;
+function pointerXY(e){return {cx:e.clientX,cy:e.clientY};}
+function pinchState(){
+  const pts=[...pointers.values()];
+  if(pts.length<2)return null;
+  const rect=svg.getBoundingClientRect();
+  return {
+    dist:Math.hypot(pts[0].cx-pts[1].cx,pts[0].cy-pts[1].cy),
+    midX:(pts[0].cx+pts[1].cx)/2-rect.left,
+    midY:(pts[0].cy+pts[1].cy)/2-rect.top
+  };
+}
+function applyPinch(){
+  const now=pinchState();
+  if(!now||!pinch0)return;
+  const k2=clamp(pinch0.k*(now.dist/Math.max(8,pinch0.dist)),0.18,3.2);
+  const r=k2/pinch0.k;
+  view.k=k2;
+  view.x=now.midX-(pinch0.midX-pinch0.vx)*r;
+  view.y=now.midY-(pinch0.midY-pinch0.vy)*r;
+  applyView();
+}
+svg.addEventListener("pointerdown",e=>{
+  pointers.set(e.pointerId,pointerXY(e));
+  if(pointers.size>=2){
+    const p=pinchState();
+    pinch0=p?{...p,vx:view.x,vy:view.y,k:view.k}:null;
+    panning=false;dragMoved=true;viewTouched=true;
+    svg.classList.add("panning");
+    return;
+  }
+  panning=true;dragMoved=false;panStart={x:e.clientX,y:e.clientY,vx:view.x,vy:view.y};
+  svg.classList.add("panning");
+});
+window.addEventListener("pointermove",e=>{
+  if(pointers.has(e.pointerId))pointers.set(e.pointerId,pointerXY(e));
+  if(pinch0&&pointers.size>=2){applyPinch();return;}
+  if(!panning)return;
+  const dx=e.clientX-panStart.x,dy=e.clientY-panStart.y;
+  if(Math.abs(dx)+Math.abs(dy)>(usesTouchCopy()?14:4)){dragMoved=true;viewTouched=true;}
+  if(!dragMoved)return;
+  view.x=panStart.vx+dx;view.y=panStart.vy+dy;applyView();
+});
+function endPan(e){
+  if(e&&e.pointerId!=null)pointers.delete(e.pointerId);
+  if(pointers.size<2)pinch0=null;
+  if(pointers.size===1){
+    const leftover=[...pointers.values()][0];
+    panning=true;panStart={x:leftover.cx,y:leftover.cy,vx:view.x,vy:view.y};
+  }
+  if(pointers.size===0){panning=false;svg.classList.remove("panning");}
+  setTimeout(()=>{if(pointers.size===0)dragMoved=false;},0);
+}
+// selection/activation on pointerup: setPointerCapture-free, so the event target is the real element
+svg.addEventListener("pointerup",e=>{
+  if(dragMoved||pinch0){endPan(e);return;}
+  const t=e.target;
+  const ng=t.closest?t.closest("g.node"):null;
+  const eg=t.closest?t.closest("g.edge"):null;
+  if(ng)select(ng.dataset.id);
+  else if(eg)onEdgeActivate(+eg.dataset.i,e);
+  else{clearSel();unpinTT();}
+  endPan(e);
+});
+svg.addEventListener("pointercancel",endPan);
+window.addEventListener("pointerup",endPan);
+window.addEventListener("pointercancel",endPan);
+window.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){closeChrome();clearSel();unpinTT();}
+});
+window.addEventListener("resize",()=>{if(isNarrow()&&!viewTouched)fit();});
+
+function fit(){
+  const rect=svg.getBoundingClientRect();
+  if(isNarrow()){
+    // Readable first paint: keep node labels at engine size and start at the
+    // entry columns. Pinch/drag still reach the rest of the graph.
+    view.k=1;
+    const entry=learnerEntryId();
+    if(entry&&pos[entry]){
+      view.x=16-pos[entry].x+8;
+      view.y=Math.max(20,rect.height/2-(pos[entry].y+NODE_H/2));
+    }else{
+      view.x=16;
+      view.y=Math.max(20,(rect.height-(maxY+TOP))/2);
+    }
+    applyView();
+    return;
+  }
+  const s=Math.min(rect.width/(maxX+LEFT),rect.height/(maxY+TOP))*0.96;
+  view.k=clamp(s,0.18,1.4);
+  view.x=(rect.width-(maxX+LEFT)*view.k)/2;view.y=(rect.height-(maxY+TOP)*view.k)/2;
+  applyView();
+  const entry=learnerEntryId();
+  if(entry&&pos[entry]){
+    view.k=clamp(Math.max(view.k,0.92),0.18,1.4);
+    centerOn(entry);
+  }
+}
+function closeHeaderChrome(){
+  const hdr=document.querySelector("header");
+  hdr.classList.remove("search-open","menu-open");
+  $("#btn-search-toggle").setAttribute("aria-expanded","false");
+  $("#btn-more").setAttribute("aria-expanded","false");
+}
+function closeChrome(){
+  closeHeaderChrome();
+  guidePinned=false;
+  legend.classList.remove("is-open");
+  $("#btn-legend").setAttribute("aria-expanded","false");
+  $("#btn-guide").setAttribute("aria-expanded","false");
+  if(isNarrow())setPanelOpen(false);
+  unpinTT();
+  syncScrim();
+}
+function anyOverlay(){
+  return panel.classList.contains("is-open")&&isNarrow()
+    ||legend.classList.contains("is-open")
+    ||(tt.style.display==="block"&&(isNarrow()||isCoarse()))
+    ||document.querySelector("header").classList.contains("menu-open");
+}
+function syncScrim(){
+  const on=anyOverlay();
+  $("#scrim").classList.toggle("is-on",on);
+  $("#scrim").hidden=!on;
+}
+function setPanelOpen(open){
+  panel.classList.toggle("is-open",!!open);
+  $("#btn-guide").setAttribute("aria-expanded",open&&!state.sel?"true":"false");
+  syncScrim();
+}
+let guidePinned=false;
+function syncFitLabel(){$("#btn-fit").textContent=isNarrow()?"Reset view":"Fit";}
+syncFitLabel();
+window.addEventListener("resize",syncFitLabel);
+$("#btn-fit").addEventListener("click",()=>{closeHeaderChrome();fit();syncScrim();});
+$("#btn-reset").addEventListener("click",()=>{guidePinned=false;clearSel();fit();closeChrome();});
+$("#btn-search-toggle").addEventListener("click",()=>{
+  const hdr=document.querySelector("header");
+  const open=!hdr.classList.contains("search-open");
+  hdr.classList.toggle("search-open",open);
+  hdr.classList.remove("menu-open");
+  $("#btn-search-toggle").setAttribute("aria-expanded",open);
+  $("#btn-more").setAttribute("aria-expanded","false");
+  if(open){searchInput.focus();searchInput.select();}
+  else{results.style.display="none";searchInput.blur();}
+});
+$("#btn-more").addEventListener("click",()=>{
+  const hdr=document.querySelector("header");
+  const open=!hdr.classList.contains("menu-open");
+  hdr.classList.toggle("menu-open",open);
+  hdr.classList.remove("search-open");
+  $("#btn-more").setAttribute("aria-expanded",open);
+  $("#btn-search-toggle").setAttribute("aria-expanded","false");
+  syncScrim();
+});
+$("#btn-legend").addEventListener("click",()=>{
+  const open=!legend.classList.contains("is-open");
+  closeHeaderChrome();
+  guidePinned=false;
+  if(isNarrow())setPanelOpen(false);
+  unpinTT();
+  legend.classList.toggle("is-open",open);
+  $("#btn-legend").setAttribute("aria-expanded",open);
+  syncScrim();
+});
+$("#btn-guide").addEventListener("click",()=>{
+  closeHeaderChrome();
+  legend.classList.remove("is-open");
+  $("#btn-legend").setAttribute("aria-expanded","false");
+  unpinTT();
+  guidePinned=true;
+  state.sel=null;
+  svg.classList.remove("dimmed");
+  Object.values(nodeEls).forEach(g=>{g.classList.remove("related");g.classList.remove("sel");g.classList.remove("match");});
+  edgeEls.forEach(g=>{g.classList.remove("related");g.classList.remove("direct");});
+  renderDefaultPanel();
+  setPanelOpen(true);
+});
+$("#scrim").addEventListener("click",()=>{
+  closeHeaderChrome();
+  legend.classList.remove("is-open");
+  $("#btn-legend").setAttribute("aria-expanded","false");
+  if(isNarrow()){guidePinned=false;setPanelOpen(false);}
+  unpinTT();
+  syncScrim();
+});
+
+// ---------- focus / selection ----------
+function applyFocus(related,keepEdges){
+  svg.classList.add("dimmed");
+  for(const id in nodeEls){nodeEls[id].classList.toggle("related",related.has(id));}
+  colEls.forEach(r=>r.classList.add("related"));
+  svg.querySelectorAll(".collabel").forEach(t=>t.classList.add("related"));
+  edgeEls.forEach((g,i)=>{
+    const rel=keepEdges.has(i);
+    g.classList.toggle("related",rel);
+    const e=DATA.edges[i];
+    g.classList.toggle("direct",rel&&(e.from===state.sel||e.to===state.sel));
+  });
+}
+function clearSel(){
+  state.sel=null;
+  svg.classList.remove("dimmed");
+  Object.values(nodeEls).forEach(g=>{g.classList.remove("related");g.classList.remove("sel");g.classList.remove("match");});
+  edgeEls.forEach(g=>{g.classList.remove("related");g.classList.remove("direct");});
+  renderDefaultPanel();
+  if(isNarrow())setPanelOpen(!!guidePinned);
+}
+function select(id){
+  state.sel=id;guidePinned=false;unpinTT();closeHeaderChrome();
+  if(isNarrow())legend.classList.remove("is-open");
+  const anc=new Set([id]),keepEdges=new Set(),stack=[id];
+  while(stack.length){
+    const cur=stack.pop();
+    DATA.edges.forEach((e,i)=>{
+      if(e.to===cur&&!anc.has(e.from)){anc.add(e.from);keepEdges.add(i);stack.push(e.from);}
+    });
+  }
+  const related=new Set(anc);
+  DATA.edges.forEach(e=>{if(e.from===id)related.add(e.to);});
+  DATA.edges.forEach((e,i)=>{if(e.from===id)keepEdges.add(i);});
+  Object.values(nodeEls).forEach(g=>g.classList.remove("sel"));
+  nodeEls[id].classList.add("sel");
+  applyFocus(related,keepEdges);
+  renderNodePanel(id,anc.size-1);
+  if(isNarrow())setPanelOpen(true);
+}
+function focusTheme(ti){
+  state.sel=null;unpinTT();
+  const related=new Set(DATA.nodes.filter(n=>n.phase===ti).map(n=>n.id));
+  const keepEdges=new Set();
+  DATA.edges.forEach((e,i)=>{if(related.has(e.from)||related.has(e.to))keepEdges.add(i);});
+  svg.classList.add("dimmed");
+  for(const id in nodeEls)nodeEls[id].classList.toggle("related",related.has(id));
+  colEls.forEach(r=>r.classList.add("related"));
+  edgeEls.forEach((g,i)=>g.classList.toggle("related",keepEdges.has(i)));
+  renderThemePanel(ti);
+}
+function focusLevel(l){
+  state.sel=null;unpinTT();
+  const related=new Set(DATA.nodes.filter(n=>LEVEL[n.id]===l).map(n=>n.id));
+  const keepEdges=new Set();
+  DATA.edges.forEach((e,i)=>{if(related.has(e.from)||related.has(e.to))keepEdges.add(i);});
+  svg.classList.add("dimmed");
+  for(const id in nodeEls)nodeEls[id].classList.toggle("related",related.has(id));
+  colEls.forEach(r=>r.classList.add("related"));
+  edgeEls.forEach((g,i)=>g.classList.toggle("related",keepEdges.has(i)));
+  renderLevelPanel(l);
+}
+
+// ---------- tooltip ----------
+const tt=$("#tt");let pinnedEdge=null;
+function showTT(html,px,py){
+  if(usesTouchCopy()){
+    tt.innerHTML=`<div class="sheet-handle"></div><div class="sheet-head narrow-only"><strong>Why this is a prerequisite</strong><button type="button" class="sheet-close" id="btn-why-close">Close</button></div>${html}`;
+    tt.style.display="block";tt.style.left="0";tt.style.top="auto";
+    const close=$("#btn-why-close");if(close)close.addEventListener("click",unpinTT);
+    syncScrim();
+    return;
+  }
+  tt.innerHTML=html;tt.style.display="block";
+  const wrap=$("#canvaswrap").getBoundingClientRect();
+  let x=px-wrap.left+14,y=py-wrap.top+14;
+  const tw=tt.offsetWidth,th=tt.offsetHeight;
+  if(x+tw>wrap.width-10)x=px-wrap.left-tw-14;
+  if(y+th>wrap.height-10)y=py-wrap.top-th-14;
+  tt.style.left=Math.max(4,x)+"px";tt.style.top=Math.max(4,y)+"px";
+}
+function hideTT(){if(pinnedEdge===null)tt.style.display="none";}
+function unpinTT(){pinnedEdge=null;tt.style.display="none";edgeEls.forEach(g=>g.classList.remove("hov"));if(typeof syncScrim==="function")syncScrim();}
+function edgeHTML(i){
+  const e=DATA.edges[i];
+  return `<div class="who">${nodeLabel(e.from)} <span class="arrow">→</span> ${nodeLabel(e.to)}</div><div>${e.why}</div>`;
+}
+function onEdgeEnter(i,ev){if(dragMoved||usesTouchCopy())return;edgeEls[i].classList.add("hov");if(pinnedEdge===null)showTT(edgeHTML(i),ev.clientX,ev.clientY);}
+function onEdgeMove(ev){if(pinnedEdge!==null||usesTouchCopy())return;showTT(tt.innerHTML,ev.clientX,ev.clientY);}
+function onEdgeLeave(i){if(usesTouchCopy())return;edgeEls[i].classList.remove("hov");if(pinnedEdge!==i)hideTT();}
+function onEdgeActivate(i,ev){
+  if(pinnedEdge===i){unpinTT();syncScrim();return;}
+  pinnedEdge=i;edgeEls.forEach(g=>g.classList.remove("hov"));edgeEls[i].classList.add("hov");
+  if(isNarrow()){legend.classList.remove("is-open");setPanelOpen(false);}
+  showTT(edgeHTML(i),ev.clientX,ev.clientY);
+}
+
+// ---------- panel ----------
+const panel=$("#panel");
+function themeChip(ti){return `<span class="chip" style="background:${THEMES[ti].color}">${THEMES[ti].name}</span>`;}
+function levelChip(l){const c=LCOL[l];return `<span class="chip" style="background:${c}${LUM(c)>0.28?";color:var(--ink)":""}">Level ${l}</span>`;}
+function depBlock(dir,e){
+  const other=dir==="req"?e.from:e.to;
+  return `<div class="dep"><b data-goto="${other}">${dir==="req"?"← ":"→ "}${nodeLabel(other)}</b><p>${e.why}</p></div>`;
+}
+function gotoHandler(){
+  panel.querySelectorAll("[data-goto]").forEach(b=>{
+    if(b.dataset.goto==="__back")return;
+    b.addEventListener("click",()=>{select(b.dataset.goto);centerOn(b.dataset.goto);});
+  });
+}
+function bindBack(){
+  panel.querySelectorAll("[data-goto='__back']").forEach(el=>{
+    el.addEventListener("click",()=>{guidePinned=false;clearSel();});
+  });
+}
+function sheetChrome(title){
+  return `<div class="sheet-handle"></div><div class="sheet-head narrow-only"><strong>${title}</strong><button type="button" class="sheet-close" data-goto="__back">Close</button></div>`;
+}
+function renderNodePanel(id,ancCount){
+  const n=nodeById(id);
+  const reqs=DATA.edges.filter(e=>e.to===id).sort((a,b)=>LEVEL[a.from]-LEVEL[b.from]);
+  const unl=DATA.edges.filter(e=>e.from===id).sort((a,b)=>LEVEL[a.to]-LEVEL[b.to]);
+  let h=`${sheetChrome(n.label)}<span class="backlink" data-goto="__back">← overview</span><br>
+  ${levelChip(LEVEL[id])} ${themeChip(n.phase)}
+  ${n.id===learnerEntryId()?`<p class="here-summary" style="margin-top:10px">Where you're starting.</p>`:learnerStateOf(n)==="known"?`<p style="color:var(--muted);font-size:14.5px">In your comfortable set — still here if you want to review.</p>`:""}
+  <h2>${n.label}</h2><p>${n.desc}</p>
+  <h3>Rough outline — study in this order</h3>
+  <ol class="outline">${n.outline.map(o=>`<li>${o}</li>`).join("")}</ol>
+  <h3>Key ideas</h3><ul>${n.ideas.map(i=>`<li>${i}</li>`).join("")}</ul>
+  <h3>Mastery check — prove you know this</h3>
+  ${n.questions.map((q,i)=>`<div class="dep"><b>Q${i+1}. ${q.q}</b><details><summary>Show answer</summary><p>${q.a}</p></details></div>`).join("")}
+  <h3>Study sources</h3><ul>${n.sources.map(s=>`<li>${s.u?`<a href="${s.u}" target="_blank" rel="noopener">${s.t}</a>`:s.t}</li>`).join("")}</ul>`;
+  h+=`<h3>Requires — why these are prerequisites (${reqs.length})</h3>`;
+  h+=reqs.length?reqs.map(e=>depBlock("req",e)).join(""):"<p style='color:var(--muted)'>Nothing — this is an entry point.</p>";
+  h+=`<h3>Unlocks (${unl.length})</h3>`;
+  h+=unl.length?unl.map(e=>depBlock("unl",e)).join(""):"<p style='color:var(--muted)'>Nothing directly — this is a terminal destination.</p>";
+  h+=`<p style="margin-top:14px;font-size:14px;color:var(--muted)">Graph focus: this node (highlighted), its ${ancCount} transitive prerequisite${ancCount===1?"":"s"}, and its direct downstream targets.</p>`;
+  panel.innerHTML=h;
+  bindBack();
+  gotoHandler();
+}
+function renderThemePanel(ti){
+  const ids=DATA.nodes.filter(n=>n.phase===ti).map(n=>n.id);
+  panel.innerHTML=`${sheetChrome(THEMES[ti].name)}<span class="backlink" data-goto="__back">← overview</span><br>${themeChip(ti)}
+  <h2>${THEMES[ti].name}</h2>
+  <p>${THEME_BLURBS[ti]||""}</p>
+  <h3>Concepts in this theme (${ids.length})</h3>
+  ${ids.map(i=>`<div class="dep"><b data-goto="${i}">${nodeLabel(i)}</b> <span style="font-size:14px;color:var(--muted)">Level ${LEVEL[i]}</span><p>${nodeById(i).desc}</p></div>`).join("")}`;
+  bindBack();
+  gotoHandler();
+  if(isNarrow())setPanelOpen(true);
+}
+function renderLevelPanel(l){
+  const ids=DATA.nodes.filter(n=>LEVEL[n.id]===l).map(n=>n.id);
+  panel.innerHTML=`${sheetChrome("Level "+l)}<span class="backlink" data-goto="__back">← overview</span><br>${levelChip(l)}
+  <h2>Level ${l}</h2>
+  <p>Everything on this level can be studied in parallel: nothing here depends on anything else at the same level, and every prerequisite sits strictly to the left.</p>
+  <h3>Concepts at this level (${ids.length})</h3>
+  ${ids.map(i=>`<div class="dep"><b data-goto="${i}">${nodeLabel(i)}</b> <span style="font-size:14px;color:var(--muted)">${THEMES[nodeById(i).phase].name}</span><p>${nodeById(i).desc}</p></div>`).join("")}`;
+  bindBack();
+  gotoHandler();
+  if(isNarrow())setPanelOpen(true);
+}
+function renderDefaultPanel(){
+  const nodeVerb=usesTouchCopy()?"Tap":"Click";
+  const arrowLine=usesTouchCopy()
+    ?"Tap any <b>arrow</b> for its rationale (tap again to dismiss). Drag to pan, pinch to zoom, search to jump."
+    :"Hover or click any <b>arrow</b> for its rationale (click again to pin). Drag to pan, scroll to zoom, search to jump.";
+  const colorLine=usesTouchCopy()
+    ?"the tint deepens from the entry level at the left to the frontier at the right — the theme's depth ramp, also drawn in the Levels sheet (tap a band to focus that level)."
+    :"the tint deepens from the entry level at the left to the frontier at the right — the theme's depth ramp, also drawn as the legend bar bottom-left (click a band to focus that level).";
+  const startHTML=hasLearnerData()?(function(){
+    const entry=learnerEntryId();
+    const note=learnerNote()||"Where you're starting is marked on the map. Quieter nodes are ones you already reported as comfortable — they're still here if you want to review.";
+    const jump=entry?`<p><b class="here-jump" data-goto="${entry}">Start here: ${nodeLabel(entry)}</b></p>`:"";
+    return `<div class="here-summary" id="learner-start"><h3>Your starting point</h3><p>${note}</p>${jump}</div>`;
+  })():"";
+  panel.innerHTML=`${sheetChrome("How to read this map")}
+  <h2 style="margin-top:0">Concept dependency map</h2>
+  <p>This map lays out the ${DATA.nodes.length} concepts between ${hasLearnerData()?"where you're starting":"zero background"} and the end goal: <b>${GOAL_STATEMENT}</b></p>
+  ${startHTML}
+  <h3>How to read it</h3>
+  <ul>
+    <li><b>Columns are topological levels.</b> An arrow A → B means learn A before B, so B always sits to the right of A. Everything in one column can be learned in parallel once the columns to its left are done.</li>
+    <li><b>Color encodes depth:</b> ${colorLine}</li>
+    <li>${nodeVerb} any <b>node</b> for its description, a <b>rough study outline</b> (ordered steps), key ideas, sources, and — for every arrow touching it — <b>why</b> that prerequisite holds.</li>
+    <li>${nodeVerb === "Tap" ? "Tapping" : "Clicking"} a node also lights up its entire prerequisite chain: what you'd need to study, in the graph's own order.</li>
+    <li>${arrowLine}</li>
+  </ul>
+  <h3>A suggested path through the graph</h3>
+  <ul>
+    ${SUGGESTED_PATH.map(s=>`<li><b>${s.h}:</b> ${s.t}</li>`).join("")}
+  </ul>
+  <h3>Themes</h3>
+  <div>${THEMES.map((p,i)=>`<span class="chipbtn" data-phase="${i}" style="margin:2px"><span class="dot" style="background:${p.color}"></span>${p.name}</span>`).join("")}</div>
+  <p style="font-size:14px;color:var(--muted)">${nodeVerb} a theme to highlight its nodes across the graph.</p>
+  <h3>Sources</h3>
+  <p style="font-size:14.5px">${GOAL_SOURCES_NOTE}</p>`;
+  bindBack();
+  gotoHandler();
+  panel.querySelectorAll("[data-phase]").forEach(b=>{
+    b.addEventListener("click",()=>focusTheme(+b.dataset.phase));
+  });
+}
+
+// ---------- search ----------
+const searchInput=$("#search"),results=$("#results");
+searchInput.addEventListener("input",()=>{
+  const q=searchInput.value.trim().toLowerCase();
+  if(!q){results.style.display="none";return;}
+  const matches=DATA.nodes.filter(n=>
+    n.label.toLowerCase().includes(q)||n.desc.toLowerCase().includes(q)||n.ideas.some(i=>i.toLowerCase().includes(q))||n.outline.some(o=>o.toLowerCase().includes(q))
+  ).slice(0,8);
+  results.innerHTML=matches.map(n=>`<div data-id="${n.id}">${n.label}<span class="rphase">${THEMES[n.phase].name}</span></div>`).join("")||"<div><i>No matches</i></div>";
+  results.style.display="block";
+  results.querySelectorAll("[data-id]").forEach(r=>{
+    r.addEventListener("click",()=>{
+      Object.values(nodeEls).forEach(g=>g.classList.remove("match"));
+      nodeEls[r.dataset.id].classList.add("match");
+      select(r.dataset.id);centerOn(r.dataset.id);
+      results.style.display="none";searchInput.value="";
+    });
+  });
+});
+document.addEventListener("click",e=>{if(!e.target.closest(".searchwrap"))results.style.display="none";});
+function centerOn(id){
+  const p=pos[id],rect=svg.getBoundingClientRect();
+  const cxg=p.x+NODE_W/2,cyg=p.y+NODE_H/2;
+  view.x=rect.width/2-cxg*view.k;view.y=rect.height/2-cyg*view.k;applyView();
+}
+
+// ---------- legend & init ----------
+const legend=$("#legend");
+(function buildLegend(){
+  const stops=LCOL.map((c,i)=>`${c} ${Math.round(100*i/(NLEVELS-1))}%`).join(", ");
+  const bandVerb=usesTouchCopy()?"Tap":"Click";
+  legend.innerHTML=`<div class="sheet-handle"></div>
+  <div class="sheet-head narrow-only"><strong>Topological levels</strong><button type="button" class="sheet-close" id="btn-legend-close">Close</button></div>
+  <div class="bar" style="background:linear-gradient(90deg, ${stops})"></div>
+  <div class="barlabels"><span>0</span><span>topological level →</span><span>${MAXL}</span></div>
+  <div class="cap">Every column is a dependency level: all its prerequisites sit strictly to the left, so a level can be studied in parallel. ${bandVerb} a band below to focus it.</div>
+  <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:5px">${LCOL.map((c,i)=>`<span class="chipbtn lvlchip" data-level="${i}" style="border-color:${c};font-size:14px;padding:1px 6px">${i}</span>`).join("")}</div>`;
+  legend.querySelectorAll(".lvlchip").forEach(b=>b.addEventListener("click",()=>{
+    if(isNarrow()){legend.classList.remove("is-open");$("#btn-legend").setAttribute("aria-expanded","false");}
+    focusLevel(+b.dataset.level);
+  }));
+  const close=$("#btn-legend-close");if(close)close.addEventListener("click",()=>{legend.classList.remove("is-open");$("#btn-legend").setAttribute("aria-expanded","false");syncScrim();});
+})();
+$("#stats").textContent=`${DATA.nodes.length} concepts · ${DATA.edges.length} prerequisite links · ${NLEVELS} topological levels · build ${BUILD}`;
+$("#hint").innerHTML=hintCopy();
+renderDefaultPanel();
+if(!isNarrow())panel.classList.add("is-open");
+fit();
+
+// ---------- theme toggle (engine): Themed ↔ Default, re-skins palette, fonts, and the depth ramp live ----------
+const ANCHORS_THEMED=ANCHORS.slice();
+let themedOn=true;
+function recolorGraph(){
+  LCOL.length=0;LCOL.push(...Array.from({length:NLEVELS},(_,l)=>levelColor(l)));
+  cols.forEach((c,i)=>colEls[i].setAttribute("fill",LCOL[c.level]));
+  svg.querySelectorAll(".collabel").forEach(t=>t.setAttribute("fill",LCOL[+t.dataset.level]));
+  for(const id in nodeEls){const c=LCOL[LEVEL[id]],rc=nodeEls[id].querySelector("rect.main");rc.setAttribute("fill",c);rc.setAttribute("stroke",c);}
+  const stops=LCOL.map((c,i)=>`${c} ${Math.round(100*i/(NLEVELS-1))}%`).join(", ");
+  const bar=legend.querySelector(".bar");if(bar)bar.style.background=`linear-gradient(90deg, ${stops})`;
+  legend.querySelectorAll(".lvlchip").forEach(b=>b.style.borderColor=LCOL[+b.dataset.level]);
+}
+function setTheme(on){
+  themedOn=on;
+  const t=on?THEME:THEME_DEFAULT;
+  applyTheme(t);
+  const ramp=on?ANCHORS_THEMED:THEME_DEFAULT.anchors;
+  if(ramp&&ramp.length>=2){ANCHORS.length=0;ANCHORS.push(...ramp);}
+  recolorGraph();
+  $("#btn-theme").textContent=on?"Themed":"Default";
+}
+$("#btn-theme").addEventListener("click",()=>setTheme(!themedOn));
+// deep link: open with #node-id to start with that concept selected
+(function(){
+  const id=location.hash&&location.hash.slice(1);
+  if(id&&nodeEls[id]){select(id);centerOn(id);}
+})();
+</script>
+</body>
+</html>

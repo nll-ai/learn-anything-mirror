@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CRISPR gene editing · misconception quiz</title>
+<noscript><style>.feedback[hidden]{display:block !important}</style></noscript>
+<style>
+
+  :root{
+    --ink:#1e293b; --muted:#64748b; --line:#e2e8f0; --bg:#f8fafc; --panel:#ffffff;
+    --accent:#2563eb; --ink-2:#334155; --dep-bg:#fbfdff;
+    --ok:#166534; --ok-bg:#ecfdf3; --bad:#9f1239; --bad-bg:#fff1f2;
+    --font-display:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --font-body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --safe-t:env(safe-area-inset-top,0px); --safe-r:env(safe-area-inset-right,0px);
+    --safe-b:env(safe-area-inset-bottom,0px); --safe-l:env(safe-area-inset-left,0px);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);line-height:1.5}
+  header{background:var(--panel);border-bottom:1px solid var(--line);
+    padding:max(14px,var(--safe-t)) max(16px,var(--safe-r)) 14px max(16px,var(--safe-l))}
+  header h1{font-family:var(--font-display);font-size:1.25rem;font-weight:650;margin:0 0 6px;line-height:1.3}
+  header p{margin:0;color:var(--muted);font-size:15px}
+  main{max-width:40rem;margin:0 auto;
+    padding:18px max(16px,var(--safe-r)) calc(36px + var(--safe-b)) max(16px,var(--safe-l))}
+  .lede{font-size:1.05rem;line-height:1.55;margin:0 0 8px;color:var(--ink-2)}
+  article.item{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:14px 14px 8px;margin:14px 0}
+  article.item h2{font-family:var(--font-display);font-size:1.05rem;font-weight:650;
+    line-height:1.4;margin:0 0 10px}
+  .choice{margin:0 0 8px}
+  button.option{display:block;width:100%;text-align:left;min-height:44px;padding:12px 14px;
+    border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);
+    font:inherit;font-size:16px;line-height:1.45;cursor:pointer;touch-action:manipulation}
+  button.option:hover{border-color:#94a3b8}
+  button.option[aria-pressed="true"][data-correct="true"]{border-color:var(--ok);background:var(--ok-bg)}
+  button.option[aria-pressed="true"][data-correct="false"]{border-color:var(--bad);background:var(--bad-bg)}
+  .feedback{margin:8px 0 0;padding:10px 12px;border-radius:10px;background:var(--dep-bg);
+    border:1px solid var(--line);font-size:15.5px;line-height:1.5;color:var(--ink-2)}
+  .feedback.is-right{background:var(--ok-bg);border-color:#bbf7d0}
+  .feedback.is-wrong{background:var(--bad-bg);border-color:#fecdd3}
+  .reflect{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:16px}
+  .reflect h2{font-family:var(--font-display);font-size:1.05rem;margin:0 0 8px}
+  .reflect ol{margin:0;padding-left:1.2rem}
+  .reflect li{margin:6px 0;font-size:16px}
+  footer{color:var(--muted);font-size:14px;margin-top:14px}
+
+</style>
+</head>
+<body>
+<header>
+  <h1>CRISPR gene editing</h1>
+  <p>Misconception quiz</p>
+</header>
+<main>
+  <p class="lede">Five questions on CRISPR gene editing. Every wrong option is a misconception people actually hold. Pick one. The note says why that choice was tempting, and what is going on instead.</p>
+    <article class="item">
+      <h2>1. What does the guide RNA do in CRISPR-Cas9?</h2>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="true" aria-describedby="q1o1">It base-pairs with the target so Cas9 sits on that sequence.</button>
+        <p id="q1o1" class="feedback" hidden>The guide is RNA. It holds Cas9 at a matching stretch of DNA by base-pairing. It does not cut, and it does not write new letters.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q1o2">It cuts both strands of the DNA.</button>
+        <p id="q1o2" class="feedback" hidden>Designing the guide makes it feel like the tool that does the work. The cutting is done by Cas9&#x27;s nuclease domains. The guide only supplies the address.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q1o3">It copies a new sequence into the gene.</button>
+        <p id="q1o3" class="feedback" hidden>Writing a guide and then seeing a new sequence makes the guide seem to be what gets inserted. The guide is not copied into the gene. A separate repair template, if you supplied one, is what the cell can copy.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q1o4">It chooses which cells keep the change.</button>
+        <p id="q1o4" class="feedback" hidden>Partial editing makes it seem as if something is picking which cells change. The guide does not choose cells. Which cells change depends on whether they were cut and how they repaired the cut.</p>
+      </div>
+    </article>
+    <article class="item">
+      <h2>2. CRISPR-Cas9 changes the letters in a gene. Which part makes that edit?</h2>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q2o1">Cas9 makes the edit.</button>
+        <p id="q2o1" class="feedback" hidden>Naming Cas9 lets the scissors picture slide from &quot;Cas9 cuts&quot; into &quot;Cas9 rewrites the gene.&quot; Cas9 cuts both strands next to a PAM. It does not write the new letters. Whatever sequence is left was made by the cell repairing that cut.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="true" aria-describedby="q2o2">Cell repair makes the edit.</button>
+        <p id="q2o2" class="feedback" hidden>Cas9 opens the DNA. The letters you end up with come from how the cell repairs the break: end-joining often adds or drops a few bases, and homology-directed repair can copy a template you supplied. The cut is not itself the edit.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q2o3">Guide RNA makes the edit.</button>
+        <p id="q2o3" class="feedback" hidden>Choosing that sequence makes the guide seem to be the edit. The guide only base-pairs with the site so Cas9 binds there. It is not the new gene sequence, and it does not cut.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q2o4">A PAM makes the edit.</button>
+        <p id="q2o4" class="feedback" hidden>Requiring a PAM makes the PAM look like the active part. A PAM (NGG for the usual Cas9) is a short license sitting next to the match. It lets the cut happen. It is not the new sequence.</p>
+      </div>
+    </article>
+    <article class="item">
+      <h2>3. You want one exact new sequence, and you supply a repair template. What copies that template into the gene?</h2>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="true" aria-describedby="q3o1">The cell copies it during homology-directed repair.</button>
+        <p id="q3o1" class="feedback" hidden>Homology-directed repair can copy a template that matches the flanks of the cut. That copying is the cell&#x27;s machinery, and it is the less common path. Most cuts are repaired by end-joining, which does not insert your template.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q3o2">Cas9 pastes the template into the cut.</button>
+        <p id="q3o2" class="feedback" hidden>Cut-and-paste is the everyday picture of editing. Cas9 cuts. It does not ligate your template into the gap. If the template shows up in the gene, the cell copied it while repairing the break.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q3o3">The guide RNA is swapped for the template.</button>
+        <p id="q3o3" class="feedback" hidden>Adding both nucleic acids makes the guide and the template seem interchangeable. The guide directs the cut. The template is a separate DNA donor. One is not swapped for the other.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q3o4">The PAM is rewritten as the template.</button>
+        <p id="q3o4" class="feedback" hidden>Placing the PAM at the cut makes it seem to be the spot that gets replaced by your sequence. The PAM is a nearby license for cutting. Your intended sequence is copied from the template, not spelled by rewriting the PAM.</p>
+      </div>
+    </article>
+    <article class="item">
+      <h2>4. The spacers in a bacterium&#x27;s own CRISPR array match its guide RNAs. Why does Cas9 usually not cut that array?</h2>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="true" aria-describedby="q4o1">Those spacers have no adjacent PAM, so Cas9 does not cut.</button>
+        <p id="q4o1" class="feedback" hidden>Cas9 cuts a match that sits next to a PAM. The spacers stored in the array are not sitting next to a PAM, so the array is spared even though the sequence matches the guide. That is how this system tells its own locus apart from a virus.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q4o2">Cas9 reads a methylation mark that means self, and skips marked DNA.</button>
+        <p id="q4o2" class="feedback" hidden>Restriction enzymes really do use a chemical mark to spare the cell&#x27;s own DNA. CRISPR-Cas9 does not use that mark for this decision. The license it checks is the PAM.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q4o3">The guide RNA cannot base-pair with the cell&#x27;s own genome.</button>
+        <p id="q4o3" class="feedback" hidden>Protecting the array sounds like the guide refuses its own sequence. The spacer and the guide match on purpose: that match is how the system remembers a virus. What spares the array is the missing PAM, not a failure to base-pair.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q4o4">The array is made of RNA, and Cas9 only cuts DNA.</button>
+        <p id="q4o4" class="feedback" hidden>RNA guides make the whole array easy to picture as RNA. The CRISPR array in the genome is DNA. Cas9 can cut DNA. It spares that array for lack of a PAM, not because the locus is the wrong material.</p>
+      </div>
+    </article>
+    <article class="item">
+      <h2>5. After a CRISPR-Cas9 treatment, some cells carry the new sequence and neighboring cells do not. What does that pattern mean?</h2>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="true" aria-describedby="q5o1">Different cells were cut and repaired independently, so the tissue is a mix.</button>
+        <p id="q5o1" class="feedback" hidden>Each cell repairs its own break. Some are cut at different times, some not at all, and end-joining does not leave the same letters every time. A mix of edited and unedited cells is an ordinary outcome, not a sign that one switch failed to flip the whole tissue.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q5o2">Cas9 either edits every cell or edits none.</button>
+        <p id="q5o2" class="feedback" hidden>One reagent pair sounds like one event with one result. Each cell is its own repair. The treatment does not flip the whole tissue together.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q5o3">The guide RNA spreads the finished edit from the first cell to the rest.</button>
+        <p id="q5o3" class="feedback" hidden>Shared changes across several cells look contagious. The guide does not carry a finished edit from cell to cell. Each edited cell made its own repair.</p>
+      </div>
+      <div class="choice">
+        <button type="button" class="option" aria-pressed="false" data-correct="false" aria-describedby="q5o4">A PAM in one cell blocks the edit in the cells around it.</button>
+        <p id="q5o4" class="feedback" hidden>Controlling whether a site can be cut seems able to veto nearby cells. A PAM decision is inside one genome. It does not switch neighboring cells off.</p>
+      </div>
+    </article>
+  <section class="reflect">
+    <h2>Before you leave</h2>
+    <ol>
+      <li>Which item felt hardest?</li>
+      <li>Which would you like drilled?</li>
+    </ol>
+  </section>
+  <footer>Nothing you pick is saved.</footer>
+</main>
+<script>
+// Shuffling (no position memory): a new order on every load, not a fixed seed.
+// Each note lives in its option's .choice, so the feedback moves with that option.
+// Heading numbers follow the on-screen order. With JavaScript off, the authored
+// order is what the page shows.
+function rnd(n) {
+  if (window.crypto && crypto.getRandomValues) {
+    var limit = Math.floor(4294967296 / n) * n;
+    var buf = new Uint32Array(1);
+    do { crypto.getRandomValues(buf); } while (buf[0] >= limit);
+    return buf[0] % n;
+  }
+  return Math.floor(Math.random() * n);
+}
+function shuffled(items) {
+  var copy = items.slice();
+  for (var i = copy.length - 1; i > 0; i--) {
+    var j = rnd(i + 1);
+    var held = copy[i];
+    copy[i] = copy[j];
+    copy[j] = held;
+  }
+  return copy;
+}
+var questions = Array.prototype.slice.call(document.querySelectorAll("article.item"));
+var afterQuestions = questions.length ? questions[questions.length - 1].nextSibling : null;
+shuffled(questions).forEach(function (item, index) {
+  var heading = item.querySelector("h2");
+  if (heading) {
+    heading.textContent = heading.textContent.replace(/^\d+\.\s*/, (index + 1) + ". ");
+  }
+  shuffled(Array.prototype.slice.call(item.querySelectorAll(".choice"))).forEach(function (choice) {
+    item.appendChild(choice);
+  });
+  item.parentNode.insertBefore(item, afterQuestions);
+});
+
+document.querySelectorAll("article.item").forEach(function (item) {
+  item.querySelectorAll("button.option").forEach(function (button) {
+    button.addEventListener("click", function () {
+      item.querySelectorAll("button.option").forEach(function (other) {
+        other.setAttribute("aria-pressed", other === button ? "true" : "false");
+      });
+      item.querySelectorAll(".feedback").forEach(function (note) {
+        note.hidden = true;
+        note.classList.remove("is-right", "is-wrong");
+      });
+      var noteId = button.getAttribute("aria-describedby");
+      var note = document.getElementById(noteId);
+      if (!note) return;
+      note.hidden = false;
+      note.classList.add(button.getAttribute("data-correct") === "true" ? "is-right" : "is-wrong");
+    });
+  });
+});
+
+</script>
+</body>
+</html>
